@@ -1,6 +1,6 @@
 import "./App.css";
 import Sidebar from "./components/Sidebar";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login/Login";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import { useAuthContext } from "./hooks/useAuthContext";
@@ -13,7 +13,7 @@ import useMediaQuery from "./hooks/useMediaQuery";
 import Topbar from "./components/Topbar";
 import PasswordRecovery from "./pages/Recover/Recover";
 import Help from "./pages/Help/Help";
-import Training from "./pages/Training/Training";
+import Training from "./pages/Content/Training/index";
 import { ReferrerDocProvider } from "./contexts/ReferrerDocContext";
 import { db } from "./firebase/config";
 import { doc, onSnapshot } from "firebase/firestore";
@@ -21,7 +21,9 @@ import Home from "./pages/Home/Home";
 import TopbarMobile from "./components/TopbarMobile";
 import BottomBar from "./components/BottomBar";
 import Content from "./pages/Content/Content";
-import StartHere from "./pages/Content/Training/StartHere/StartHere";
+import StartHereModule from "./pages/Content/Training/StartHere/index";
+import BehaviorModule from "./pages/Content/Training/Behavior/index";
+import SocializationModule from "./pages/Content/Training/Socialization/index";
 
 function AppRoutes() {
   const { user, authIsReady } = useAuthContext();
@@ -76,7 +78,13 @@ function AppRoutes() {
                   <Routes>
                     <Route exact path="/" element={<Home />} />
                     <Route path="/adestramento" element={<Content />} />
-                    <Route path="/comece-aqui" element={<StartHere />} />
+                    <Route path="/content/training" element={<Training />} />
+                    <Route path="/content/training/starthere" element={<StartHereModule />} />
+                    <Route path="/content/training/behavior" element={<BehaviorModule />} />
+                    <Route path="/content/training/socialization" element={<SocializationModule />} />
+                    <Route path="/content/training/hygiene" element={<div>Higiene e Rotina (Em breve)</div>} />
+                    <Route path="/content/training/badhabits" element={<div>Evitando Maus Hábitos (Em breve)</div>} />
+                    <Route path="/content/training/mental" element={<div>Exercícios Mentais (Em breve)</div>} />
                     <Route path="/rota2" element={<Content />} />
                     <Route path="/rota3" element={<Content />} />
                     <Route path="/rota4" element={<Content />} />

@@ -1,31 +1,4 @@
-# Firebase
-.firebase/
-firebase-debug.log
-firebase-debug.*.log
-ui-debug.log
-.runtimeconfig.json
-
-# Node
-node_modules/
-npm-debug.log
-yarn-debug.log
-yarn-error.log
-
-# Environment variables
-.env
-.env.local
-.env.*.local
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
+node_modules
 dist
 src/pages/Admin
 src/pages/AdminPanel
