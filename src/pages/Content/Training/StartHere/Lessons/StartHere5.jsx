@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import ModuleCompletionPopup from "../../../../../components/ModuleCompletionPopup";
 
 const LessonContainer = styled.div`
-  padding: 2rem;
+  padding: 20px;
   max-width: 800px;
   margin: 0 auto;
 `;
@@ -163,10 +163,25 @@ const Dot = styled.div`
   transition: background 0.2s;
 `;
 
-export default function StartHere5({ onNextLesson }) {
+const ContentSection = styled.div`
+  margin-bottom: 1.5rem;
+`;
+
+const SectionTitle = styled.h3`
+  font-size: 1.2rem;
+  color: #2D3748;
+  margin-bottom: 0.75rem;
+`;
+
+const ContentText = styled.p`
+  color: #4A5568;
+  line-height: 1.6;
+`;
+
+export default function StartHere5({ onNextLesson, onBack }) {
+  const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showPopup, setShowPopup] = useState(false);
-  const navigate = useNavigate();
 
   const nextSlide = () => {
     if (currentSlide === 2) {
@@ -189,57 +204,62 @@ export default function StartHere5({ onNextLesson }) {
   };
 
   const handleNextModule = () => {
-    // Aqui você pode adicionar a lógica para desbloquear a primeira aula do módulo Behavior
-    // Por exemplo, atualizar o estado global ou localStorage
+    // Desbloqueia a primeira aula do módulo de comportamento
     localStorage.setItem("behavior1_unlocked", "true");
+    
+    // Desbloqueia o módulo na página de adestramento
+    localStorage.setItem("behavior_unlocked", "true");
+    
+    // Navega para a primeira aula do módulo de comportamento
     navigate("/content/training/behavior");
   };
 
   return (
     <LessonContainer>
-      <Title>Introdução ao Clicker ou Recompensas</Title>
+      <Title>Ambiente de Treinamento</Title>
       
       <CarouselContainer>
-        {/* Slide 0: Introdução com Imagem */}
         <Slide active={currentSlide === 0}>
-          <SlideTitle>Bem-vindo à Aula!</SlideTitle>
-          <ImageContainer>
-            <ImagePlaceholder>Imagem ilustrativa do uso do clicker</ImagePlaceholder>
-          </ImageContainer>
-          <IntroductionText>
-            Nesta aula, vamos aprender como usar o clicker ou recompensas verbais para treinar seu cão de forma mais eficiente.
-          </IntroductionText>
+          <SlideTitle>Preparação do Ambiente</SlideTitle>
+          <ContentSection>
+            <ContentText>
+              Um ambiente adequado é fundamental para o sucesso do treinamento. 
+              Vamos aprender como criar o local ideal para treinar seu cão.
+            </ContentText>
+          </ContentSection>
         </Slide>
 
-        {/* Slide 1: Como Funciona e Passo a Passo */}
         <Slide active={currentSlide === 1}>
-          <SlideTitle>Como Funciona?</SlideTitle>
-          <Text>
-            O clicker é um dispositivo que faz um "click" para marcar o comportamento certo.
-            Sempre que o cão faz algo correto, clique e recompense.
-          </Text>
-          <StepList>
-            <StepItem>Dê um petisco e clique ao mesmo tempo.</StepItem>
-            <StepItem>Repita 10x para que o cão associe o "click" à recompensa.</StepItem>
-            <StepItem>Use o clicker sempre que o cão acertar um comando.</StepItem>
-          </StepList>
+          <SlideTitle>Elementos Essenciais</SlideTitle>
+          <ContentSection>
+            <SectionTitle>O que você precisa:</SectionTitle>
+            <ContentText>
+              • Local silencioso e sem distrações
+              • Petiscos de alto valor
+              • Brinquedos interativos
+              • Guia e coleira
+              • Tapete ou cama para descanso
+            </ContentText>
+          </ContentSection>
         </Slide>
 
-        {/* Slide 2: Resumo Rápido */}
         <Slide active={currentSlide === 2}>
-          <SlideTitle>Resumo Rápido</SlideTitle>
-          <SummaryList>
-            <SummaryItem>O clicker ajuda o cão a aprender mais rápido.</SummaryItem>
-            <SummaryItem>Sempre associe o clique a algo positivo.</SummaryItem>
-            <SummaryItem>Se não tiver um clicker, use "sim!" ou "muito bem!" com entusiasmo.</SummaryItem>
-          </SummaryList>
+          <SlideTitle>Organização do Espaço</SlideTitle>
+          <ContentSection>
+            <SectionTitle>Dicas de Organização</SectionTitle>
+            <ContentText>
+              • Mantenha o espaço limpo e organizado
+              • Tenha todos os materiais à mão
+              • Crie uma área de descanso
+              • Evite objetos que possam distrair
+              • Mantenha uma temperatura agradável
+            </ContentText>
+          </ContentSection>
         </Slide>
       </CarouselContainer>
 
       <NavigationButtons>
-        <Button onClick={prevSlide} disabled={currentSlide === 0}>
-          Anterior
-        </Button>
+        <Button onClick={onBack}>Voltar</Button>
         <Button onClick={nextSlide}>
           {currentSlide === 2 ? "Concluir Aula" : "Próximo"}
         </Button>

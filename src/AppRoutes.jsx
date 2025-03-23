@@ -27,6 +27,11 @@ import SocializationModule from "./pages/Content/Training/Socialization/index";
 import HygieneModule from "./pages/Content/Training/Hygiene/index";
 import BadHabitsModule from "./pages/Content/Training/BadHabits/index";
 import MentalModule from "./pages/Content/Training/Mental/index";
+import Behavior1 from "./pages/Content/Training/Behavior/Lessons/Behavior1";
+import Behavior2 from "./pages/Content/Training/Behavior/Lessons/Behavior2";
+import Behavior3 from "./pages/Content/Training/Behavior/Lessons/Behavior3";
+import Behavior4 from "./pages/Content/Training/Behavior/Lessons/Behavior4";
+import Behavior5 from "./pages/Content/Training/Behavior/Lessons/Behavior5";
 
 function AppRoutes() {
   const { user, authIsReady } = useAuthContext();
@@ -83,7 +88,7 @@ function AppRoutes() {
                     <Route path="/adestramento" element={<Content />} />
                     <Route path="/content/training" element={<Training />} />
                     <Route path="/content/training/starthere" element={<StartHereModule />} />
-                    <Route path="/content/training/behavior" element={<BehaviorModule />} />
+                    <Route path="/content/training/behavior/*" element={<BehaviorModule />} />
                     <Route path="/content/training/socialization" element={<SocializationModule />} />
                     <Route path="/content/training/hygiene" element={<HygieneModule />} />
                     <Route path="/content/training/badhabits" element={<BadHabitsModule />} />

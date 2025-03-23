@@ -61,16 +61,21 @@ const NavigationButtons = styled.div`
 `;
 
 const Button = styled.button`
-  padding: 10px 20px;
-  background-color: ${props => props.disabled ? '#ccc' : '#4CAF50'};
+  padding: 0.5rem 1rem;
+  background: ${props => props.active ? '#48BB78' : '#4299E1'};
   color: white;
   border: none;
   border-radius: 4px;
-  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
-  transition: background-color 0.2s;
+  cursor: pointer;
+  transition: background 0.2s;
 
   &:hover {
-    background-color: ${props => props.disabled ? '#ccc' : '#45a049'};
+    background: ${props => props.active ? '#38A169' : '#3182CE'};
+  }
+
+  &:disabled {
+    background: #CBD5E0;
+    cursor: not-allowed;
   }
 `;
 
@@ -85,9 +90,9 @@ const Dot = styled.div`
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background-color: ${props => (props.active ? "#4CAF50" : "#ccc")};
+  background: ${props => props.active ? '#4299E1' : '#CBD5E0'};
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background 0.2s;
 `;
 
 export default function Behavior1({ onNextLesson, onBack }) {

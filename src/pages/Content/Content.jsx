@@ -19,7 +19,7 @@ import {
   Lock,
   Unlock,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useMediaQuery from "@/hooks/useMediaQuery";
 import { useAuthContext } from "@/hooks/useAuthContext";
@@ -31,6 +31,12 @@ function Content() {
   const isWideScreen = useMediaQuery("(min-width: 1920px)");
   const navigate = useNavigate();
   const [isContentLocked, setIsContentLocked] = useState(!userDoc?.startHere);
+  const [behaviorUnlocked, setBehaviorUnlocked] = useState(false);
+
+  useEffect(() => {
+    const isBehaviorUnlocked = localStorage.getItem("behavior_unlocked") === "true";
+    setBehaviorUnlocked(isBehaviorUnlocked);
+  }, []);
 
   const toggleContentLock = () => {
     setIsContentLocked(!isContentLocked);
@@ -54,7 +60,7 @@ function Content() {
       icon: <HeartIcon className="h-6 w-6 sm:w-8 sm:h-8 shrink-0 text-brand" />,
       description: "Desenvolva comportamentos essenciais para uma convivência harmoniosa com seu cão.",
       route: "/content/training/behavior",
-      isLocked: isContentLocked,
+      isLocked: !behaviorUnlocked,
     },
     {
       name: "Socialização e Controle",
