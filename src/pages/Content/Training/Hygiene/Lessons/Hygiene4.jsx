@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import ModuleCompletionPopup from "../../../../../components/ModuleCompletionPopup";
 
 const LessonContainer = styled.div`
   padding: 2rem;
@@ -171,11 +173,13 @@ const Dot = styled.div`
 `;
 
 export default function Hygiene4({ onNextLesson }) {
+  const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [showPopup, setShowPopup] = useState(false);
 
   const nextSlide = () => {
     if (currentSlide === 3) {
-      onNextLesson();
+      setShowPopup(true);
     } else {
       setCurrentSlide(prev => prev + 1);
     }
@@ -187,6 +191,25 @@ export default function Hygiene4({ onNextLesson }) {
 
   const goToSlide = (index) => {
     setCurrentSlide(index);
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+  const handleNextModule = () => {
+    // Desbloqueia a primeira aula do módulo de maus hábitos
+    localStorage.setItem("badhabits1_unlocked", "true");
+    
+    // Desbloqueia o módulo na página de adestramento
+    localStorage.setItem("badhabits_unlocked", "true");
+    
+    // Desbloqueia o módulo na página de adestramento geral
+    localStorage.setItem("startHere", "true");
+    localStorage.setItem("badhabits_unlocked", "true");
+    
+    // Navega para a primeira aula do módulo de maus hábitos
+    navigate("/content/training/badhabits");
   };
 
   return (
@@ -246,7 +269,7 @@ export default function Hygiene4({ onNextLesson }) {
           Anterior
         </Button>
         <Button onClick={nextSlide}>
-          {currentSlide === 3 ? "Próxima Aula" : "Próximo"}
+          {currentSlide === 3 ? "Concluir Aula" : "Próximo"}
         </Button>
       </NavigationButtons>
 
@@ -259,6 +282,13 @@ export default function Hygiene4({ onNextLesson }) {
           />
         ))}
       </Dots>
+
+      {showPopup && (
+        <ModuleCompletionPopup
+          onClose={handleClosePopup}
+          onNextModule={handleNextModule}
+        />
+      )}
     </LessonContainer>
   );
 } 

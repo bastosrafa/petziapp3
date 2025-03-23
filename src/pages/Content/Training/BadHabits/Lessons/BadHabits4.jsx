@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import ModuleCompletionPopup from "../../../../../components/ModuleCompletionPopup";
 
 const LessonContainer = styled.div`
   padding: 2rem;
@@ -171,11 +173,13 @@ const Dot = styled.div`
 `;
 
 export default function BadHabits4({ onNextLesson }) {
+  const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [showPopup, setShowPopup] = useState(false);
 
   const nextSlide = () => {
     if (currentSlide === 3) {
-      onNextLesson();
+      setShowPopup(true);
     } else {
       setCurrentSlide(prev => prev + 1);
     }
@@ -189,9 +193,32 @@ export default function BadHabits4({ onNextLesson }) {
     setCurrentSlide(index);
   };
 
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+  const handleNextModule = () => {
+    // Desbloqueia a primeira aula do módulo de exercícios mentais
+    localStorage.setItem("mental1_unlocked", "true");
+    
+    // Desbloqueia o módulo na página de adestramento
+    localStorage.setItem("mental_unlocked", "true");
+    
+    // Desbloqueia o módulo na página de adestramento geral
+    localStorage.setItem("startHere", "true");
+    localStorage.setItem("mental_unlocked", "true");
+    localStorage.setItem("isContentLocked", "false");
+    
+    // Força a atualização do estado isContentLocked no Content.jsx
+    window.dispatchEvent(new Event('storage'));
+    
+    // Navega para a primeira aula do módulo de exercícios mentais
+    navigate("/content/training/mental");
+  };
+
   return (
     <LessonContainer>
-      <Title>Evitar que o Cão Destrua Móveis e Objetos</Title>
+      <Title>Evitando Destruição de Objetos</Title>
       
       <CarouselContainer>
         {/* Slide 0: Introdução com Imagem */}
@@ -241,7 +268,7 @@ export default function BadHabits4({ onNextLesson }) {
           Anterior
         </Button>
         <Button onClick={nextSlide}>
-          {currentSlide === 3 ? "Próxima Aula" : "Próximo"}
+          {currentSlide === 3 ? "Concluir Aula" : "Próximo"}
         </Button>
       </NavigationButtons>
 
@@ -254,6 +281,13 @@ export default function BadHabits4({ onNextLesson }) {
           />
         ))}
       </Dots>
+
+      {showPopup && (
+        <ModuleCompletionPopup
+          onClose={handleClosePopup}
+          onNextModule={handleNextModule}
+        />
+      )}
     </LessonContainer>
   );
 } 

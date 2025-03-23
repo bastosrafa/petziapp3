@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import ModuleCompletionPopup from "../../../../../components/ModuleCompletionPopup";
 
 const LessonContainer = styled.div`
   padding: 20px;
@@ -94,11 +96,13 @@ const Dot = styled.div`
 `;
 
 const Socialization5 = ({ onNextLesson }) => {
+  const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [showPopup, setShowPopup] = useState(false);
 
   const nextSlide = () => {
     if (currentSlide === 2) {
-      onNextLesson();
+      setShowPopup(true);
     } else {
       setCurrentSlide((prev) => (prev + 1) % 3);
     }
@@ -110,6 +114,21 @@ const Socialization5 = ({ onNextLesson }) => {
 
   const goToSlide = (index) => {
     setCurrentSlide(index);
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+  const handleNextModule = () => {
+    // Desbloqueia a primeira aula do módulo de higiene
+    localStorage.setItem("hygiene1_unlocked", "true");
+    
+    // Desbloqueia o módulo na página de adestramento
+    localStorage.setItem("hygiene_unlocked", "true");
+    
+    // Navega para a primeira aula do módulo de higiene
+    navigate("/content/training/hygiene");
   };
 
   return (
@@ -156,7 +175,7 @@ const Socialization5 = ({ onNextLesson }) => {
           Anterior
         </Button>
         <Button onClick={nextSlide}>
-          {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
+          {currentSlide === 2 ? "Concluir Aula" : "Próximo"}
         </Button>
       </NavigationButtons>
 
@@ -169,6 +188,13 @@ const Socialization5 = ({ onNextLesson }) => {
           />
         ))}
       </Dots>
+
+      {showPopup && (
+        <ModuleCompletionPopup
+          onClose={handleClosePopup}
+          onNextModule={handleNextModule}
+        />
+      )}
     </LessonContainer>
   );
 };

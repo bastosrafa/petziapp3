@@ -32,10 +32,31 @@ function Content() {
   const navigate = useNavigate();
   const [isContentLocked, setIsContentLocked] = useState(!userDoc?.startHere);
   const [behaviorUnlocked, setBehaviorUnlocked] = useState(false);
+  const [socializationUnlocked, setSocializationUnlocked] = useState(false);
+  const [hygieneUnlocked, setHygieneUnlocked] = useState(false);
+  const [badhabitsUnlocked, setBadhabitsUnlocked] = useState(false);
 
   useEffect(() => {
     const isBehaviorUnlocked = localStorage.getItem("behavior_unlocked") === "true";
+    const isSocializationUnlocked = localStorage.getItem("socialization_unlocked") === "true";
+    const isHygieneUnlocked = localStorage.getItem("hygiene_unlocked") === "true";
+    const isBadhabitsUnlocked = localStorage.getItem("badhabits_unlocked") === "true";
+    const isContentLocked = localStorage.getItem("isContentLocked") === "true";
     setBehaviorUnlocked(isBehaviorUnlocked);
+    setSocializationUnlocked(isSocializationUnlocked);
+    setHygieneUnlocked(isHygieneUnlocked);
+    setBadhabitsUnlocked(isBadhabitsUnlocked);
+    setIsContentLocked(isContentLocked);
+  }, []);
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const isContentLocked = localStorage.getItem("isContentLocked") === "true";
+      setIsContentLocked(isContentLocked);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   const toggleContentLock = () => {
@@ -67,21 +88,21 @@ function Content() {
       icon: <UsersIcon className="h-6 w-6 sm:w-8 sm:h-8 shrink-0 text-brand" />,
       description: "Aprenda a socializar seu cão e controlar seus impulsos em diferentes situações.",
       route: "/content/training/socialization",
-      isLocked: isContentLocked,
+      isLocked: !socializationUnlocked,
     },
     {
       name: "Higiene e Rotina",
       icon: <DropletsIcon className="h-6 w-6 sm:w-8 sm:h-8 shrink-0 text-brand" />,
       description: "Estabeleça uma rotina saudável e hábitos de higiene com seu cão.",
       route: "/content/training/hygiene",
-      isLocked: isContentLocked,
+      isLocked: !hygieneUnlocked,
     },
     {
       name: "Evitando Maus Hábitos",
       icon: <AlertTriangleIcon className="h-6 w-6 sm:w-8 sm:h-8 shrink-0 text-brand" />,
       description: "Aprenda a prevenir e corrigir comportamentos indesejados.",
       route: "/content/training/badhabits",
-      isLocked: isContentLocked,
+      isLocked: !badhabitsUnlocked,
     },
     {
       name: "Exercícios Mentais",
