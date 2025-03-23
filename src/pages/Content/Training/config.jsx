@@ -1,24 +1,6 @@
 import { DogIcon, HeartIcon, UsersIcon, DropletsIcon, AlertTriangleIcon, BrainIcon } from "lucide-react";
 
-interface Lesson {
-  id: string;
-  title: string;
-  description: string;
-  duration: string;
-  component: string;
-}
-
-interface TrainingModule {
-  id: string;
-  title: string;
-  description: string;
-  duration: string;
-  route: string;
-  icon?: any;
-  lessons: Lesson[];
-}
-
-export const trainingModules: TrainingModule[] = [
+export const trainingModules = [
   {
     id: "starthere",
     title: "Comece Aqui 🎯",
@@ -171,38 +153,31 @@ export const trainingModules: TrainingModule[] = [
     lessons: [
       {
         id: "hygiene1",
-        title: "Banho e Escovação",
-        description: "Técnicas adequadas para banho e escovação",
+        title: "Ensinando o Local Correto",
+        description: "Como ensinar seu cão onde fazer suas necessidades",
         duration: "15 min",
-        component: "ComingSoon",
+        component: "Hygiene1",
       },
       {
         id: "hygiene2",
-        title: "Corte de Unhas",
-        description: "Como cortar as unhas do seu cão de forma segura",
+        title: "Rotina de Alimentação",
+        description: "Estabelecendo horários e hábitos alimentares saudáveis",
         duration: "15 min",
-        component: "ComingSoon",
+        component: "Hygiene2",
       },
       {
         id: "hygiene3",
-        title: "Limpeza de Ouvidos",
-        description: "Cuidados com a higiene dos ouvidos",
+        title: "Caixa de Transporte",
+        description: "Acostumando seu cão com a caixa de transporte",
         duration: "15 min",
-        component: "ComingSoon",
+        component: "Hygiene3",
       },
       {
         id: "hygiene4",
-        title: "Escovação de Dentes",
-        description: "Higiene bucal e escovação de dentes",
+        title: "Preservando os Móveis",
+        description: "Evitando que seu cão destrua móveis e objetos",
         duration: "15 min",
-        component: "ComingSoon",
-      },
-      {
-        id: "hygiene5",
-        title: "Rotina de Higiene",
-        description: "Como estabelecer uma rotina de higiene",
-        duration: "15 min",
-        component: "ComingSoon",
+        component: "Hygiene4",
       },
     ],
   },
@@ -216,83 +191,67 @@ export const trainingModules: TrainingModule[] = [
     lessons: [
       {
         id: "badhabits1",
-        title: "Latidos Excessivos",
-        description: "Como controlar latidos excessivos",
+        title: "Mordidas e Mastigação",
+        description: "Como controlar mordidas e mastigação excessiva",
         duration: "15 min",
-        component: "ComingSoon",
+        component: "BadHabits1",
       },
       {
         id: "badhabits2",
-        title: "Destruição de Objetos",
-        description: "Prevenção e correção de comportamentos destrutivos",
+        title: "Roubo de Comida",
+        description: "Evitar que o cão roube comida da mesa",
         duration: "15 min",
-        component: "ComingSoon",
+        component: "BadHabits2",
       },
       {
         id: "badhabits3",
-        title: "Puxar na Guia",
-        description: "Correção do comportamento de puxar na guia",
+        title: "Pular nas Pessoas",
+        description: "Como evitar que o cão pule nas pessoas",
         duration: "15 min",
-        component: "ComingSoon",
+        component: "BadHabits3",
       },
       {
         id: "badhabits4",
-        title: "Ansiedade de Separação",
-        description: "Como lidar com a ansiedade de separação",
+        title: "Destruição de Móveis",
+        description: "Evitar que o cão destrua móveis e objetos",
         duration: "15 min",
-        component: "ComingSoon",
-      },
-      {
-        id: "badhabits5",
-        title: "Comportamentos Obsessivos",
-        description: "Identificação e correção de comportamentos obsessivos",
-        duration: "15 min",
-        component: "ComingSoon",
-      },
+        component: "BadHabits4",
+      }
     ],
   },
   {
     id: "mental",
-    title: "Exercícios Mentais e Diversão 🧩",
+    title: "Exercícios Mentais e Diversão",
     description: "Atividades para estimular a mente do seu cão",
-    duration: "1 hora",
-    route: "/content/training/mental",
-    icon: BrainIcon,
+    icon: "🧩",
     lessons: [
       {
         id: "mental1",
-        title: "Jogos de Busca",
-        description: "Jogos para estimular a busca e o olfato",
+        title: "Brinquedos Interativos",
+        description: "Enriquecimento ambiental com brinquedos interativos",
         duration: "15 min",
-        component: "ComingSoon",
+        component: "Mental1",
       },
       {
         id: "mental2",
-        title: "Quebra-cabeças",
-        description: "Atividades mentais com brinquedos interativos",
+        title: "Jogos para Gastar Energia",
+        description: "Atividades divertidas para dentro de casa",
         duration: "15 min",
-        component: "ComingSoon",
+        component: "Mental2",
       },
       {
         id: "mental3",
-        title: "Treinamento de Truques",
-        description: "Aprenda a ensinar truques divertidos",
+        title: "Truques Simples",
+        description: "Truques divertidos para ensinar ao seu cão",
         duration: "15 min",
-        component: "ComingSoon",
+        component: "Mental3",
       },
       {
         id: "mental4",
-        title: "Jogos de Agilidade",
-        description: "Exercícios físicos e mentais combinados",
+        title: "Esportes Caninos",
+        description: "Introdução aos principais esportes caninos",
         duration: "15 min",
-        component: "ComingSoon",
-      },
-      {
-        id: "mental5",
-        title: "Enriquecimento Ambiental",
-        description: "Como criar um ambiente estimulante",
-        duration: "15 min",
-        component: "ComingSoon",
+        component: "Mental4",
       },
     ],
   },

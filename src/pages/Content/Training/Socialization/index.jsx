@@ -148,6 +148,13 @@ const SocializationModule = () => {
     setSelectedLesson(lesson);
   };
 
+  const handleNextLesson = () => {
+    const currentIndex = lessons.findIndex(lesson => lesson.id === selectedLesson.id);
+    if (currentIndex < lessons.length - 1) {
+      setSelectedLesson(lessons[currentIndex + 1]);
+    }
+  };
+
   const handleBack = () => {
     if (selectedLesson) {
       setSelectedLesson(null);
@@ -161,7 +168,7 @@ const SocializationModule = () => {
     return (
       <Container>
         <BackButton onClick={handleBack}>Voltar para a lista de aulas</BackButton>
-        <LessonComponent />
+        <LessonComponent onNextLesson={handleNextLesson} />
       </Container>
     );
   }

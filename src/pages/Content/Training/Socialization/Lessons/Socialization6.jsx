@@ -26,6 +26,7 @@ const Slide = styled.div`
   height: 100%;
   opacity: ${props => (props.active ? 1 : 0)};
   transition: opacity 0.5s ease-in-out;
+  visibility: ${props => (props.active ? 'visible' : 'hidden')};
 `;
 
 const SlideTitle = styled.h2`
@@ -59,13 +60,19 @@ const NavigationButtons = styled.div`
 
 const Button = styled.button`
   padding: 10px 20px;
-  background-color: #007bff;
+  background: #4299E1;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #3182CE;
+  }
+
   &:disabled {
-    background-color: #ccc;
+    background: #CBD5E0;
     cursor: not-allowed;
   }
 `;
@@ -73,23 +80,28 @@ const Button = styled.button`
 const Dots = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  gap: 0.5rem;
+  margin-top: 1rem;
 `;
 
 const Dot = styled.div`
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background-color: ${props => (props.active ? "#007bff" : "#ccc")};
-  margin: 0 5px;
+  background: ${props => props.active === "true" ? '#4299E1' : '#CBD5E0'};
   cursor: pointer;
+  transition: background 0.2s;
 `;
 
-const Socialization6 = () => {
+const Socialization6 = ({ onNextLesson }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % 3);
+    if (currentSlide === 2) {
+      onNextLesson();
+    } else {
+      setCurrentSlide((prev) => (prev + 1) % 3);
+    }
   };
 
   const prevSlide = () => {
@@ -143,8 +155,8 @@ const Socialization6 = () => {
         <Button onClick={prevSlide} disabled={currentSlide === 0}>
           Anterior
         </Button>
-        <Button onClick={nextSlide} disabled={currentSlide === 2}>
-          Próximo
+        <Button onClick={nextSlide}>
+          {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
         </Button>
       </NavigationButtons>
 
@@ -152,7 +164,7 @@ const Socialization6 = () => {
         {[0, 1, 2].map((index) => (
           <Dot
             key={index}
-            active={currentSlide === index}
+            active={currentSlide === index ? "true" : "false"}
             onClick={() => goToSlide(index)}
           />
         ))}

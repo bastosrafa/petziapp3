@@ -21,11 +21,7 @@ const ModulesGrid = styled.div`
   gap: 20px;
 `;
 
-interface ModuleCardProps {
-  locked?: boolean;
-}
-
-const ModuleCard = styled.div<ModuleCardProps>`
+const ModuleCard = styled.div`
   background: white;
   border-radius: 8px;
   padding: 20px;
@@ -85,7 +81,7 @@ const LockIcon = styled.div`
 export default function Training() {
   const navigate = useNavigate();
 
-  const handleModuleClick = (moduleId: string) => {
+  const handleModuleClick = (moduleId) => {
     const module = trainingModules.find(m => m.id === moduleId);
     if (module && module.route) {
       navigate(module.route);

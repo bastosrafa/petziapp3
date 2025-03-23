@@ -24,6 +24,9 @@ import Content from "./pages/Content/Content";
 import StartHereModule from "./pages/Content/Training/StartHere/index";
 import BehaviorModule from "./pages/Content/Training/Behavior/index";
 import SocializationModule from "./pages/Content/Training/Socialization/index";
+import HygieneModule from "./pages/Content/Training/Hygiene/index";
+import BadHabitsModule from "./pages/Content/Training/BadHabits/index";
+import MentalModule from "./pages/Content/Training/Mental/index";
 
 function AppRoutes() {
   const { user, authIsReady } = useAuthContext();
@@ -82,9 +85,9 @@ function AppRoutes() {
                     <Route path="/content/training/starthere" element={<StartHereModule />} />
                     <Route path="/content/training/behavior" element={<BehaviorModule />} />
                     <Route path="/content/training/socialization" element={<SocializationModule />} />
-                    <Route path="/content/training/hygiene" element={<div>Higiene e Rotina (Em breve)</div>} />
-                    <Route path="/content/training/badhabits" element={<div>Evitando Maus Hábitos (Em breve)</div>} />
-                    <Route path="/content/training/mental" element={<div>Exercícios Mentais (Em breve)</div>} />
+                    <Route path="/content/training/hygiene" element={<HygieneModule />} />
+                    <Route path="/content/training/badhabits" element={<BadHabitsModule />} />
+                    <Route path="/content/training/mental" element={<MentalModule />} />
                     <Route path="/rota2" element={<Content />} />
                     <Route path="/rota3" element={<Content />} />
                     <Route path="/rota4" element={<Content />} />

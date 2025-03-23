@@ -3,7 +3,7 @@ const admin = require("firebase-admin");
 const express = require("express");
 const cors = require("cors");
 
-firebase functions:config:set project.api_key="AIzaSyBnLH-WPXrw6LbXTo6FhHogwjFApEOXIos"
+
 const FIREBASE_API_KEY = functions.config().project.api_key; // TODO: Definir API key do projeto
 
 const app = express();
