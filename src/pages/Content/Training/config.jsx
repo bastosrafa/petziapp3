@@ -223,7 +223,7 @@ export const trainingModules = [
     id: "mental",
     title: "Exercícios Mentais e Diversão",
     description: "Atividades para estimular a mente do seu cão",
-    icon: "🧩",
+    icon: BrainIcon,
     lessons: [
       {
         id: "mental1",

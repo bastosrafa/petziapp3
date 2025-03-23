@@ -155,9 +155,16 @@ function BehaviorModule() {
     }
   };
 
+  const handleNextLesson = () => {
+    const currentIndex = lessons.findIndex(lesson => lesson.id === selectedLesson.id);
+    if (currentIndex < lessons.length - 1) {
+      setSelectedLesson(lessons[currentIndex + 1]);
+    }
+  };
+
   if (selectedLesson) {
     const LessonComponent = selectedLesson.component;
-    return <LessonComponent onBack={handleBack} />;
+    return <LessonComponent onNextLesson={handleNextLesson} onBack={handleBack} />;
   }
 
   return (

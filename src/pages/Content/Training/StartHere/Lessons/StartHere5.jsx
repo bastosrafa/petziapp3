@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import ModuleCompletionPopup from "../../../../../components/ModuleCompletionPopup";
 
 const LessonContainer = styled.div`
   padding: 2rem;
@@ -163,10 +165,12 @@ const Dot = styled.div`
 
 export default function StartHere5({ onNextLesson }) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [showPopup, setShowPopup] = useState(false);
+  const navigate = useNavigate();
 
   const nextSlide = () => {
     if (currentSlide === 2) {
-      onNextLesson();
+      setShowPopup(true);
     } else {
       setCurrentSlide(prev => prev + 1);
     }
@@ -178,6 +182,17 @@ export default function StartHere5({ onNextLesson }) {
 
   const goToSlide = (index) => {
     setCurrentSlide(index);
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+  const handleNextModule = () => {
+    // Aqui você pode adicionar a lógica para desbloquear a primeira aula do módulo Behavior
+    // Por exemplo, atualizar o estado global ou localStorage
+    localStorage.setItem("behavior1_unlocked", "true");
+    navigate("/content/training/behavior");
   };
 
   return (
@@ -226,7 +241,7 @@ export default function StartHere5({ onNextLesson }) {
           Anterior
         </Button>
         <Button onClick={nextSlide}>
-          {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
+          {currentSlide === 2 ? "Concluir Aula" : "Próximo"}
         </Button>
       </NavigationButtons>
 
@@ -239,6 +254,13 @@ export default function StartHere5({ onNextLesson }) {
           />
         ))}
       </Dots>
+
+      {showPopup && (
+        <ModuleCompletionPopup
+          onClose={handleClosePopup}
+          onNextModule={handleNextModule}
+        />
+      )}
     </LessonContainer>
   );
 } 

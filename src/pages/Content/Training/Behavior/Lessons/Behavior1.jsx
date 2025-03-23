@@ -62,14 +62,15 @@ const NavigationButtons = styled.div`
 
 const Button = styled.button`
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: ${props => props.disabled ? '#ccc' : '#4CAF50'};
   color: white;
   border: none;
   border-radius: 4px;
-  cursor: pointer;
-  &:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: ${props => props.disabled ? '#ccc' : '#45a049'};
   }
 `;
 
@@ -84,11 +85,12 @@ const Dot = styled.div`
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background-color: ${props => (props.active ? "#007bff" : "#ccc")};
+  background-color: ${props => (props.active ? "#4CAF50" : "#ccc")};
   cursor: pointer;
+  transition: background-color 0.2s;
 `;
 
-export default function Behavior1({ onNextLesson }) {
+export default function Behavior1({ onNextLesson, onBack }) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const nextSlide = () => {
@@ -153,9 +155,7 @@ export default function Behavior1({ onNextLesson }) {
       </CarouselContainer>
 
       <NavigationButtons>
-        <Button onClick={prevSlide} disabled={currentSlide === 0}>
-          Anterior
-        </Button>
+        <Button onClick={onBack}>Voltar</Button>
         <Button onClick={nextSlide}>
           {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
         </Button>
