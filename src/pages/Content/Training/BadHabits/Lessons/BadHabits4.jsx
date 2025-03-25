@@ -178,10 +178,14 @@ export default function BadHabits4({ onNextLesson }) {
   const [showPopup, setShowPopup] = useState(false);
 
   const nextSlide = () => {
-    if (currentSlide === 3) {
+    if (currentSlide === 2) {
+      localStorage.setItem("badhabits4_completed", "true");
+      // Força a atualização do estado
+      window.dispatchEvent(new Event('storage'));
       setShowPopup(true);
+      onNextLesson();
     } else {
-      setCurrentSlide(prev => prev + 1);
+      setCurrentSlide((prev) => (prev + 1) % 3);
     }
   };
 

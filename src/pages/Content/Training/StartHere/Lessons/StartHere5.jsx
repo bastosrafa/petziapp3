@@ -27,7 +27,7 @@ const Slide = styled.div`
   position: absolute;
   width: 100%;
   height: 100%;
-  opacity: ${props => props.active ? 1 : 0};
+  opacity: ${props => props.active === "true" ? 1 : 0};
   transition: opacity 0.5s ease-in-out;
   padding: 2rem;
   background: white;
@@ -182,12 +182,14 @@ export default function StartHere5({ onNextLesson, onBack }) {
   const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showPopup, setShowPopup] = useState(false);
+  const LESSON_NAME = "Introdução ao Clicker ou Recompensas";
 
   const nextSlide = () => {
     if (currentSlide === 2) {
+      localStorage.setItem("starthere5_completed", "true");
       setShowPopup(true);
     } else {
-      setCurrentSlide(prev => prev + 1);
+      setCurrentSlide((prev) => (prev + 1) % 3);
     }
   };
 
@@ -216,10 +218,10 @@ export default function StartHere5({ onNextLesson, onBack }) {
 
   return (
     <LessonContainer>
-      <Title>Ambiente de Treinamento</Title>
+      <Title>{LESSON_NAME}</Title>
       
       <CarouselContainer>
-        <Slide active={currentSlide === 0}>
+        <Slide active={(currentSlide === 0).toString()}>
           <SlideTitle>Preparação do Ambiente</SlideTitle>
           <ContentSection>
             <ContentText>
@@ -229,7 +231,7 @@ export default function StartHere5({ onNextLesson, onBack }) {
           </ContentSection>
         </Slide>
 
-        <Slide active={currentSlide === 1}>
+        <Slide active={(currentSlide === 1).toString()}>
           <SlideTitle>Elementos Essenciais</SlideTitle>
           <ContentSection>
             <SectionTitle>O que você precisa:</SectionTitle>
@@ -243,7 +245,7 @@ export default function StartHere5({ onNextLesson, onBack }) {
           </ContentSection>
         </Slide>
 
-        <Slide active={currentSlide === 2}>
+        <Slide active={(currentSlide === 2).toString()}>
           <SlideTitle>Organização do Espaço</SlideTitle>
           <ContentSection>
             <SectionTitle>Dicas de Organização</SectionTitle>

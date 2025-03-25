@@ -102,45 +102,51 @@ const SocializationModule = () => {
   const lessons = [
     {
       id: "socialization1",
-      title: "Como socializar o cão com pessoas e outros pets",
-      description: "Técnicas para socializar seu cão com diferentes tipos de pessoas e animais",
+      title: "Introdução à Socialização",
+      description: "Aprenda a socializar seu cão com pessoas e outros animais",
       duration: "15 min",
       component: Socialization1,
+      locked: !localStorage.getItem("socialization1_unlocked") === "true",
     },
     {
       id: "socialization2",
-      title: "Passeio sem puxar a guia",
-      description: "Aprenda a ensinar seu cão a caminhar sem puxar a guia",
+      title: "Socialização com Pessoas",
+      description: "Como apresentar seu cão a diferentes tipos de pessoas",
       duration: "15 min",
       component: Socialization2,
+      locked: localStorage.getItem("socialization1_completed") !== "true",
     },
     {
       id: "socialization3",
-      title: "Latidos excessivos: Como reduzir e controlar",
-      description: "Métodos para controlar e reduzir latidos excessivos",
+      title: "Socialização com Outros Cães",
+      description: "Técnicas para socialização segura com outros cães",
       duration: "15 min",
       component: Socialization3,
+      locked: localStorage.getItem("socialization2_completed") !== "true",
     },
     {
       id: "socialization4",
-      title: "Ensinar a não pular em visitas",
-      description: "Técnicas para evitar que seu cão pule em visitas",
+      title: "Controle de Impulsos",
+      description: "Aprenda a controlar a excitação do seu cão",
       duration: "15 min",
       component: Socialization4,
+      locked: localStorage.getItem("socialization3_completed") !== "true",
     },
     {
       id: "socialization5",
-      title: "Controle na hora da refeição",
-      description: "Evitar ansiedade e possessividade durante as refeições",
+      title: "Ambientes Desafiadores",
+      description: "Como lidar com diferentes ambientes e situações",
       duration: "15 min",
       component: Socialization5,
+      locked: localStorage.getItem("socialization4_completed") !== "true",
     },
     {
       id: "socialization6",
-      title: "Ensinar a aceitar manuseio",
-      description: "Preparar seu cão para visitas ao veterinário, banho e tosa",
+      title: "Consolidação e Prática",
+      description: "Prática final e consolidação dos conhecimentos",
       duration: "15 min",
       component: Socialization6,
+      locked: localStorage.getItem("socialization5_completed") !== "true",
     },
   ];
 
@@ -183,10 +189,34 @@ const SocializationModule = () => {
       </Header>
       <LessonsGrid>
         {lessons.map((lesson) => (
-          <LessonCard key={lesson.id} onClick={() => handleLessonSelect(lesson)}>
-            <LessonTitle>{lesson.title}</LessonTitle>
+          <LessonCard 
+            key={lesson.id} 
+            onClick={() => !lesson.locked && handleLessonSelect(lesson)}
+            style={{ 
+              opacity: lesson.locked ? 0.5 : 1,
+              cursor: lesson.locked ? 'not-allowed' : 'pointer',
+              position: 'relative'
+            }}
+          >
+            <LessonTitle>
+              {lesson.title}
+              {localStorage.getItem(`${lesson.id}_completed`) === "true" && (
+                <span className="ml-2 text-green-500">✓</span>
+              )}
+            </LessonTitle>
             <LessonDescription>{lesson.description}</LessonDescription>
             <LessonDuration>{lesson.duration}</LessonDuration>
+            {lesson.locked && (
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                fontSize: '2rem'
+              }}>
+                🔒
+              </div>
+            )}
           </LessonCard>
         ))}
       </LessonsGrid>

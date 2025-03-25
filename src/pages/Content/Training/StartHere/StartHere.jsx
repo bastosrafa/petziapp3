@@ -77,6 +77,9 @@ export default function StartHere() {
                     {lesson.icon}
                     <p className="text-md font-medium text-brand">
                       {lesson.name}
+                      {localStorage.getItem(`${lesson.name.toLowerCase().replace(/\s+/g, '')}_completed`) === "true" && (
+                        <span className="ml-2 text-green-500">✓</span>
+                      )}
                     </p>
                   </div>
                   <p className="text-black/75 text-sm">{lesson.description}</p>

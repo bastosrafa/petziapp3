@@ -99,10 +99,13 @@ export default function Behavior1({ onNextLesson, onBack }) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const nextSlide = () => {
-    if (currentSlide === 2) {
+    if (currentSlide === 3) {
+      localStorage.setItem("behavior1_completed", "true");
+      // Força a atualização do estado
+      window.dispatchEvent(new Event('storage'));
       onNextLesson();
     } else {
-      setCurrentSlide(prev => prev + 1);
+      setCurrentSlide((prev) => (prev + 1) % 4);
     }
   };
 

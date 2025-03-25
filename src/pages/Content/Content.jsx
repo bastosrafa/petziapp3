@@ -18,6 +18,7 @@ import {
   BrainIcon,
   Lock,
   Unlock,
+  Trash2,
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -60,7 +61,85 @@ function Content() {
   }, []);
 
   const toggleContentLock = () => {
-    setIsContentLocked(!isContentLocked);
+    const newLockState = !isContentLocked;
+    
+    // Atualiza o estado local
+    setIsContentLocked(newLockState);
+    
+    // Atualiza o localStorage
+    localStorage.setItem("isContentLocked", newLockState.toString());
+    
+    // Desbloqueia/bloqueia todos os módulos
+    if (!newLockState) {
+      // Desbloqueia todos os módulos
+      localStorage.setItem("behavior_unlocked", "true");
+      localStorage.setItem("socialization_unlocked", "true");
+      localStorage.setItem("hygiene_unlocked", "true");
+      localStorage.setItem("badhabits_unlocked", "true");
+      localStorage.setItem("mental_unlocked", "true");
+      
+      // Atualiza os estados locais
+      setBehaviorUnlocked(true);
+      setSocializationUnlocked(true);
+      setHygieneUnlocked(true);
+      setBadhabitsUnlocked(true);
+    } else {
+      // Bloqueia todos os módulos
+      localStorage.removeItem("behavior_unlocked");
+      localStorage.removeItem("socialization_unlocked");
+      localStorage.removeItem("hygiene_unlocked");
+      localStorage.removeItem("badhabits_unlocked");
+      localStorage.removeItem("mental_unlocked");
+      
+      // Atualiza os estados locais
+      setBehaviorUnlocked(false);
+      setSocializationUnlocked(false);
+      setHygieneUnlocked(false);
+      setBadhabitsUnlocked(false);
+    }
+    
+    // Força a atualização do estado
+    window.dispatchEvent(new Event('storage'));
+  };
+
+  const resetProgress = () => {
+    // Reseta todas as flags de desbloqueio no localStorage
+    localStorage.removeItem("behavior1_unlocked");
+    localStorage.removeItem("behavior_unlocked");
+    localStorage.removeItem("socialization1_unlocked");
+    localStorage.removeItem("socialization_unlocked");
+    localStorage.removeItem("hygiene1_unlocked");
+    localStorage.removeItem("hygiene_unlocked");
+    localStorage.removeItem("badhabits1_unlocked");
+    localStorage.removeItem("badhabits_unlocked");
+    localStorage.removeItem("mental1_unlocked");
+    localStorage.removeItem("mental_unlocked");
+    
+    // Reseta o progresso das aulas do módulo StartHere
+    localStorage.removeItem("starthere1_completed");
+    localStorage.removeItem("starthere2_completed");
+    localStorage.removeItem("starthere3_completed");
+    localStorage.removeItem("starthere4_completed");
+    localStorage.removeItem("starthere5_completed");
+    
+    // Reseta o progresso das aulas do módulo Behavior
+    localStorage.removeItem("behavior1_completed");
+    localStorage.removeItem("behavior2_completed");
+    localStorage.removeItem("behavior3_completed");
+    localStorage.removeItem("behavior4_completed");
+    localStorage.removeItem("behavior5_completed");
+    
+    localStorage.setItem("isContentLocked", "true");
+    
+    // Reseta os estados locais
+    setBehaviorUnlocked(false);
+    setSocializationUnlocked(false);
+    setHygieneUnlocked(false);
+    setBadhabitsUnlocked(false);
+    setIsContentLocked(true);
+    
+    // Força a atualização do estado
+    window.dispatchEvent(new Event('storage'));
   };
 
   const options = [
@@ -119,7 +198,14 @@ function Content() {
   return (
     <div className="h-[200vh] py-2.5 px-2.5 sm:px-0 lg:w-1/2">
       {/* Botão temporário para controle de bloqueio */}
-      <div className="fixed top-4 right-4 z-50">
+      <div className="fixed top-4 right-4 z-50 flex gap-2">
+        <button
+          onClick={resetProgress}
+          className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+        >
+          <Trash2 className="h-4 w-4" />
+          Resetar Progresso
+        </button>
         <button
           onClick={toggleContentLock}
           className="flex items-center gap-2 px-4 py-2 bg-brand text-white rounded-md hover:bg-brand/90 transition-colors"

@@ -174,10 +174,13 @@ export default function Hygiene1({ onNextLesson }) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const nextSlide = () => {
-    if (currentSlide === 3) {
+    if (currentSlide === 2) {
+      localStorage.setItem("hygiene1_completed", "true");
+      // Força a atualização do estado
+      window.dispatchEvent(new Event('storage'));
       onNextLesson();
     } else {
-      setCurrentSlide(prev => prev + 1);
+      setCurrentSlide((prev) => (prev + 1) % 3);
     }
   };
 

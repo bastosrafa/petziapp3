@@ -111,6 +111,7 @@ function BadHabitsModule() {
       description: "Como controlar mordidas e mastigação excessiva",
       duration: "15 min",
       component: BadHabits1,
+      locked: !localStorage.getItem("badhabits1_unlocked") === "true",
     },
     {
       id: "badhabits2",
@@ -118,6 +119,7 @@ function BadHabitsModule() {
       description: "Evitar que o cão roube comida da mesa",
       duration: "15 min",
       component: BadHabits2,
+      locked: localStorage.getItem("badhabits1_completed") !== "true",
     },
     {
       id: "badhabits3",
@@ -125,6 +127,7 @@ function BadHabitsModule() {
       description: "Como evitar que o cão pule nas pessoas",
       duration: "15 min",
       component: BadHabits3,
+      locked: localStorage.getItem("badhabits2_completed") !== "true",
     },
     {
       id: "badhabits4",
@@ -132,6 +135,7 @@ function BadHabitsModule() {
       description: "Evitar que o cão destrua móveis e objetos",
       duration: "15 min",
       component: BadHabits4,
+      locked: localStorage.getItem("badhabits3_completed") !== "true",
     },
   ];
 
@@ -168,10 +172,34 @@ function BadHabitsModule() {
       <Description>{badHabitsModule.description}</Description>
       <LessonsGrid>
         {lessons.map((lesson) => (
-          <LessonCard key={lesson.id} onClick={() => handleLessonSelect(lesson)}>
-            <LessonTitle>{lesson.title}</LessonTitle>
+          <LessonCard 
+            key={lesson.id} 
+            onClick={() => !lesson.locked && handleLessonSelect(lesson)}
+            style={{ 
+              opacity: lesson.locked ? 0.5 : 1,
+              cursor: lesson.locked ? 'not-allowed' : 'pointer',
+              position: 'relative'
+            }}
+          >
+            <LessonTitle>
+              {lesson.title}
+              {localStorage.getItem(`${lesson.id}_completed`) === "true" && (
+                <span className="ml-2 text-green-500">✓</span>
+              )}
+            </LessonTitle>
             <LessonDescription>{lesson.description}</LessonDescription>
             <LessonDuration>{lesson.duration}</LessonDuration>
+            {lesson.locked && (
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                fontSize: '2rem'
+              }}>
+                🔒
+              </div>
+            )}
           </LessonCard>
         ))}
       </LessonsGrid>

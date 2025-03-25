@@ -25,7 +25,7 @@ const Slide = styled.div`
   position: absolute;
   width: 100%;
   height: 100%;
-  opacity: ${props => props.active ? 1 : 0};
+  opacity: ${props => props.active === "true" ? 1 : 0};
   transition: opacity 0.5s ease-in-out;
   padding: 2rem;
   background: white;
@@ -166,9 +166,11 @@ export default function StartHere4({ onNextLesson }) {
 
   const nextSlide = () => {
     if (currentSlide === 2) {
+      localStorage.setItem("starthere4_completed", "true");
+      window.dispatchEvent(new Event('storage'));
       onNextLesson();
     } else {
-      setCurrentSlide(prev => prev + 1);
+      setCurrentSlide((prev) => (prev + 1) % 3);
     }
   };
 
@@ -186,7 +188,7 @@ export default function StartHere4({ onNextLesson }) {
       
       <CarouselContainer>
         {/* Slide 0: Introdução com Imagem */}
-        <Slide active={currentSlide === 0}>
+        <Slide active={(currentSlide === 0).toString()}>
           <SlideTitle>Bem-vindo à Aula!</SlideTitle>
           <ImageContainer>
             <ImagePlaceholder>Imagem ilustrativa de cão respondendo ao nome</ImagePlaceholder>
@@ -197,7 +199,7 @@ export default function StartHere4({ onNextLesson }) {
         </Slide>
 
         {/* Slide 1: Passo a Passo */}
-        <Slide active={currentSlide === 1}>
+        <Slide active={(currentSlide === 1).toString()}>
           <SlideTitle>Passo a Passo</SlideTitle>
           <StepList>
             <StepItem>Chame o nome do cão com um tom animado.</StepItem>
@@ -207,7 +209,7 @@ export default function StartHere4({ onNextLesson }) {
         </Slide>
 
         {/* Slide 2: Resumo Rápido */}
-        <Slide active={currentSlide === 2}>
+        <Slide active={(currentSlide === 2).toString()}>
           <SlideTitle>Resumo Rápido</SlideTitle>
           <SummaryList>
             <SummaryItem>Nome = atenção do pet.</SummaryItem>

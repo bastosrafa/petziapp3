@@ -25,7 +25,7 @@ const Slide = styled.div`
   position: absolute;
   width: 100%;
   height: 100%;
-  opacity: ${props => props.active ? 1 : 0};
+  opacity: ${props => props.active === "true" ? 1 : 0};
   transition: opacity 0.5s ease-in-out;
   padding: 2rem;
   background: white;
@@ -177,9 +177,11 @@ export default function StartHere2({ onNextLesson }) {
 
   const nextSlide = () => {
     if (currentSlide === 3) {
+      localStorage.setItem("starthere2_completed", "true");
+      window.dispatchEvent(new Event('storage'));
       onNextLesson();
     } else {
-      setCurrentSlide(prev => prev + 1);
+      setCurrentSlide((prev) => (prev + 1) % 4);
     }
   };
 
@@ -197,7 +199,7 @@ export default function StartHere2({ onNextLesson }) {
       
       <CarouselContainer>
         {/* Slide 0: Introdução com Imagem */}
-        <Slide active={currentSlide === 0}>
+        <Slide active={(currentSlide === 0).toString()}>
           <SlideTitle>Bem-vindo à Aula!</SlideTitle>
           <ImageContainer>
             <ImagePlaceholder>Imagem ilustrativa da comunicação com cães</ImagePlaceholder>
@@ -208,7 +210,7 @@ export default function StartHere2({ onNextLesson }) {
         </Slide>
 
         {/* Slide 1: Como os Cães Interpretam o Mundo */}
-        <Slide active={currentSlide === 1}>
+        <Slide active={(currentSlide === 1).toString()}>
           <SlideTitle>Como os Cães Interpretam o Mundo?</SlideTitle>
           <Text>
             Os cães não entendem palavras como os humanos, mas associam sons, gestos e expressões faciais ao que acontece em seguida.
@@ -221,7 +223,7 @@ export default function StartHere2({ onNextLesson }) {
         </Slide>
 
         {/* Slide 2: Como Usar o Tom de Voz Corretamente */}
-        <Slide active={currentSlide === 2}>
+        <Slide active={(currentSlide === 2).toString()}>
           <SlideTitle>Como Usar o Tom de Voz Corretamente?</SlideTitle>
           <BulletList>
             <BulletItem>Tom neutro e firme (comandos de obediência) → Para comandos como "Senta", "Deita", "Fica".</BulletItem>
@@ -236,7 +238,7 @@ export default function StartHere2({ onNextLesson }) {
         </Slide>
 
         {/* Slide 3: Exemplo Prático */}
-        <Slide active={currentSlide === 3}>
+        <Slide active={(currentSlide === 3).toString()}>
           <SlideTitle>Exemplo Prático</SlideTitle>
           <ExampleList>
             <ExampleItem>Diga "Senta" com um tom firme e neutro.</ExampleItem>

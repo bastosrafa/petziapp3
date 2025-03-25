@@ -25,7 +25,7 @@ const Slide = styled.div`
   position: absolute;
   width: 100%;
   height: 100%;
-  opacity: ${props => props.active ? 1 : 0};
+  opacity: ${props => props.active === "true" ? 1 : 0};
   transition: opacity 0.5s ease-in-out;
   padding: 2rem;
   background: white;
@@ -163,9 +163,11 @@ export default function StartHere1({ onNextLesson }) {
 
   const nextSlide = () => {
     if (currentSlide === 3) {
+      localStorage.setItem("starthere1_completed", "true");
+      window.dispatchEvent(new Event('storage'));
       onNextLesson();
     } else {
-      setCurrentSlide(prev => prev + 1);
+      setCurrentSlide((prev) => (prev + 1) % 4);
     }
   };
 
@@ -179,11 +181,16 @@ export default function StartHere1({ onNextLesson }) {
 
   return (
     <LessonContainer>
-      <Title>Como os cães aprendem</Title>
+      <Title>
+        Introdução ao Treinamento
+        {localStorage.getItem("starthere1_completed") === "true" && (
+          <span className="ml-2 text-green-500">✓</span>
+        )}
+      </Title>
       
       <CarouselContainer>
         {/* Slide 0: Introdução com Imagem */}
-        <Slide active={currentSlide === 0}>
+        <Slide active={(currentSlide === 0).toString()}>
           <SlideTitle>Bem-vindo à Aula!</SlideTitle>
           <ImageContainer>
             <ImagePlaceholder>Imagem ilustrativa do tema</ImagePlaceholder>
@@ -194,7 +201,7 @@ export default function StartHere1({ onNextLesson }) {
         </Slide>
 
         {/* Slide 1: Conceitos Básicos */}
-        <Slide active={currentSlide === 1}>
+        <Slide active={(currentSlide === 1).toString()}>
           <SlideTitle>Conceitos Básicos</SlideTitle>
           <Text>
             Os cães aprendem através de associação e repetição.
@@ -208,7 +215,7 @@ export default function StartHere1({ onNextLesson }) {
         </Slide>
 
         {/* Slide 2: Exercício Prático */}
-        <Slide active={currentSlide === 2}>
+        <Slide active={(currentSlide === 2).toString()}>
           <SlideTitle>Exercício Prático</SlideTitle>
           <ExerciseSteps>
             <ExerciseStep>Pegue um petisco e segure na mão.</ExerciseStep>
@@ -218,7 +225,7 @@ export default function StartHere1({ onNextLesson }) {
         </Slide>
 
         {/* Slide 3: Resumo Rápido */}
-        <Slide active={currentSlide === 3}>
+        <Slide active={(currentSlide === 3).toString()}>
           <SlideTitle>Resumo Rápido</SlideTitle>
           <SummaryList>
             <SummaryItem>Use reforço positivo sempre.</SummaryItem>

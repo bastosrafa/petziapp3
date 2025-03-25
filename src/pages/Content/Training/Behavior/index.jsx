@@ -112,6 +112,7 @@ function BehaviorModule() {
       description: "Aprenda a ensinar os comandos básicos de obediência",
       duration: "15 min",
       component: Behavior1,
+      locked: !localStorage.getItem("behavior1_unlocked") === "true",
     },
     {
       id: "behavior2",
@@ -119,6 +120,7 @@ function BehaviorModule() {
       description: "Controle e chamada do seu cão em diferentes situações",
       duration: "15 min",
       component: Behavior2,
+      locked: localStorage.getItem("behavior1_completed") !== "true",
     },
     {
       id: "behavior3",
@@ -126,6 +128,7 @@ function BehaviorModule() {
       description: "Passeio com guia e controle de objetos",
       duration: "15 min",
       component: Behavior3,
+      locked: localStorage.getItem("behavior2_completed") !== "true",
     },
     {
       id: "behavior4",
@@ -133,6 +136,7 @@ function BehaviorModule() {
       description: "Controle de comportamentos indesejados",
       duration: "15 min",
       component: Behavior4,
+      locked: localStorage.getItem("behavior3_completed") !== "true",
     },
     {
       id: "behavior5",
@@ -140,6 +144,7 @@ function BehaviorModule() {
       description: "Jogos e brincadeiras para fortalecer o vínculo",
       duration: "15 min",
       component: Behavior5,
+      locked: localStorage.getItem("behavior4_completed") !== "true",
     },
   ];
 
@@ -178,10 +183,34 @@ function BehaviorModule() {
       </Description>
       <LessonsGrid>
         {lessons.map((lesson) => (
-          <LessonCard key={lesson.id} onClick={() => handleLessonSelect(lesson)}>
-            <LessonTitle>{lesson.title}</LessonTitle>
+          <LessonCard 
+            key={lesson.id} 
+            onClick={() => !lesson.locked && handleLessonSelect(lesson)}
+            style={{ 
+              opacity: lesson.locked ? 0.5 : 1,
+              cursor: lesson.locked ? 'not-allowed' : 'pointer',
+              position: 'relative'
+            }}
+          >
+            <LessonTitle>
+              {lesson.title}
+              {localStorage.getItem(`${lesson.id}_completed`) === "true" && (
+                <span className="ml-2 text-green-500">✓</span>
+              )}
+            </LessonTitle>
             <LessonDescription>{lesson.description}</LessonDescription>
             <LessonDuration>{lesson.duration}</LessonDuration>
+            {lesson.locked && (
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                fontSize: '2rem'
+              }}>
+                🔒
+              </div>
+            )}
           </LessonCard>
         ))}
       </LessonsGrid>

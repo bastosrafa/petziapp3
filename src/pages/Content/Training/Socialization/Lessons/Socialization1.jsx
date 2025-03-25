@@ -98,6 +98,9 @@ const Socialization1 = ({ onNextLesson }) => {
 
   const nextSlide = () => {
     if (currentSlide === 2) {
+      localStorage.setItem("socialization1_completed", "true");
+      // Força a atualização do estado
+      window.dispatchEvent(new Event('storage'));
       onNextLesson();
     } else {
       setCurrentSlide((prev) => (prev + 1) % 3);

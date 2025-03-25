@@ -25,7 +25,7 @@ const Slide = styled.div`
   position: absolute;
   width: 100%;
   height: 100%;
-  opacity: ${props => props.active ? 1 : 0};
+  opacity: ${props => props.active === "true" ? 1 : 0};
   transition: opacity 0.5s ease-in-out;
   padding: 2rem;
   background: white;
@@ -210,9 +210,11 @@ export default function StartHere3({ onNextLesson }) {
 
   const nextSlide = () => {
     if (currentSlide === 4) {
+      localStorage.setItem("starthere3_completed", "true");
+      window.dispatchEvent(new Event('storage'));
       onNextLesson();
     } else {
-      setCurrentSlide(prev => prev + 1);
+      setCurrentSlide((prev) => (prev + 1) % 5);
     }
   };
 
@@ -230,7 +232,7 @@ export default function StartHere3({ onNextLesson }) {
       
       <CarouselContainer>
         {/* Slide 0: Introdução com Imagem */}
-        <Slide active={currentSlide === 0}>
+        <Slide active={(currentSlide === 0).toString()}>
           <SlideTitle>Bem-vindo à Aula!</SlideTitle>
           <ImageContainer>
             <ImagePlaceholder>Imagem ilustrativa da linguagem corporal com cães</ImagePlaceholder>
@@ -241,7 +243,7 @@ export default function StartHere3({ onNextLesson }) {
         </Slide>
 
         {/* Slide 1: O que fazer */}
-        <Slide active={currentSlide === 1}>
+        <Slide active={(currentSlide === 1).toString()}>
           <SlideTitle>O que fazer:</SlideTitle>
           <BulletList>
             <BulletItem>Postura relaxada → O cão se sente seguro e confortável.</BulletItem>
@@ -252,7 +254,7 @@ export default function StartHere3({ onNextLesson }) {
         </Slide>
 
         {/* Slide 2: O que NÃO fazer */}
-        <Slide active={currentSlide === 2}>
+        <Slide active={(currentSlide === 2).toString()}>
           <SlideTitle>O que NÃO fazer:</SlideTitle>
           <WarningList>
             <WarningItem>Inclinar-se para frente ou fazer movimentos bruscos → Pode soar ameaçador.</WarningItem>
@@ -262,7 +264,7 @@ export default function StartHere3({ onNextLesson }) {
         </Slide>
 
         {/* Slide 3: Exemplo Prático */}
-        <Slide active={currentSlide === 3}>
+        <Slide active={(currentSlide === 3).toString()}>
           <SlideTitle>Exemplo Prático</SlideTitle>
           <ExampleList>
             <ExampleItem>Quando pedir "Senta", levante a mão com a palma para cima.</ExampleItem>
@@ -272,7 +274,7 @@ export default function StartHere3({ onNextLesson }) {
         </Slide>
 
         {/* Slide 4: Exercício Prático */}
-        <Slide active={currentSlide === 4}>
+        <Slide active={(currentSlide === 4).toString()}>
           <SlideTitle>Exercício Prático para Aprimorar a Comunicação</SlideTitle>
           <ExerciseList>
             <ExerciseItem>Grave um comando e ouça sua voz → Seu tom está firme, neutro e claro?</ExerciseItem>
