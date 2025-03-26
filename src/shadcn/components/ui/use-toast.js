@@ -2,7 +2,7 @@
 import * as React from "react"
 
 const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 1000000
+const TOAST_REMOVE_DELAY = 5000 // 5 segundos
 
 const actionTypes = {
   ADD_TOAST: "ADD_TOAST",
@@ -111,6 +111,9 @@ function toast({
       toast: { ...props, id },
     })
   const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id })
+
+  // Automatically dismiss after TOAST_REMOVE_DELAY
+  setTimeout(dismiss, TOAST_REMOVE_DELAY)
 
   dispatch({
     type: "ADD_TOAST",
