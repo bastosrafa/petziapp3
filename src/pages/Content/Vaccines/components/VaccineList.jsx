@@ -46,7 +46,7 @@ export default function VaccineList() {
     return (
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Carteira de Vacinação</CardTitle>
+          <CardTitle>Histórico de Vacinas e Medicamentos</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center p-8">
@@ -64,7 +64,7 @@ export default function VaccineList() {
     return (
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Carteira de Vacinação</CardTitle>
+          <CardTitle>Histórico de Vacinas e Medicamentos</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center text-red-500">
@@ -78,7 +78,7 @@ export default function VaccineList() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Carteira de Vacinação</CardTitle>
+        <CardTitle>Histórico de Vacinas e Medicamentos</CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="pending" className="w-full">

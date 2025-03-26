@@ -6,8 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shadcn/components/ui
 import { Label } from "@/shadcn/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shadcn/components/ui/select";
 import { toast } from "@/shadcn/components/ui/use-toast";
+import { X } from "lucide-react";
 
-export default function VaccineForm() {
+export default function VaccineForm({ onClose }) {
   const { addVaccine } = useVaccineContext();
   const [formData, setFormData] = useState({
     name: "",
@@ -16,6 +17,16 @@ export default function VaccineForm() {
     type: "V8/V10",
     notes: "",
   });
+
+  const vaccineTypes = [
+    { value: "V8/V10", label: "V8/V10" },
+    { value: "antirrabica", label: "Antirrábica" },
+    { value: "gripe", label: "Gripe" },
+    { value: "giardia", label: "Giárdia" },
+    { value: "antipulgas", label: "Anti-pulgas e Carrapatos" },
+    { value: "vermifugo", label: "Vermífugos" },
+    { value: "outro", label: "Outro" }
+  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,22 +65,23 @@ export default function VaccineForm() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Adicionar Nova Vacina</CardTitle>
+        <CardTitle>Adicionar Novo</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Nome da Vacina</Label>
+            <Label htmlFor="name">Nome</Label>
             <Input
               id="name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Ex: V8, V10, Antirrábica"
+              placeholder="Nome da vacina ou medicamento"
+              required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="type">Tipo de Vacina</Label>
+            <Label htmlFor="type">Tipo</Label>
             <Select
               value={formData.type}
               onValueChange={(value) => setFormData({ ...formData, type: value })}
@@ -78,22 +90,23 @@ export default function VaccineForm() {
                 <SelectValue placeholder="Selecione o tipo" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="V8/V10">V8/V10</SelectItem>
-                <SelectItem value="Antirrábica">Antirrábica</SelectItem>
-                <SelectItem value="Gripe">Gripe</SelectItem>
-                <SelectItem value="Giárdia">Giárdia</SelectItem>
-                <SelectItem value="Outro">Outro</SelectItem>
+                {vaccineTypes.map((type) => (
+                  <SelectItem key={type.value} value={type.value}>
+                    {type.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="date">Data da Vacina</Label>
+            <Label htmlFor="date">Data de Aplicação</Label>
             <Input
               id="date"
               type="date"
               value={formData.date}
               onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+              required
             />
           </div>
 
