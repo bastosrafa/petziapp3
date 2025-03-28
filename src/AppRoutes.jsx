@@ -34,6 +34,7 @@ import Behavior4 from "./pages/Content/Training/Behavior/Lessons/Behavior4";
 import Behavior5 from "./pages/Content/Training/Behavior/Lessons/Behavior5";
 import Vaccines from "./pages/Content/Vaccines";
 import { VaccineProvider } from "./pages/Content/Vaccines/contexts/VaccineContext";
+import Diary from "./pages/Content/Diary";
 
 function AppRoutes() {
   const { user, authIsReady } = useAuthContext();
@@ -97,6 +98,7 @@ function AppRoutes() {
                       <Route path="/content/training/badhabits" element={<BadHabitsModule />} />
                       <Route path="/content/training/mental" element={<MentalModule />} />
                       <Route path="/vacinas" element={<Vaccines />} />
+                      <Route path="/diario" element={<Diary />} />
                       <Route path="/rota2" element={<Content />} />
                       <Route path="/rota3" element={<Content />} />
                       <Route path="/rota4" element={<Content />} />
