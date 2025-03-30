@@ -26,7 +26,10 @@ export const DashboardProvider = ({ children }) => {
   // Carregar dados iniciais
   useEffect(() => {
     const loadDashboardData = async () => {
-      if (!user) return;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
       
       try {
         setLoading(true);
@@ -48,10 +51,24 @@ export const DashboardProvider = ({ children }) => {
         // Se for erro de permissão, não mostrar erro ao usuário
         if (err.code === 'permission-denied') {
           setError(null);
+          // Manter os dados padrão em caso de erro de permissão
+          setPetData(prev => ({
+            ...prev,
+            lastFood: null,
+            lastWalk: null,
+            vaccines: {
+              nextDose: null,
+              status: 'up_to_date'
+            },
+            training: {
+              completedLessons: 0,
+              totalTime: 0,
+              currentLevel: 'beginner'
+            }
+          }));
         } else {
           setError('Erro ao carregar dados do dashboard');
         }
-        // Manter os dados padrão em caso de erro
       } finally {
         setLoading(false);
       }
@@ -106,38 +123,38 @@ export const DashboardProvider = ({ children }) => {
         throw err;
       }
     },
-    updateVaccines: async (vaccineData) => {
+    updateVaccineStatus: async (data) => {
       if (!user) return;
       try {
-        await healthService.updateVaccineStatus(user.uid, vaccineData);
+        await healthService.updateVaccineStatus(user.uid, data);
         setPetData(prev => ({
           ...prev,
           vaccines: {
             ...prev.vaccines,
-            ...vaccineData
+            ...data
           }
         }));
       } catch (err) {
-        console.error('Error updating vaccines:', err);
+        console.error('Error updating vaccine status:', err);
         if (err.code === 'permission-denied') {
           throw new Error('Você não tem permissão para atualizar este dado');
         }
         throw err;
       }
     },
-    updateTraining: async (trainingData) => {
+    updateTrainingProgress: async (data) => {
       if (!user) return;
       try {
-        await trainingService.updateTrainingProgress(user.uid, trainingData);
+        await trainingService.updateTrainingProgress(user.uid, data);
         setPetData(prev => ({
           ...prev,
           training: {
             ...prev.training,
-            ...trainingData
+            ...data
           }
         }));
       } catch (err) {
-        console.error('Error updating training:', err);
+        console.error('Error updating training progress:', err);
         if (err.code === 'permission-denied') {
           throw new Error('Você não tem permissão para atualizar este dado');
         }

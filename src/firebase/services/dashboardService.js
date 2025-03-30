@@ -9,7 +9,8 @@ import {
   where, 
   orderBy, 
   limit as firestoreLimit,
-  Timestamp 
+  Timestamp,
+  setDoc 
 } from 'firebase/firestore';
 import { db } from '../config';
 
@@ -18,10 +19,11 @@ export const diaryService = {
   // Adicionar entrada de alimentação
   addFoodEntry: async (userId, data) => {
     try {
-      const diaryRef = collection(db, 'users', userId, 'diary');
+      const diaryRef = collection(db, 'diary_entries');
       const entry = {
         type: 'food',
         timestamp: Timestamp.now(),
+        userId,
         ...data
       };
       return await addDoc(diaryRef, entry);
@@ -34,10 +36,11 @@ export const diaryService = {
   // Adicionar registro de passeio
   addWalkEntry: async (userId, data) => {
     try {
-      const diaryRef = collection(db, 'users', userId, 'diary');
+      const diaryRef = collection(db, 'diary_entries');
       const entry = {
         type: 'walk',
         timestamp: Timestamp.now(),
+        userId,
         ...data
       };
       return await addDoc(diaryRef, entry);
@@ -50,9 +53,10 @@ export const diaryService = {
   // Buscar últimas entradas
   getRecentEntries: async (userId, limitCount = 10) => {
     try {
-      const diaryRef = collection(db, 'users', userId, 'diary');
+      const diaryRef = collection(db, 'diary_entries');
       const q = query(
         diaryRef,
+        where('userId', '==', userId),
         orderBy('timestamp', 'desc'),
         firestoreLimit(limitCount)
       );
@@ -73,12 +77,14 @@ export const healthService = {
   // Atualizar status das vacinas
   updateVaccineStatus: async (userId, data) => {
     try {
-      const healthRef = doc(db, 'users', userId, 'health_records', 'vaccines');
-      await updateDoc(healthRef, {
+      const healthRef = doc(db, 'health_records', userId);
+      const healthData = {
         status: data.status,
         lastUpdate: Timestamp.now(),
+        userId,
         ...data
-      });
+      };
+      await setDoc(healthRef, healthData, { merge: true });
     } catch (error) {
       console.error('Error updating vaccine status:', error);
       throw error;
@@ -88,10 +94,11 @@ export const healthService = {
   // Adicionar registro de vacina
   addVaccineRecord: async (userId, data) => {
     try {
-      const healthRef = collection(db, 'users', userId, 'health_records', 'vaccines', 'history');
+      const healthRef = collection(db, 'health_records');
       const record = {
         ...data,
-        timestamp: Timestamp.now()
+        timestamp: Timestamp.now(),
+        userId
       };
       return await addDoc(healthRef, record);
     } catch (error) {
@@ -103,9 +110,20 @@ export const healthService = {
   // Buscar status atual das vacinas
   getVaccineStatus: async (userId) => {
     try {
-      const healthRef = doc(db, 'users', userId, 'health_records', 'vaccines');
+      const healthRef = doc(db, 'health_records', userId);
       const docSnap = await getDoc(healthRef);
-      return docSnap.exists() ? docSnap.data() : null;
+      if (!docSnap.exists()) {
+        // Create default record if it doesn't exist
+        const defaultData = {
+          status: 'up_to_date',
+          lastUpdate: Timestamp.now(),
+          userId,
+          nextDose: null
+        };
+        await setDoc(healthRef, defaultData);
+        return defaultData;
+      }
+      return docSnap.data();
     } catch (error) {
       console.error('Error fetching vaccine status:', error);
       throw error;
@@ -118,11 +136,13 @@ export const trainingService = {
   // Atualizar progresso do treino
   updateTrainingProgress: async (userId, data) => {
     try {
-      const progressRef = doc(db, 'users_progress', userId);
-      await updateDoc(progressRef, {
+      const progressRef = doc(db, 'training_progress', userId);
+      const progressData = {
         lastUpdate: Timestamp.now(),
+        userId,
         ...data
-      });
+      };
+      await setDoc(progressRef, progressData, { merge: true });
     } catch (error) {
       console.error('Error updating training progress:', error);
       throw error;
@@ -132,10 +152,11 @@ export const trainingService = {
   // Adicionar lição concluída
   addCompletedLesson: async (userId, lessonData) => {
     try {
-      const progressRef = collection(db, 'users_progress', userId, 'completed_lessons');
+      const progressRef = collection(db, 'training_progress');
       const lesson = {
         ...lessonData,
-        completedAt: Timestamp.now()
+        completedAt: Timestamp.now(),
+        userId
       };
       return await addDoc(progressRef, lesson);
     } catch (error) {
@@ -147,9 +168,21 @@ export const trainingService = {
   // Buscar progresso atual
   getTrainingProgress: async (userId) => {
     try {
-      const progressRef = doc(db, 'users_progress', userId);
+      const progressRef = doc(db, 'training_progress', userId);
       const docSnap = await getDoc(progressRef);
-      return docSnap.exists() ? docSnap.data() : null;
+      if (!docSnap.exists()) {
+        // Create default record if it doesn't exist
+        const defaultData = {
+          completedLessons: 0,
+          totalTime: 0,
+          currentLevel: 'beginner',
+          lastUpdate: Timestamp.now(),
+          userId
+        };
+        await setDoc(progressRef, defaultData);
+        return defaultData;
+      }
+      return docSnap.data();
     } catch (error) {
       console.error('Error fetching training progress:', error);
       throw error;
