@@ -1,0 +1,112 @@
+.recommendations-container {
+  padding: 2rem;
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.recommendations-container h2 {
+  margin-bottom: 1.5rem;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.recommendations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.recommendation-card {
+  display: flex;
+  align-items: flex-start;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  background-color: #f8f9fa;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.recommendation-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Card types */
+.recommendation-card.health {
+  border-left: 4px solid #dc3545;
+}
+
+.recommendation-card.activity {
+  border-left: 4px solid #28a745;
+}
+
+.recommendation-card.training {
+  border-left: 4px solid #007bff;
+}
+
+.recommendation-icon {
+  font-size: 2rem;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.recommendation-content {
+  flex-grow: 1;
+}
+
+.recommendation-content h3 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.recommendation-content p {
+  color: #666;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.action-button {
+  background-color: white;
+  border: 1px solid #dee2e6;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  color: #495057;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-button:hover {
+  background-color: #e9ecef;
+  border-color: #ced4da;
+}
+
+/* No recommendations state */
+.no-recommendations {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  border-radius: 0.75rem;
+  color: #28a745;
+  font-size: 1.1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .recommendation-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .recommendation-icon {
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+
+  .action-button {
+    width: 100%;
+  }
+} 
