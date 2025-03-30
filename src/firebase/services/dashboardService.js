@@ -8,7 +8,7 @@ import {
   query, 
   where, 
   orderBy, 
-  limit,
+  limit as firestoreLimit,
   Timestamp 
 } from 'firebase/firestore';
 import { db } from '../config';
@@ -48,13 +48,13 @@ export const diaryService = {
   },
 
   // Buscar últimas entradas
-  getRecentEntries: async (userId, limit = 10) => {
+  getRecentEntries: async (userId, limitCount = 10) => {
     try {
       const diaryRef = collection(db, 'users', userId, 'diary');
       const q = query(
         diaryRef,
         orderBy('timestamp', 'desc'),
-        limit(limit)
+        firestoreLimit(limitCount)
       );
       const querySnapshot = await getDocs(q);
       return querySnapshot.docs.map(doc => ({
@@ -63,7 +63,7 @@ export const diaryService = {
       }));
     } catch (error) {
       console.error('Error fetching recent entries:', error);
-      throw error;
+      return []; // Retornar array vazio em caso de erro
     }
   }
 };

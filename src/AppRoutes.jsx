@@ -35,6 +35,8 @@ import Behavior5 from "./pages/Content/Training/Behavior/Lessons/Behavior5";
 import Vaccines from "./pages/Content/Vaccines";
 import { VaccineProvider } from "./pages/Content/Vaccines/contexts/VaccineContext";
 import Diary from "./pages/Content/Diary";
+import Dashboard from "./pages/Dashboard";
+import { DashboardProvider } from "./pages/Dashboard/contexts/DashboardContext";
 
 function AppRoutes() {
   const { user, authIsReady } = useAuthContext();
@@ -89,6 +91,11 @@ function AppRoutes() {
                   <div className="sm:w-[calc(100%_-_300px)] sm:ml-[310px] mt-[80px] px-2.5 sm:px-5 sm:mt-[112px]">
                     <Routes>
                       <Route exact path="/" element={<Home />} />
+                      <Route path="/dashboard" element={
+                        <DashboardProvider>
+                          <Dashboard />
+                        </DashboardProvider>
+                      } />
                       <Route path="/adestramento" element={<Content />} />
                       <Route path="/content/training" element={<Training />} />
                       <Route path="/content/training/starthere" element={<StartHereModule />} />

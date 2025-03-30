@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { dashboardService, diaryService, healthService, trainingService } from '../../../firebase/services/dashboardService';
-import { useAuth } from '../../../contexts/AuthContext';
+import { AuthContext } from '../../../contexts/AuthContext';
 
 const DashboardContext = createContext();
 
 export const DashboardProvider = ({ children }) => {
-  const { user } = useAuth();
+  const { user } = useContext(AuthContext);
   const [petData, setPetData] = useState({
     mood: 'neutral',
     lastFood: null,
@@ -30,14 +30,28 @@ export const DashboardProvider = ({ children }) => {
       
       try {
         setLoading(true);
+        setError(null);
+        
+        // Tentar carregar dados do dashboard
         const data = await dashboardService.getDashboardData(user.uid);
+        
+        // Atualizar apenas os campos que existem nos dados retornados
         setPetData(prev => ({
           ...prev,
-          ...data
+          ...(data.lastFood && { lastFood: data.lastFood }),
+          ...(data.lastWalk && { lastWalk: data.lastWalk }),
+          ...(data.vaccines && { vaccines: data.vaccines }),
+          ...(data.training && { training: data.training })
         }));
       } catch (err) {
-        setError('Erro ao carregar dados do dashboard');
         console.error('Error loading dashboard data:', err);
+        // Se for erro de permissão, não mostrar erro ao usuário
+        if (err.code === 'permission-denied') {
+          setError(null);
+        } else {
+          setError('Erro ao carregar dados do dashboard');
+        }
+        // Manter os dados padrão em caso de erro
       } finally {
         setLoading(false);
       }
@@ -70,6 +84,9 @@ export const DashboardProvider = ({ children }) => {
         }));
       } catch (err) {
         console.error('Error updating last food:', err);
+        if (err.code === 'permission-denied') {
+          throw new Error('Você não tem permissão para atualizar este dado');
+        }
         throw err;
       }
     },
@@ -83,6 +100,9 @@ export const DashboardProvider = ({ children }) => {
         }));
       } catch (err) {
         console.error('Error updating last walk:', err);
+        if (err.code === 'permission-denied') {
+          throw new Error('Você não tem permissão para atualizar este dado');
+        }
         throw err;
       }
     },
@@ -99,6 +119,9 @@ export const DashboardProvider = ({ children }) => {
         }));
       } catch (err) {
         console.error('Error updating vaccines:', err);
+        if (err.code === 'permission-denied') {
+          throw new Error('Você não tem permissão para atualizar este dado');
+        }
         throw err;
       }
     },
@@ -115,6 +138,9 @@ export const DashboardProvider = ({ children }) => {
         }));
       } catch (err) {
         console.error('Error updating training:', err);
+        if (err.code === 'permission-denied') {
+          throw new Error('Você não tem permissão para atualizar este dado');
+        }
         throw err;
       }
     }
