@@ -6,6 +6,7 @@ import StartHere2 from "./Lessons/StartHere2";
 import StartHere3 from "./Lessons/StartHere3";
 import StartHere4 from "./Lessons/StartHere4";
 import StartHere5 from "./Lessons/StartHere5";
+import { DashboardProvider } from "@/pages/Dashboard/contexts/DashboardContext";
 
 const Container = styled.div`
   padding: 2rem;
@@ -166,7 +167,11 @@ function StartHereModule() {
 
   if (selectedLesson) {
     const LessonComponent = selectedLesson.component;
-    return <LessonComponent onBack={handleBack} onNextLesson={handleNextLesson} />;
+    return (
+      <DashboardProvider>
+        <LessonComponent onBack={handleBack} onNextLesson={handleNextLesson} />
+      </DashboardProvider>
+    );
   }
 
   return (

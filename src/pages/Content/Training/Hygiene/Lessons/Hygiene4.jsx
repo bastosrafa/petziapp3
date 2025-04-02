@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import ModuleCompletionPopup from "../../../../../components/ModuleCompletionPopup";
+import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { useFirestore } from "@/hooks/useFirestore";
+import { Timestamp } from 'firebase/firestore';
 
 const LessonContainer = styled.div`
   padding: 2rem;
@@ -176,14 +180,48 @@ export default function Hygiene4({ onNextLesson }) {
   const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showPopup, setShowPopup] = useState(false);
+  const { user } = useAuthContext();
+  const { addDocument: addProgress } = useFirestore("progress");
+  const { updateTraining, refreshData } = useDashboard();
 
-  const nextSlide = () => {
+  const nextSlide = async () => {
     if (currentSlide === 2) {
-      localStorage.setItem("hygiene4_completed", "true");
-      // Força a atualização do estado
-      window.dispatchEvent(new Event('storage'));
-      setShowPopup(true);
-      onNextLesson();
+      try {
+        // Salvar no localStorage
+        localStorage.setItem("hygiene4_completed", "true");
+        window.dispatchEvent(new Event('storage'));
+        
+        // Atualizar o progresso no Firestore
+        if (user) {
+          const progressData = {
+            lessonId: "hygiene4",
+            moduleId: "hygiene",
+            courseId: "9DwWIAtShVCPXyRPSbqF",
+            userId: user.uid,
+            status: "completed",
+            completedAt: Timestamp.fromDate(new Date()),
+            duration: 15
+          };
+          
+          await addProgress(progressData);
+          
+          await updateTraining({
+            completedLessons: 19,
+            currentLevel: 'intermediate',
+            lastSession: new Date(),
+            totalTime: 220
+          });
+          
+          await refreshData();
+          
+          console.log("Progresso da lição Hygiene4 salvo com sucesso");
+        }
+        
+        setShowPopup(true);
+      } catch (error) {
+        console.error("Erro ao salvar progresso da lição:", error);
+        setShowPopup(true);
+      }
     } else {
       setCurrentSlide((prev) => (prev + 1) % 3);
     }

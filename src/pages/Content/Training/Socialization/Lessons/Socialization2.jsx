@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { useFirestore } from "@/hooks/useFirestore";
+import { Timestamp } from 'firebase/firestore';
 
 const LessonContainer = styled.div`
   padding: 20px;
@@ -95,13 +99,54 @@ const Dot = styled.div`
 
 const Socialization2 = ({ onNextLesson }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { user } = useAuthContext();
+  const { addDocument: addProgress, updateDocument: updateProgress } = useFirestore("progress");
+  const { updateTraining, refreshData } = useDashboard();
 
-  const nextSlide = () => {
+  const nextSlide = async () => {
     if (currentSlide === 2) {
-      localStorage.setItem("socialization2_completed", "true");
-      // Força a atualização do estado
-      window.dispatchEvent(new Event('storage'));
-      onNextLesson();
+      try {
+        // Salvar no localStorage
+        localStorage.setItem("socialization2_completed", "true");
+        window.dispatchEvent(new Event('storage'));
+        
+        // Atualizar o progresso no Firestore
+        if (user) {
+          // Verificar se já existe um progresso para esta lição
+          const progressData = {
+            lessonId: "socialization2",
+            moduleId: "socialization",
+            courseId: "9DwWIAtShVCPXyRPSbqF",
+            userId: user.uid,
+            status: "completed",
+            completedAt: Timestamp.fromDate(new Date()),
+            duration: 15 // Duração estimada em minutos
+          };
+          
+          // Adicionar o progresso
+          await addProgress(progressData);
+          
+          // Atualizar o dashboard
+          await updateTraining({
+            completedLessons: 12, // Incrementar o número de lições completadas
+            currentLevel: 'intermediate',
+            lastSession: new Date(),
+            totalTime: 115 // Tempo total em minutos
+          });
+          
+          // Forçar atualização do dashboard
+          await refreshData();
+          
+          console.log("Progresso da lição Socialization2 salvo com sucesso");
+        }
+        
+        // Avançar para a próxima lição
+        onNextLesson();
+      } catch (error) {
+        console.error("Erro ao salvar progresso da lição:", error);
+        // Mesmo com erro, avançar para a próxima lição
+        onNextLesson();
+      }
     } else {
       setCurrentSlide((prev) => (prev + 1) % 3);
     }

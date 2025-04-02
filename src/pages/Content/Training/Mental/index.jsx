@@ -5,6 +5,7 @@ import Mental1 from "./Lessons/Mental1";
 import Mental2 from "./Lessons/Mental2";
 import Mental3 from "./Lessons/Mental3";
 import Mental4 from "./Lessons/Mental4";
+import { DashboardProvider } from "@/pages/Dashboard/contexts/DashboardContext";
 
 const Container = styled.div`
   padding: 2rem;
@@ -157,7 +158,11 @@ function MentalModule() {
 
   if (selectedLesson) {
     const LessonComponent = selectedLesson.component;
-    return <LessonComponent onBack={handleBack} onNextLesson={handleNextLesson} />;
+    return (
+      <DashboardProvider>
+        <LessonComponent onBack={handleBack} onNextLesson={handleNextLesson} />
+      </DashboardProvider>
+    );
   }
 
   return (

@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { useFirestore } from "@/hooks/useFirestore";
+import { Timestamp } from 'firebase/firestore';
 
 const LessonContainer = styled.div`
   padding: 2rem;
@@ -25,7 +29,7 @@ const Slide = styled.div`
   position: absolute;
   width: 100%;
   height: 100%;
-  opacity: ${props => props.active === "true" ? 1 : 0};
+  opacity: ${props => props.active ? 1 : 0};
   transition: opacity 0.5s ease-in-out;
   padding: 2rem;
   background: white;
@@ -160,12 +164,55 @@ const NextLessonButton = styled.button`
 
 export default function StartHere1({ onNextLesson }) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { user } = useAuthContext();
+  const { addDocument: addProgress } = useFirestore("progress");
+  const { updateTraining, refreshData } = useDashboard();
 
-  const nextSlide = () => {
+  const nextSlide = async () => {
     if (currentSlide === 3) {
+      // Salvar no localStorage primeiro
       localStorage.setItem("starthere1_completed", "true");
       window.dispatchEvent(new Event('storage'));
+      
+      // Avançar para a próxima lição imediatamente
       onNextLesson();
+      
+      // Tentar salvar no Firestore em segundo plano
+      try {
+        if (user) {
+          const progressData = {
+            lessonId: "starthere1",
+            moduleId: "starthere",
+            courseId: "9DwWIAtShVCPXyRPSbqF",
+            userId: user.uid,
+            status: "completed",
+            completedAt: Timestamp.fromDate(new Date()),
+            duration: 5
+          };
+          
+          // Usar Promise.race para não bloquear a navegação
+          Promise.race([
+            addProgress(progressData),
+            new Promise(resolve => setTimeout(resolve, 2000)) // Timeout de 2 segundos
+          ]).then(() => {
+            // Atualizar o dashboard em segundo plano
+            updateTraining({
+              completedLessons: 1,
+              currentLevel: 'beginner',
+              lastSession: new Date(),
+              totalTime: 5
+            }).catch(err => console.error("Erro ao atualizar dashboard:", err));
+            
+            refreshData().catch(err => console.error("Erro ao atualizar dados:", err));
+            
+            console.log("Progresso da lição StartHere1 salvo com sucesso");
+          }).catch(error => {
+            console.error("Erro ao salvar progresso da lição:", error);
+          });
+        }
+      } catch (error) {
+        console.error("Erro ao processar progresso da lição:", error);
+      }
     } else {
       setCurrentSlide((prev) => (prev + 1) % 4);
     }
@@ -190,7 +237,7 @@ export default function StartHere1({ onNextLesson }) {
       
       <CarouselContainer>
         {/* Slide 0: Introdução com Imagem */}
-        <Slide active={(currentSlide === 0).toString()}>
+        <Slide active={currentSlide === 0}>
           <SlideTitle>Bem-vindo à Aula!</SlideTitle>
           <ImageContainer>
             <ImagePlaceholder>Imagem ilustrativa do tema</ImagePlaceholder>
@@ -201,7 +248,7 @@ export default function StartHere1({ onNextLesson }) {
         </Slide>
 
         {/* Slide 1: Conceitos Básicos */}
-        <Slide active={(currentSlide === 1).toString()}>
+        <Slide active={currentSlide === 1}>
           <SlideTitle>Conceitos Básicos</SlideTitle>
           <Text>
             Os cães aprendem através de associação e repetição.
@@ -215,7 +262,7 @@ export default function StartHere1({ onNextLesson }) {
         </Slide>
 
         {/* Slide 2: Exercício Prático */}
-        <Slide active={(currentSlide === 2).toString()}>
+        <Slide active={currentSlide === 2}>
           <SlideTitle>Exercício Prático</SlideTitle>
           <ExerciseSteps>
             <ExerciseStep>Pegue um petisco e segure na mão.</ExerciseStep>
@@ -225,7 +272,7 @@ export default function StartHere1({ onNextLesson }) {
         </Slide>
 
         {/* Slide 3: Resumo Rápido */}
-        <Slide active={(currentSlide === 3).toString()}>
+        <Slide active={currentSlide === 3}>
           <SlideTitle>Resumo Rápido</SlideTitle>
           <SummaryList>
             <SummaryItem>Use reforço positivo sempre.</SummaryItem>

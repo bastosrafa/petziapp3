@@ -16,6 +16,7 @@ import VideoPlayer from "./VideoPlayer";
 import { Button } from "@/shadcn/components/ui/button";
 import { useFirestore } from "@/hooks/useFirestore";
 import { useUserContext } from "@/hooks/useUserContext";
+import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
 
 export default function Training({
   redirectToRoute,
@@ -33,6 +34,7 @@ export default function Training({
     "==",
     "9DwWIAtShVCPXyRPSbqF",
   ]);
+  const { updateTraining, refreshData } = useDashboard();
 
   const { userDoc } = useUserContext();
 
@@ -111,53 +113,144 @@ export default function Training({
   };
 
   const completeLesson = async () => {
-    const progress = progressDocs.find(
-      (doc) => doc.lessonId === selectedLesson.id
-    );
-
-    if (progress) {
-      await updateProgress(progress.id, {
-        status: "completed",
-        completedAt: new Date(),
-      });
-    } else {
-      await addProgress({
-        lessonId: selectedLesson.id,
-        moduleId: selectedLesson.moduleId,
-        courseId: course.id,
-        userId: user.uid,
-        status: "completed",
-        completedAt: new Date(),
-      });
-    }
-
-    let nextLesson = lessons.find(
-      (l) =>
-        l.moduleId === selectedLesson.moduleId &&
-        l.index === selectedLesson.index + 1
-    );
-
-    // Add a condition that verifies if there is another module, then define the next lesson as the first lesson of the next module
-
-    const module = course.modules.find((m) => m.id === selectedLesson.moduleId);
-
-    if (!nextLesson && course.modules.length > module.index + 1) {
-      const nextModule = course.modules.find(
-        (m) => m.index === module.index + 1
+    try {
+      console.log("Iniciando conclusão da lição:", selectedLesson.id);
+      
+      // Verificar se a lição já está marcada como concluída
+      const progress = progressDocs.find(
+        (doc) => doc.lessonId === selectedLesson.id
       );
-      if (nextModule) {
-        const firstLesson = lessons.find(
-          (l) => l.moduleId === nextModule.id && l.index === 0
-        );
-        setIsPaused(true);
-        watchLesson(nextModule.id, firstLesson);
-        return;
-      }
-    }
+      
+      console.log("Progresso existente:", progress);
 
-    if (nextLesson) {
-      setIsPaused(true);
-      watchLesson(selectedLesson.moduleId, nextLesson);
+      // Atualizar ou adicionar o progresso da lição
+      if (progress) {
+        console.log("Atualizando progresso existente:", progress.id);
+        await updateProgress(progress.id, {
+          status: "completed",
+          completedAt: new Date(),
+        });
+      } else {
+        console.log("Criando novo progresso para lição:", selectedLesson.id);
+        await addProgress({
+          lessonId: selectedLesson.id,
+          moduleId: selectedLesson.moduleId,
+          courseId: course.id,
+          userId: user.uid,
+          status: "completed",
+          completedAt: new Date(),
+        });
+      }
+
+      // Atualizar a lista de progresso após a operação
+      const updatedProgressDocs = [...progressDocs];
+      if (progress) {
+        const index = updatedProgressDocs.findIndex(doc => doc.id === progress.id);
+        if (index !== -1) {
+          updatedProgressDocs[index] = {
+            ...updatedProgressDocs[index],
+            status: "completed",
+            completedAt: new Date()
+          };
+        }
+      } else {
+        updatedProgressDocs.push({
+          id: "temp-" + Date.now(),
+          lessonId: selectedLesson.id,
+          moduleId: selectedLesson.moduleId,
+          courseId: course.id,
+          userId: user.uid,
+          status: "completed",
+          completedAt: new Date()
+        });
+      }
+
+      // Calcular o progresso total do treinamento
+      const completedLessons = updatedProgressDocs.filter(doc => doc.status === "completed").length;
+      console.log("Total de lições completadas:", completedLessons);
+      
+      // Determinar o nível atual com base no número de lições concluídas
+      const currentLevel = completedLessons < 10 ? 'beginner' : 
+                          completedLessons < 20 ? 'intermediate' : 
+                          completedLessons < 30 ? 'advanced' : 'expert';
+      console.log("Nível atual:", currentLevel);
+
+      // Calcular o tempo total de treinamento
+      const totalTime = updatedProgressDocs.reduce((acc, doc) => acc + (doc.duration || 0), 0) + 
+        (selectedLesson.duration || 0);
+      console.log("Tempo total de treinamento:", totalTime);
+
+      // Atualizar os dados de treinamento no dashboard
+      console.log("Atualizando dashboard com:", {
+        completedLessons,
+        currentLevel,
+        lastSession: new Date(),
+        totalTime
+      });
+      
+      await updateTraining({
+        completedLessons,
+        currentLevel,
+        lastSession: new Date(),
+        totalTime
+      });
+      
+      // Forçar atualização do dashboard
+      await refreshData();
+      console.log("Dashboard atualizado com sucesso");
+
+      // Verificar se o módulo atual foi completado
+      const currentModule = course.modules.find(m => m.id === selectedLesson.moduleId);
+      const moduleLessons = lessons.filter(l => l.moduleId === currentModule.id);
+      const completedModuleLessons = moduleLessons.filter(lesson => 
+        updatedProgressDocs.some(doc => doc.lessonId === lesson.id && doc.status === "completed")
+      ).length;
+      
+      console.log(`Módulo ${currentModule.id}: ${completedModuleLessons}/${moduleLessons.length} lições completadas`);
+
+      // Se o módulo foi completado, desbloquear o próximo módulo
+      if (completedModuleLessons === moduleLessons.length) {
+        console.log(`Módulo ${currentModule.id} completado!`);
+        
+        // Desbloquear o próximo módulo
+        if (currentModule.index < course.modules.length - 1) {
+          const nextModule = course.modules.find(m => m.index === currentModule.index + 1);
+          if (nextModule) {
+            console.log(`Desbloqueando módulo: ${nextModule.id}`);
+            localStorage.setItem(`${nextModule.id}_unlocked`, "true");
+          }
+        }
+      }
+
+      // Navegar para a próxima lição
+      let nextLesson = lessons.find(
+        (l) =>
+          l.moduleId === selectedLesson.moduleId &&
+          l.index === selectedLesson.index + 1
+      );
+
+      const module = course.modules.find((m) => m.id === selectedLesson.moduleId);
+
+      if (!nextLesson && course.modules.length > module.index + 1) {
+        const nextModule = course.modules.find(
+          (m) => m.index === module.index + 1
+        );
+        if (nextModule) {
+          const firstLesson = lessons.find(
+            (l) => l.moduleId === nextModule.id && l.index === 0
+          );
+          setIsPaused(true);
+          watchLesson(nextModule.id, firstLesson);
+          return;
+        }
+      }
+
+      if (nextLesson) {
+        setIsPaused(true);
+        watchLesson(selectedLesson.moduleId, nextLesson);
+      }
+    } catch (error) {
+      console.error("Erro ao completar lição:", error);
     }
   };
 

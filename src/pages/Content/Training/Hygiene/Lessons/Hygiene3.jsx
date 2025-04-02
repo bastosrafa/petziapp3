@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { useFirestore } from "@/hooks/useFirestore";
+import { Timestamp } from 'firebase/firestore';
 
 const LessonContainer = styled.div`
   padding: 2rem;
@@ -172,13 +176,48 @@ const Dot = styled.div`
 
 export default function Hygiene3({ onNextLesson }) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { user } = useAuthContext();
+  const { addDocument: addProgress } = useFirestore("progress");
+  const { updateTraining, refreshData } = useDashboard();
 
-  const nextSlide = () => {
+  const nextSlide = async () => {
     if (currentSlide === 2) {
-      localStorage.setItem("hygiene3_completed", "true");
-      // Força a atualização do estado
-      window.dispatchEvent(new Event('storage'));
-      onNextLesson();
+      try {
+        // Salvar no localStorage
+        localStorage.setItem("hygiene3_completed", "true");
+        window.dispatchEvent(new Event('storage'));
+        
+        // Atualizar o progresso no Firestore
+        if (user) {
+          const progressData = {
+            lessonId: "hygiene3",
+            moduleId: "hygiene",
+            courseId: "9DwWIAtShVCPXyRPSbqF",
+            userId: user.uid,
+            status: "completed",
+            completedAt: Timestamp.fromDate(new Date()),
+            duration: 15
+          };
+          
+          await addProgress(progressData);
+          
+          await updateTraining({
+            completedLessons: 18,
+            currentLevel: 'intermediate',
+            lastSession: new Date(),
+            totalTime: 205
+          });
+          
+          await refreshData();
+          
+          console.log("Progresso da lição Hygiene3 salvo com sucesso");
+        }
+        
+        onNextLesson();
+      } catch (error) {
+        console.error("Erro ao salvar progresso da lição:", error);
+        onNextLesson();
+      }
     } else {
       setCurrentSlide((prev) => (prev + 1) % 3);
     }

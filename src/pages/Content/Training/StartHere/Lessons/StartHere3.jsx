@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { useFirestore } from "@/hooks/useFirestore";
+import { Timestamp } from 'firebase/firestore';
 
 const LessonContainer = styled.div`
   padding: 2rem;
@@ -207,19 +211,62 @@ const Dot = styled.div`
 
 export default function StartHere3({ onNextLesson }) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { user } = useAuthContext();
+  const { addDocument: addProgress } = useFirestore("progress");
+  const { updateTraining, refreshData } = useDashboard();
 
-  const nextSlide = () => {
-    if (currentSlide === 4) {
+  const nextSlide = async () => {
+    if (currentSlide === 3) {
+      // Salvar no localStorage primeiro
       localStorage.setItem("starthere3_completed", "true");
       window.dispatchEvent(new Event('storage'));
+      
+      // Avançar para a próxima lição imediatamente
       onNextLesson();
+      
+      // Tentar salvar no Firestore em segundo plano
+      try {
+        if (user) {
+          const progressData = {
+            lessonId: "starthere3",
+            moduleId: "starthere",
+            courseId: "9DwWIAtShVCPXyRPSbqF",
+            userId: user.uid,
+            status: "completed",
+            completedAt: Timestamp.fromDate(new Date()),
+            duration: 5
+          };
+          
+          // Usar Promise.race para não bloquear a navegação
+          Promise.race([
+            addProgress(progressData),
+            new Promise(resolve => setTimeout(resolve, 2000)) // Timeout de 2 segundos
+          ]).then(() => {
+            // Atualizar o dashboard em segundo plano
+            updateTraining({
+              completedLessons: 3,
+              currentLevel: 'beginner',
+              lastSession: new Date(),
+              totalTime: 15
+            }).catch(err => console.error("Erro ao atualizar dashboard:", err));
+            
+            refreshData().catch(err => console.error("Erro ao atualizar dados:", err));
+            
+            console.log("Progresso da lição StartHere3 salvo com sucesso");
+          }).catch(error => {
+            console.error("Erro ao salvar progresso da lição:", error);
+          });
+        }
+      } catch (error) {
+        console.error("Erro ao processar progresso da lição:", error);
+      }
     } else {
-      setCurrentSlide((prev) => (prev + 1) % 5);
+      setCurrentSlide((prev) => (prev + 1) % 4);
     }
   };
 
   const prevSlide = () => {
-    setCurrentSlide(prev => (prev - 1 + 5) % 5);
+    setCurrentSlide(prev => (prev - 1 + 4) % 4);
   };
 
   const goToSlide = (index) => {

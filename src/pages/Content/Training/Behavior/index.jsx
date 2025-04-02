@@ -7,6 +7,7 @@ import Behavior3 from "./Lessons/Behavior3";
 import Behavior4 from "./Lessons/Behavior4";
 import Behavior5 from "./Lessons/Behavior5";
 import { trainingModules } from "../config";
+import { DashboardProvider } from "@/pages/Dashboard/contexts/DashboardContext";
 
 const Container = styled.div`
   padding: 2rem;
@@ -169,7 +170,11 @@ function BehaviorModule() {
 
   if (selectedLesson) {
     const LessonComponent = selectedLesson.component;
-    return <LessonComponent onNextLesson={handleNextLesson} onBack={handleBack} />;
+    return (
+      <DashboardProvider>
+        <LessonComponent onNextLesson={handleNextLesson} onBack={handleBack} />
+      </DashboardProvider>
+    );
   }
 
   return (

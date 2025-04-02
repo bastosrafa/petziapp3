@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { useFirestore } from "@/hooks/useFirestore";
+import { Timestamp } from 'firebase/firestore';
 
 const LessonContainer = styled.div`
   padding: 20px;
@@ -90,15 +94,57 @@ const Dot = styled.div`
 
 export default function Behavior3({ onNextLesson }) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { user } = useAuthContext();
+  const { addDocument: addProgress } = useFirestore("progress");
+  const { updateTraining, refreshData } = useDashboard();
 
-  const nextSlide = () => {
-    if (currentSlide === 3) {
+  const nextSlide = async () => {
+    if (currentSlide === 2) {
+      // Salvar no localStorage primeiro
       localStorage.setItem("behavior3_completed", "true");
-      // Força a atualização do estado
       window.dispatchEvent(new Event('storage'));
+      
+      // Avançar para a próxima lição imediatamente
       onNextLesson();
+      
+      // Tentar salvar no Firestore em segundo plano
+      try {
+        if (user) {
+          const progressData = {
+            lessonId: "behavior3",
+            moduleId: "behavior",
+            courseId: "9DwWIAtShVCPXyRPSbqF",
+            userId: user.uid,
+            status: "completed",
+            completedAt: Timestamp.fromDate(new Date()),
+            duration: 5
+          };
+          
+          // Usar Promise.race para não bloquear a navegação
+          Promise.race([
+            addProgress(progressData),
+            new Promise(resolve => setTimeout(resolve, 2000)) // Timeout de 2 segundos
+          ]).then(() => {
+            // Atualizar o dashboard em segundo plano
+            updateTraining({
+              completedLessons: 3,
+              currentLevel: 'beginner',
+              lastSession: new Date(),
+              totalTime: 15
+            }).catch(err => console.error("Erro ao atualizar dashboard:", err));
+            
+            refreshData().catch(err => console.error("Erro ao atualizar dados:", err));
+            
+            console.log("Progresso da lição Behavior3 salvo com sucesso");
+          }).catch(error => {
+            console.error("Erro ao salvar progresso da lição:", error);
+          });
+        }
+      } catch (error) {
+        console.error("Erro ao processar progresso da lição:", error);
+      }
     } else {
-      setCurrentSlide((prev) => (prev + 1) % 4);
+      setCurrentSlide((prev) => (prev + 1) % 3);
     }
   };
 

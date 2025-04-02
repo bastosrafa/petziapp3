@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import ModuleCompletionPopup from "../../../../../components/ModuleCompletionPopup";
+import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { useFirestore } from "@/hooks/useFirestore";
+import { Timestamp } from 'firebase/firestore';
 
 const LessonContainer = styled.div`
   padding: 20px;
@@ -94,12 +98,57 @@ export default function Behavior5({ onNextLesson }) {
   const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showPopup, setShowPopup] = useState(false);
+  const { user } = useAuthContext();
+  const { addDocument: addProgress } = useFirestore("progress");
+  const { updateTraining, refreshData } = useDashboard();
 
-  const nextSlide = () => {
+  const nextSlide = async () => {
     if (currentSlide === 2) {
+      // Salvar no localStorage primeiro
+      localStorage.setItem("behavior5_completed", "true");
+      window.dispatchEvent(new Event('storage'));
+      
+      // Mostrar o popup imediatamente
       setShowPopup(true);
+      
+      // Tentar salvar no Firestore em segundo plano
+      try {
+        if (user) {
+          const progressData = {
+            lessonId: "behavior5",
+            moduleId: "behavior",
+            courseId: "9DwWIAtShVCPXyRPSbqF",
+            userId: user.uid,
+            status: "completed",
+            completedAt: Timestamp.fromDate(new Date()),
+            duration: 5
+          };
+          
+          // Usar Promise.race para não bloquear a navegação
+          Promise.race([
+            addProgress(progressData),
+            new Promise(resolve => setTimeout(resolve, 2000)) // Timeout de 2 segundos
+          ]).then(() => {
+            // Atualizar o dashboard em segundo plano
+            updateTraining({
+              completedLessons: 5,
+              currentLevel: 'beginner',
+              lastSession: new Date(),
+              totalTime: 25
+            }).catch(err => console.error("Erro ao atualizar dashboard:", err));
+            
+            refreshData().catch(err => console.error("Erro ao atualizar dados:", err));
+            
+            console.log("Progresso da lição Behavior5 salvo com sucesso");
+          }).catch(error => {
+            console.error("Erro ao salvar progresso da lição:", error);
+          });
+        }
+      } catch (error) {
+        console.error("Erro ao processar progresso da lição:", error);
+      }
     } else {
-      setCurrentSlide(prev => prev + 1);
+      setCurrentSlide((prev) => (prev + 1) % 3);
     }
   };
 

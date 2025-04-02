@@ -7,6 +7,7 @@ import Socialization3 from "./Lessons/Socialization3";
 import Socialization4 from "./Lessons/Socialization4";
 import Socialization5 from "./Lessons/Socialization5";
 import Socialization6 from "./Lessons/Socialization6";
+import { DashboardProvider } from "@/pages/Dashboard/contexts/DashboardContext";
 
 const Container = styled.div`
   max-width: 1200px;
@@ -174,7 +175,9 @@ const SocializationModule = () => {
     return (
       <Container>
         <BackButton onClick={handleBack}>Voltar para a lista de aulas</BackButton>
-        <LessonComponent onNextLesson={handleNextLesson} />
+        <DashboardProvider>
+          <LessonComponent onNextLesson={handleNextLesson} />
+        </DashboardProvider>
       </Container>
     );
   }

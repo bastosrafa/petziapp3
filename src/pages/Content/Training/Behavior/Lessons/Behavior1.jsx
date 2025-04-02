@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { useFirestore } from "@/hooks/useFirestore";
+import { useCollection } from "@/hooks/useCollection";
+import { Timestamp } from 'firebase/firestore';
 
 const LessonContainer = styled.div`
   padding: 20px;
@@ -97,15 +102,80 @@ const Dot = styled.div`
 
 export default function Behavior1({ onNextLesson, onBack }) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { user } = useAuthContext();
+  const { addDocument: addProgress } = useFirestore("progress");
+  const { updateTraining, refreshData } = useDashboard();
+  
+  // Buscar todos os documentos de progresso do usuário
+  const { documents: progressDocs } = useCollection(
+    "progress",
+    ["userId", "==", user.uid],
+    null,
+    ["courseId", "==", "9DwWIAtShVCPXyRPSbqF"]
+  );
 
-  const nextSlide = () => {
-    if (currentSlide === 3) {
+  const nextSlide = async () => {
+    if (currentSlide === 2) {
+      // Salvar no localStorage primeiro
       localStorage.setItem("behavior1_completed", "true");
-      // Força a atualização do estado
       window.dispatchEvent(new Event('storage'));
+      
+      // Tentar salvar no Firestore em segundo plano
+      try {
+        if (user) {
+          const progressData = {
+            lessonId: "behavior1",
+            moduleId: "behavior",
+            courseId: "9DwWIAtShVCPXyRPSbqF",
+            userId: user.uid,
+            status: "completed",
+            completedAt: Timestamp.fromDate(new Date()),
+            duration: 5
+          };
+          
+          // Usar Promise.race para não bloquear a navegação
+          Promise.race([
+            addProgress(progressData),
+            new Promise(resolve => setTimeout(resolve, 2000)) // Timeout de 2 segundos
+          ]).then(() => {
+            // Calcular o progresso total
+            const updatedProgressDocs = progressDocs ? [...progressDocs] : [];
+            updatedProgressDocs.push(progressData);
+            
+            // Calcular o número total de lições completadas
+            const completedLessons = updatedProgressDocs.filter(doc => doc.status === "completed").length;
+            
+            // Calcular o tempo total de treinamento
+            const totalTime = updatedProgressDocs.reduce((acc, doc) => acc + (doc.duration || 0), 0);
+            
+            // Determinar o nível com base no número de lições
+            const currentLevel = completedLessons < 10 ? 'beginner' : 
+                               completedLessons < 20 ? 'intermediate' : 
+                               completedLessons < 30 ? 'advanced' : 'expert';
+            
+            // Atualizar o dashboard em segundo plano
+            updateTraining({
+              completedLessons,
+              currentLevel,
+              lastSession: new Date(),
+              totalTime
+            }).catch(err => console.error("Erro ao atualizar dashboard:", err));
+            
+            refreshData().catch(err => console.error("Erro ao atualizar dados:", err));
+            
+            console.log("Progresso da lição Behavior1 salvo com sucesso");
+          }).catch(error => {
+            console.error("Erro ao salvar progresso da lição:", error);
+          });
+        }
+      } catch (error) {
+        console.error("Erro ao processar progresso da lição:", error);
+      }
+      
+      // Avançar para a próxima lição imediatamente
       onNextLesson();
     } else {
-      setCurrentSlide((prev) => (prev + 1) % 4);
+      setCurrentSlide((prev) => (prev + 1) % 3);
     }
   };
 

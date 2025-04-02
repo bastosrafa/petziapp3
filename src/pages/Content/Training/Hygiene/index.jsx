@@ -6,6 +6,7 @@ import Hygiene2 from "./Lessons/Hygiene2";
 import Hygiene3 from "./Lessons/Hygiene3";
 import Hygiene4 from "./Lessons/Hygiene4";
 import { trainingModules } from "../config";
+import { DashboardProvider } from "@/pages/Dashboard/contexts/DashboardContext";
 
 const Container = styled.div`
   padding: 2rem;
@@ -160,7 +161,11 @@ function HygieneModule() {
 
   if (selectedLesson) {
     const LessonComponent = selectedLesson.component;
-    return <LessonComponent onBack={handleBack} onNextLesson={handleNextLesson} />;
+    return (
+      <DashboardProvider>
+        <LessonComponent onBack={handleBack} onNextLesson={handleNextLesson} />
+      </DashboardProvider>
+    );
   }
 
   return (

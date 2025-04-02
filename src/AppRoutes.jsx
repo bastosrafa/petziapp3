@@ -97,29 +97,78 @@ function AppRoutes() {
                         </DashboardProvider>
                       } />
                       <Route path="/adestramento" element={<Content />} />
-                      <Route path="/content/training" element={<Training />} />
-                      <Route path="/content/training/starthere" element={<StartHereModule />} />
-                      <Route path="/content/training/behavior/*" element={<BehaviorModule />} />
-                      <Route path="/content/training/socialization" element={<SocializationModule />} />
-                      <Route path="/content/training/hygiene" element={<HygieneModule />} />
-                      <Route path="/content/training/badhabits" element={<BadHabitsModule />} />
-                      <Route path="/content/training/mental" element={<MentalModule />} />
-                      <Route path="/vacinas" element={<Vaccines />} />
-                      <Route path="/diario" element={<Diary />} />
-                      <Route path="/rota2" element={<Content />} />
-                      <Route path="/rota3" element={<Content />} />
-                      <Route path="/rota4" element={<Content />} />
-                      <Route
-                        path="/conta"
-                        element={
-                          <Profile
-                            rerender={rerender}
-                            setRerender={setRerender}
-                          />
-                        }
-                      />
+                      <Route path="/content/training" element={
+                        <DashboardProvider>
+                          <Training />
+                        </DashboardProvider>
+                      } />
+                      <Route path="/content/training/starthere" element={
+                        <DashboardProvider>
+                          <StartHereModule />
+                        </DashboardProvider>
+                      } />
+                      <Route path="/content/training/behavior" element={
+                        <DashboardProvider>
+                          <BehaviorModule />
+                        </DashboardProvider>
+                      } />
+                      <Route path="/content/training/socialization" element={
+                        <DashboardProvider>
+                          <SocializationModule />
+                        </DashboardProvider>
+                      } />
+                      <Route path="/content/training/hygiene" element={
+                        <DashboardProvider>
+                          <HygieneModule />
+                        </DashboardProvider>
+                      } />
+                      <Route path="/content/training/badhabits" element={
+                        <DashboardProvider>
+                          <BadHabitsModule />
+                        </DashboardProvider>
+                      } />
+                      <Route path="/content/training/mental" element={
+                        <DashboardProvider>
+                          <MentalModule />
+                        </DashboardProvider>
+                      } />
+                      <Route path="/content/training/behavior/1" element={
+                        <DashboardProvider>
+                          <Behavior1 />
+                        </DashboardProvider>
+                      } />
+                      <Route path="/content/training/behavior/2" element={
+                        <DashboardProvider>
+                          <Behavior2 />
+                        </DashboardProvider>
+                      } />
+                      <Route path="/content/training/behavior/3" element={
+                        <DashboardProvider>
+                          <Behavior3 />
+                        </DashboardProvider>
+                      } />
+                      <Route path="/content/training/behavior/4" element={
+                        <DashboardProvider>
+                          <Behavior4 />
+                        </DashboardProvider>
+                      } />
+                      <Route path="/content/training/behavior/5" element={
+                        <DashboardProvider>
+                          <Behavior5 />
+                        </DashboardProvider>
+                      } />
+                      <Route path="/content/vaccines" element={
+                        <DashboardProvider>
+                          <Vaccines />
+                        </DashboardProvider>
+                      } />
+                      <Route path="/content/diary" element={
+                        <DashboardProvider>
+                          <Diary />
+                        </DashboardProvider>
+                      } />
+                      <Route path="/profile" element={<Profile />} />
                       <Route path="/help" element={<Help />} />
-                      <Route path="*" element={<Home />} />
                     </Routes>
                   </div>
                   {isMobile ? (

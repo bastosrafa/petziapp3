@@ -6,6 +6,7 @@ import BadHabits2 from "./Lessons/BadHabits2";
 import BadHabits3 from "./Lessons/BadHabits3";
 import BadHabits4 from "./Lessons/BadHabits4";
 import { trainingModules } from "../config";
+import { DashboardProvider } from "@/pages/Dashboard/contexts/DashboardContext";
 
 const Container = styled.div`
   padding: 2rem;
@@ -160,7 +161,11 @@ function BadHabitsModule() {
 
   if (selectedLesson) {
     const LessonComponent = selectedLesson.component;
-    return <LessonComponent onBack={handleBack} onNextLesson={handleNextLesson} />;
+    return (
+      <DashboardProvider>
+        <LessonComponent onBack={handleBack} onNextLesson={handleNextLesson} />
+      </DashboardProvider>
+    );
   }
 
   return (
