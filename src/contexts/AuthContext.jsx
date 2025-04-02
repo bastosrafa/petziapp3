@@ -24,13 +24,18 @@ export function AuthContextProvider({ children }) {
   });
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
+    // Manter a inscrição ativa para mudanças no estado de autenticação
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log("Auth state changed:", user ? "User logged in" : "No user");
       dispatch({ type: "AUTH_IS_READY", payload: user });
-      unsub();
     });
+
+    // Limpar a inscrição apenas quando o componente for desmontado
+    return () => unsubscribe();
   }, []);
 
-  // const foo = useMemo(() => ({ ...state, dispatch }), []);
+  console.log("AuthContext state:", state);
+
   return (
     <AuthContext.Provider value={{ ...state, dispatch }}>
       {children}

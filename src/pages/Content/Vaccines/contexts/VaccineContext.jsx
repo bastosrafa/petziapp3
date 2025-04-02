@@ -56,6 +56,7 @@ export function VaccineProvider({ children }) {
       console.log("Adicionando nova vacina:", vaccineData);
       const docRef = await addDoc(collection(db, "users", user.uid, "health_records"), {
         ...vaccineData,
+        userId: user.uid,
         createdAt: serverTimestamp(),
       });
       console.log("Vacina adicionada com ID:", docRef.id);

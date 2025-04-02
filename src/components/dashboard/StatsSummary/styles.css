@@ -59,6 +59,13 @@
   margin-bottom: 0.5rem;
 }
 
+.activity-item .notes {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
 /* Vaccine Card Styles */
 .vaccine-section {
   display: flex;

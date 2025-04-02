@@ -12,6 +12,31 @@
     <meta name="msapplication-TileColor" content="#000000" />
     <meta name="theme-color" content="#000000" />
     <title>Generic App</title>
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app-compat.js"></script>
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-messaging-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-remote-config-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-performance-compat.js"></script>
+    <script>
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyBnLH-WPXrw6LbXTo6FhHogwjFApEOXIos",
+        authDomain: "petzia-f86b4.firebaseapp.com",
+        projectId: "petzia-f86b4",
+        storageBucket: "petzia-f86b4.firebasestorage.app",
+        messagingSenderId: "375896389326",
+        appId: "1:375896389326:web:dddf24146bf368fc88029f",
+        measurementId: "G-SZJ3S8XPKT"
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+    </script>
   </head>
   <body>
     <div id="root"></div>

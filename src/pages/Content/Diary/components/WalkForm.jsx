@@ -6,8 +6,12 @@ import { Label } from "@/shadcn/components/ui/label";
 import { Textarea } from "@/shadcn/components/ui/textarea";
 import { X } from "lucide-react";
 import { toast } from "@/shadcn/components/ui/use-toast";
+import { dashboardService } from "@/firebase/services/dashboardService";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { Timestamp } from 'firebase/firestore';
 
 export default function WalkForm({ onClose }) {
+  const { user } = useAuthContext();
   const [formData, setFormData] = useState({
     date: "",
     time: "",
@@ -21,14 +25,46 @@ export default function WalkForm({ onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!user) {
+      toast({
+        title: "Erro ao salvar",
+        description: "Você precisa estar logado para registrar um passeio.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
-      // TODO: Implementar a lógica de salvamento
+      // Criar timestamp combinando data e hora
+      const date = new Date(formData.date);
+      if (formData.time) {
+        const [hours, minutes] = formData.time.split(':');
+        date.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      }
+      
+      // Converter para Timestamp do Firestore
+      const timestamp = Timestamp.fromDate(date);
+
+      // Preparar dados para salvar
+      const walkData = {
+        timestamp,
+        duration: parseInt(formData.duration),
+        distance: formData.distance ? parseFloat(formData.distance) : null,
+        location: formData.location || null,
+        weather: formData.weather || null,
+        notes: formData.notes || null,
+        category: formData.category
+      };
+
+      await dashboardService.updateActivity(user.uid, 'walk', walkData);
+      
       toast({
         title: "Registro salvo com sucesso!",
         description: "O passeio foi registrado no diário.",
       });
       onClose();
     } catch (error) {
+      console.error('Error saving walk entry:', error);
       toast({
         title: "Erro ao salvar",
         description: "Não foi possível salvar o registro. Tente novamente.",
@@ -77,59 +113,51 @@ export default function WalkForm({ onClose }) {
                 type="number"
                 value={formData.duration}
                 onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                placeholder="Ex: 30"
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="distance">Distância (km) (opcional)</Label>
+              <Label htmlFor="distance">Distância (km)</Label>
               <Input
                 id="distance"
                 type="number"
                 step="0.1"
                 value={formData.distance}
                 onChange={(e) => setFormData({ ...formData, distance: e.target.value })}
-                placeholder="Ex: 2.5"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="location">Local (opcional)</Label>
+            <Label htmlFor="location">Local</Label>
             <Input
               id="location"
               value={formData.location}
               onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              placeholder="Ex: Parque do Cão, Praça Central"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="weather">Condições do Tempo (opcional)</Label>
+            <Label htmlFor="weather">Condições do Tempo</Label>
             <Input
               id="weather"
               value={formData.weather}
               onChange={(e) => setFormData({ ...formData, weather: e.target.value })}
-              placeholder="Ex: Ensolarado, Nublado, Chuvoso"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="notes">Observações (opcional)</Label>
+            <Label htmlFor="notes">Observações</Label>
             <Textarea
               id="notes"
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              placeholder="Observações sobre o passeio, comportamento do pet, etc..."
             />
           </div>
 
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button type="submit">Salvar</Button>
-          </div>
+          <Button type="submit" className="w-full">
+            Salvar Registro
+          </Button>
         </form>
       </CardContent>
     </Card>

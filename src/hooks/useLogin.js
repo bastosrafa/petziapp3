@@ -90,9 +90,28 @@ export const useLogin = () => {
     try {
       const res = await signInWithEmailAndPassword(auth, email, password);
 
-      // const userRef = doc(db, "users", res.user.uid);
+      // Atualizar documento do usuário
+      const userRef = doc(db, "users", res.user.uid);
+      const userDoc = await getDoc(userRef);
 
-      // await updateDoc(userRef, { online: true });
+      if (userDoc.exists()) {
+        await updateDoc(userRef, {
+          online: true,
+          lastLogin: new Date(),
+          user_agent: navigator.userAgent,
+          origin: window.location.href.split("?")[0],
+          fbp: getCookie("_fbp"),
+          fbc: getCookie("_fbc"),
+          utm: {
+            source: query.get("utm_source") || getCookie("utm_source"),
+            medium: query.get("utm_medium") || getCookie("utm_medium"),
+            campaign: query.get("utm_campaign") || getCookie("utm_campaign"),
+            term: query.get("utm_term") || getCookie("utm_term"),
+            content: query.get("utm_content") || getCookie("utm_content"),
+          },
+          sck: query.get("sck") || getCookie("sck"),
+        });
+      }
 
       dispatch({ type: "LOGIN", payload: res.user });
 

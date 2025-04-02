@@ -23,12 +23,25 @@ const animations = {
 };
 
 const MoodDog = () => {
-  const { petData } = useDashboard();
+  const { dashboardData } = useDashboard();
+
+  // Se não houver dados do dashboard, mostrar animação neutra
+  if (!dashboardData) {
+    return (
+      <div className="mood-dog-container">
+        <Lottie
+          animationData={animations.neutral}
+          options={lottieOptions}
+          className="mood-dog-animation"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="mood-dog-container">
       <Lottie
-        animationData={animations[petData.mood] || animations.neutral}
+        animationData={animations[dashboardData.mood] || animations.neutral}
         options={lottieOptions}
         className="mood-dog-animation"
       />

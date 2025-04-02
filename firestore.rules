@@ -2,77 +2,73 @@ rules_version = '2';
 // TODO: Definir as próprias regras de banco de dados
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isAdmin() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.admin == 'XXX'; // TODO: Alterar para o seu próprio ID de administrador
+    // Funções auxiliares
+    function isSignedIn() {
+      return request.auth != null;
     }
-    function isOwner() {
-      return request.auth.uid == resource.data.userId;
-    }
+
     function idsMatch(userId) {
       return request.auth.uid == userId;
     }
-    function isSignedIn() {
-      return request.auth.uid != null;
-    }
-    function isPaid() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.plan.status == 'active';
-    }
+
+    // Regra padrão: negar tudo
     match /{document=**} {
       allow read, write: if false;
     }
+
+    // Regras para a coleção users
     match /users/{userId} {
-      allow delete: if false;
-      allow create: if isSignedIn() && idsMatch(userId);
-      allow update: if
-        isSignedIn() && idsMatch(userId)
-        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['email', 'id', 'admin', 'plan']);
-      allow read:
-        if isSignedIn() && (idsMatch(userId) || isAdmin());
-    }
-    match /users/{userId}/health_records/{recordId} {
-      allow read, write: if isSignedIn() && idsMatch(userId);
+      allow read: if isSignedIn() && idsMatch(userId);
       allow create: if isSignedIn() && idsMatch(userId);
       allow update: if isSignedIn() && idsMatch(userId);
-      allow delete: if isSignedIn() && idsMatch(userId);
-    }
-    match /tokens/{planId} {
       allow delete: if false;
-      allow create: if false;
-      allow update: if false;
-      allow read: if isSignedIn() && isPaid();
+
+      // Regras para a subcoleção health_records
+      match /health_records/{recordId} {
+        allow read: if isSignedIn() && idsMatch(userId);
+        allow create: if isSignedIn() && idsMatch(userId);
+        allow update: if isSignedIn() && idsMatch(userId);
+        allow delete: if isSignedIn() && idsMatch(userId);
+      }
     }
-    match /appVersion/{current} {
+
+    // Regras para a coleção dashboards
+    match /dashboards/{userId} {
+      allow read: if isSignedIn() && idsMatch(userId);
+      allow create: if isSignedIn() && idsMatch(userId);
+      allow update: if isSignedIn() && idsMatch(userId);
       allow delete: if false;
-      allow create: if false;
-      allow update: if false;
-      allow read: if isSignedIn() && isPaid();
     }
-    match /progress/{progressId} {
-      allow read, write: if true;
-    }
-    match /lessons/{lessonId} {
-      allow read, write: if isSignedIn() && isPaid();
-    }
-    match /courses/{courseId} {
-      allow read, write: if isSignedIn() && isPaid();
-    }
-    // Dashboard collections
-    match /diary_entries/{entryId} {
+
+    // Regras para a coleção activities
+    match /activities/{activityId} {
       allow read: if isSignedIn() && request.auth.uid == resource.data.userId;
       allow create: if isSignedIn() && request.auth.uid == request.resource.data.userId;
       allow update, delete: if isSignedIn() && request.auth.uid == resource.data.userId;
     }
+
+    // Regras para a coleção health_records
     match /health_records/{recordId} {
-      allow read: if isSignedIn() && (request.auth.uid == recordId || request.auth.uid == resource.data.userId);
+      allow read: if isSignedIn() && request.auth.uid == resource.data.userId;
       allow create: if isSignedIn() && request.auth.uid == request.resource.data.userId;
-      allow update: if isSignedIn() && (request.auth.uid == recordId || request.auth.uid == resource.data.userId);
-      allow delete: if isSignedIn() && (request.auth.uid == recordId || request.auth.uid == resource.data.userId);
+      allow update: if isSignedIn() && request.auth.uid == resource.data.userId;
+      allow delete: if isSignedIn() && request.auth.uid == resource.data.userId;
     }
+
+    // Regras para a coleção training_progress
     match /training_progress/{progressId} {
-      allow read: if isSignedIn() && (request.auth.uid == progressId || request.auth.uid == resource.data.userId);
+      allow read: if isSignedIn() && request.auth.uid == resource.data.userId;
       allow create: if isSignedIn() && request.auth.uid == request.resource.data.userId;
-      allow update: if isSignedIn() && (request.auth.uid == progressId || request.auth.uid == resource.data.userId);
-      allow delete: if isSignedIn() && (request.auth.uid == progressId || request.auth.uid == resource.data.userId);
+      allow update: if isSignedIn() && request.auth.uid == resource.data.userId;
+      allow delete: if isSignedIn() && request.auth.uid == resource.data.userId;
+    }
+
+    // Regras para a coleção referrals2
+    match /referrals2/{referralId} {
+      allow read: if isSignedIn() && request.auth.uid == resource.data.userId;
+      allow create: if isSignedIn() && request.auth.uid == request.resource.data.userId;
+      allow update: if isSignedIn() && request.auth.uid == resource.data.userId;
+      allow delete: if isSignedIn() && request.auth.uid == resource.data.userId;
     }
   }
 }

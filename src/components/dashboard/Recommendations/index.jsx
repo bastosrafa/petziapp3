@@ -3,14 +3,16 @@ import { useDashboard } from '../../../pages/Dashboard/contexts/DashboardContext
 import './styles.css';
 
 const Recommendations = () => {
-  const { petData } = useDashboard();
+  const { dashboardData } = useDashboard();
 
   const getRecommendations = () => {
+    if (!dashboardData) return [];
+    
     const recommendations = [];
     const now = new Date();
 
     // Verificar vacinas
-    if (petData.vaccines.status === 'pending') {
+    if (dashboardData.health?.vaccines?.status === 'pending') {
       recommendations.push({
         type: 'health',
         priority: 1,
@@ -22,8 +24,8 @@ const Recommendations = () => {
     }
 
     // Verificar passeios
-    if (petData.lastWalk) {
-      const lastWalk = new Date(petData.lastWalk);
+    if (dashboardData.activities?.walk?.lastEntry) {
+      const lastWalk = new Date(dashboardData.activities.walk.lastEntry.timestamp);
       const daysSinceLastWalk = (now - lastWalk) / (1000 * 60 * 60 * 24);
       if (daysSinceLastWalk >= 2) {
         recommendations.push({
@@ -38,8 +40,8 @@ const Recommendations = () => {
     }
 
     // Verificar alimentação
-    if (petData.lastFood) {
-      const lastFood = new Date(petData.lastFood);
+    if (dashboardData.activities?.food?.lastEntry) {
+      const lastFood = new Date(dashboardData.activities.food.lastEntry.timestamp);
       const hoursSinceLastFood = (now - lastFood) / (1000 * 60 * 60);
       if (hoursSinceLastFood >= 24) {
         recommendations.push({
@@ -54,12 +56,12 @@ const Recommendations = () => {
     }
 
     // Verificar treinos
-    if (petData.training.completedLessons < 10) {
+    if (dashboardData.training?.completedLessons < 10) {
       recommendations.push({
         type: 'training',
         priority: 3,
         title: 'Treino Pendente',
-        message: `${10 - petData.training.completedLessons} lições restantes para completar o nível atual.`,
+        message: `${10 - dashboardData.training.completedLessons} lições restantes para completar o nível atual.`,
         action: 'Iniciar treino',
         icon: '🎓'
       });

@@ -1,8 +1,9 @@
-import { initializeApp } from "firebase/app";
-import { initializeFirestore, serverTimestamp } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
+// Import Firebase services
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
+import 'firebase/compat/storage';
+import 'firebase/compat/messaging';
 
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
@@ -19,9 +20,9 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const firebaseApp = initializeApp(firebaseConfig);
+const firebaseApp = firebase.initializeApp(firebaseConfig);
 
-const messaging = getMessaging(firebaseApp);
+const messaging = firebase.messaging();
 
 // TODO: Descomentar código abaixo após ativar o App Check
 
@@ -31,16 +32,14 @@ const messaging = getMessaging(firebaseApp);
 // });
 
 // Initialize services
-const db = initializeFirestore(firebaseApp, {
-  ignoreUndefinedProperties: true,
-});
-const auth = getAuth(firebaseApp);
-const storage = getStorage(firebaseApp);
+const db = firebase.firestore();
+const auth = firebase.auth();
+const storage = firebase.storage();
 
 // Timestamp
-const timestamp = serverTimestamp();
+const timestamp = firebase.firestore.FieldValue.serverTimestamp();
 
 // Google Sign In
-const googleProvider = new GoogleAuthProvider();
+const googleProvider = new firebase.auth.GoogleAuthProvider();
 
 export { db, auth, storage, timestamp, googleProvider, messaging };

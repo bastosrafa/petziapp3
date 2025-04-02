@@ -6,8 +6,12 @@ import { Label } from "@/shadcn/components/ui/label";
 import { Textarea } from "@/shadcn/components/ui/textarea";
 import { X } from "lucide-react";
 import { toast } from "@/shadcn/components/ui/use-toast";
+import { dashboardService } from "@/firebase/services/dashboardService";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { Timestamp } from 'firebase/firestore';
 
 export default function FoodForm({ onClose }) {
+  const { user } = useAuthContext();
   const [formData, setFormData] = useState({
     date: "",
     time: "",
@@ -21,14 +25,46 @@ export default function FoodForm({ onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!user) {
+      toast({
+        title: "Erro ao salvar",
+        description: "Você precisa estar logado para registrar uma alimentação.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
-      // TODO: Implementar a lógica de salvamento
+      // Criar timestamp combinando data e hora
+      const date = new Date(formData.date);
+      if (formData.time) {
+        const [hours, minutes] = formData.time.split(':');
+        date.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      }
+      
+      // Converter para Timestamp do Firestore
+      const timestamp = Timestamp.fromDate(date);
+
+      // Preparar dados para salvar
+      const foodData = {
+        timestamp,
+        type: formData.type,
+        amount: formData.amount ? parseFloat(formData.amount) : null,
+        unit: formData.unit,
+        brand: formData.brand || null,
+        notes: formData.notes || null,
+        category: formData.category
+      };
+
+      await dashboardService.updateActivity(user.uid, 'food', foodData);
+      
       toast({
         title: "Registro salvo com sucesso!",
         description: "A alimentação foi registrada no diário.",
       });
       onClose();
     } catch (error) {
+      console.error('Error saving food entry:', error);
       toast({
         title: "Erro ao salvar",
         description: "Não foi possível salvar o registro. Tente novamente.",
