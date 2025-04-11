@@ -88,7 +88,7 @@ function AppRoutes() {
                       />
                     </div>
                   )}
-                  <div className="sm:w-[calc(100%_-_300px)] sm:ml-[310px] mt-[80px] px-2.5 sm:px-5 sm:mt-[112px]">
+                  <div className="w-full sm:w-[calc(100%_-_300px)] sm:ml-[310px] mt-[80px] px-2 sm:px-5 sm:mt-[112px] main-content">
                     <Routes>
                       <Route exact path="/" element={<Home />} />
                       <Route path="/dashboard" element={
@@ -167,6 +167,8 @@ function AppRoutes() {
                           <Diary />
                         </DashboardProvider>
                       } />
+                      <Route path="/diario" element={<Navigate to="/content/diary" replace />} />
+                      <Route path="/vacinas" element={<Navigate to="/content/vaccines" replace />} />
                       <Route path="/profile" element={<Profile />} />
                       <Route path="/help" element={<Help />} />
                     </Routes>

@@ -9,7 +9,7 @@ export default function BottomBar({ activeRoute, setActiveRoute }) {
   const location = useLocation();
 
   return (
-    <div className="fixed w-full bg-muted border border-border h-16 flex justify-between items-center">
+    <div className="fixed bottom-0 left-0 right-0 w-full bg-muted border-t border-border h-16 flex justify-between items-center z-50">
       {routeOptions.map(function (option, index) {
         return (
           <div
