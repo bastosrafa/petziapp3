@@ -1,0 +1,262 @@
+.pet-status-container {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.pet-status-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  max-width: 800px;
+}
+
+.pet-animation {
+  flex-shrink: 0;
+  width: 200px;
+  height: 200px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pet-animation > div {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.loading-animation,
+.error-animation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  color: #666;
+  font-size: 0.9rem;
+  z-index: 1;
+}
+
+.error-animation {
+  background-color: #fff5f5;
+  color: #dc2626;
+}
+
+.pet-status-info {
+  text-align: center;
+  width: 100%;
+}
+
+.pet-status-info h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.mood-description {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.mood-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mood-message {
+  font-size: 1rem;
+  color: #888;
+  font-style: italic;
+  padding: 4px 8px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  display: inline-block;
+  margin: 0 auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .pet-status-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .pet-animation {
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto;
+  }
+}
+
+.pet-container {
+  width: 200px;
+  height: 200px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+}
+
+.pet {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+/* Cabeça */
+.head {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-color: #ffd700;
+  border-radius: 50%;
+  top: 10px;
+  left: 10px;
+  box-shadow: inset -5px -5px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Orelhas */
+.ear {
+  position: absolute;
+  width: 30px;
+  height: 40px;
+  background-color: #ffd700;
+  border-radius: 50% 50% 0 0;
+  transform-origin: bottom center;
+}
+
+.ear.left {
+  top: -10px;
+  left: 5px;
+  transform: rotate(-15deg);
+  animation: earWiggleLeft 2s infinite;
+}
+
+.ear.right {
+  top: -10px;
+  right: 5px;
+  transform: rotate(15deg);
+  animation: earWiggleRight 2s infinite;
+}
+
+/* Olhos */
+.eye {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background-color: #333;
+  border-radius: 50%;
+  top: 40px;
+}
+
+.eye.left {
+  left: 35px;
+}
+
+.eye.right {
+  right: 35px;
+}
+
+/* Pupilas */
+.eye::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background-color: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+}
+
+/* Boca */
+.mouth {
+  position: absolute;
+  width: 40px;
+  height: 20px;
+  border: 3px solid #333;
+  border-color: transparent transparent #333 transparent;
+  border-radius: 0 0 50% 50%;
+  bottom: 25px;
+  left: 30px;
+  transform-origin: center;
+}
+
+/* Nariz */
+.nose {
+  position: absolute;
+  width: 15px;
+  height: 10px;
+  background-color: #333;
+  border-radius: 50%;
+  bottom: 35px;
+  left: 42px;
+}
+
+/* Estados de humor */
+.pet.happy .mouth {
+  border-radius: 50%;
+  border-color: #333 transparent transparent transparent;
+  transform: scaleY(-1);
+  animation: happyMouth 2s infinite;
+}
+
+.pet.sad .mouth {
+  border-radius: 50%;
+  border-color: #333 transparent transparent transparent;
+  transform: scaleY(1);
+  animation: sadMouth 2s infinite;
+}
+
+.pet.neutral .mouth {
+  animation: neutralMouth 2s infinite;
+}
+
+/* Animações */
+@keyframes earWiggleLeft {
+  0%, 100% { transform: rotate(-15deg); }
+  50% { transform: rotate(-25deg); }
+}
+
+@keyframes earWiggleRight {
+  0%, 100% { transform: rotate(15deg); }
+  50% { transform: rotate(25deg); }
+}
+
+@keyframes happyMouth {
+  0%, 100% { transform: scaleY(-1) scaleX(1); }
+  50% { transform: scaleY(-1) scaleX(1.2); }
+}
+
+@keyframes sadMouth {
+  0%, 100% { transform: scaleY(1) scaleX(1); }
+  50% { transform: scaleY(1) scaleX(1.2); }
+}
+
+@keyframes neutralMouth {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(1.2); }
+} 
