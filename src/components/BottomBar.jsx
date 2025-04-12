@@ -1,42 +1,54 @@
-import { routeOptions } from "@/constants/constants";
-import { useAuthContext } from "@/hooks/useAuthContext";
-import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import SettingsMenu from './SettingsMenu';
+import './BottomBar.css';
 
-export default function BottomBar({ activeRoute, setActiveRoute }) {
-  const { user } = useAuthContext();
-  const navigate = useNavigate();
+const BottomBar = () => {
   const location = useLocation();
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 w-full bg-muted border-t border-border h-16 flex justify-between items-center z-50">
-      {routeOptions.map(function (option, index) {
-        return (
-          <div
-            key={option.route}
-            role="button"
-            className={`relative flex flex-col gap-1 items-center justify-center w-full h-full text-xs font-medium text-center transition-all duration-300
-            ${
-              activeRoute === option.route
-                ? "text-brand"
-                : "text-muted-foreground"
-            }
-            `}
-            onClick={() => {
-              setActiveRoute(option.route);
-              navigate(option.route);
-            }}
-          >
-            {option.icon}
-            {option.badge && (
-              <p className="absolute top-1.5 right-5 text-[18px] font-light rounded-sm">
-                {option.badge}
-              </p>
-            )}
-            {option.name}
-          </div>
-        );
-      })}
-    </div>
+    <>
+      <nav className="bottom-bar">
+        <Link to="/dashboard" className={`nav-item ${isActive('/dashboard') ? 'active' : ''}`}>
+          <span className="nav-icon">🏠</span>
+          <span className="nav-label">Início</span>
+        </Link>
+
+        <Link to="/adestramento" className={`nav-item ${isActive('/adestramento') ? 'active' : ''}`}>
+          <span className="nav-icon">🎓</span>
+          <span className="nav-label">Adestramento</span>
+        </Link>
+
+        <Link to="/diario" className={`nav-item ${isActive('/diario') ? 'active' : ''}`}>
+          <span className="nav-icon">📝</span>
+          <span className="nav-label">Diário</span>
+        </Link>
+
+        <Link to="/vacinas" className={`nav-item ${isActive('/vacinas') ? 'active' : ''}`}>
+          <span className="nav-icon">💉</span>
+          <span className="nav-label">Vacinas</span>
+        </Link>
+
+        <button 
+          className={`nav-item ${isActive('/more') ? 'active' : ''}`}
+          onClick={() => setIsSettingsOpen(true)}
+        >
+          <span className="nav-icon">⚙️</span>
+          <span className="nav-label">Mais</span>
+        </button>
+      </nav>
+
+      <SettingsMenu 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+      />
+    </>
   );
-}
+};
+
+export default BottomBar;
