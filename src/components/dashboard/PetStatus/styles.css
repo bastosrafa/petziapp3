@@ -72,26 +72,35 @@
 }
 
 .mood-description {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: #666;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  font-weight: 500;
 }
 
 .mood-messages {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 .mood-message {
-  font-size: 1rem;
-  color: #888;
+  font-size: 1.1rem;
+  color: #555;
   font-style: italic;
-  padding: 4px 8px;
+  padding: 12px 16px;
   background-color: #f8f9fa;
-  border-radius: 4px;
+  border-radius: 8px;
   display: inline-block;
   margin: 0 auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.mood-message:hover {
+  transform: translateY(-2px);
 }
 
 /* Responsive adjustments */
@@ -118,46 +127,61 @@
   justify-content: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin: 0 auto;
+  position: relative;
+  overflow: hidden;
 }
 
 .pet {
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
 }
 
 /* Cabeça */
 .head {
   position: absolute;
-  width: 100px;
+  width: 120px;
   height: 100px;
   background-color: #ffd700;
-  border-radius: 50%;
-  top: 10px;
-  left: 10px;
+  border-radius: 60px 60px 40px 40px;
+  top: 25px;
+  left: 15px;
   box-shadow: inset -5px -5px 10px rgba(0, 0, 0, 0.1);
+  transform: rotate(-5deg);
+}
+
+/* Focinho */
+.snout {
+  position: absolute;
+  width: 60px;
+  height: 40px;
+  background-color: #ffd700;
+  border-radius: 30px;
+  top: 60px;
+  left: 45px;
+  box-shadow: inset -3px -3px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Orelhas */
 .ear {
   position: absolute;
-  width: 30px;
-  height: 40px;
+  width: 40px;
+  height: 60px;
   background-color: #ffd700;
-  border-radius: 50% 50% 0 0;
+  border-radius: 20px;
   transform-origin: bottom center;
 }
 
 .ear.left {
-  top: -10px;
-  left: 5px;
+  top: 15px;
+  left: 10px;
   transform: rotate(-15deg);
   animation: earWiggleLeft 2s infinite;
 }
 
 .ear.right {
-  top: -10px;
-  right: 5px;
+  top: 15px;
+  right: 10px;
   transform: rotate(15deg);
   animation: earWiggleRight 2s infinite;
 }
@@ -165,31 +189,42 @@
 /* Olhos */
 .eye {
   position: absolute;
-  width: 12px;
-  height: 12px;
+  width: 15px;
+  height: 15px;
   background-color: #333;
   border-radius: 50%;
-  top: 40px;
+  top: 45px;
 }
 
 .eye.left {
-  left: 35px;
+  left: 40px;
 }
 
 .eye.right {
-  right: 35px;
+  right: 40px;
 }
 
 /* Pupilas */
 .eye::after {
   content: '';
   position: absolute;
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   background-color: white;
   border-radius: 50%;
-  top: 2px;
-  left: 2px;
+  top: 3px;
+  left: 3px;
+}
+
+/* Nariz */
+.nose {
+  position: absolute;
+  width: 20px;
+  height: 15px;
+  background-color: #333;
+  border-radius: 10px;
+  top: 65px;
+  left: 65px;
 }
 
 /* Boca */
@@ -199,33 +234,22 @@
   height: 20px;
   border: 3px solid #333;
   border-color: transparent transparent #333 transparent;
-  border-radius: 0 0 50% 50%;
-  bottom: 25px;
-  left: 30px;
+  border-radius: 0 0 20px 20px;
+  top: 80px;
+  left: 55px;
   transform-origin: center;
-}
-
-/* Nariz */
-.nose {
-  position: absolute;
-  width: 15px;
-  height: 10px;
-  background-color: #333;
-  border-radius: 50%;
-  bottom: 35px;
-  left: 42px;
 }
 
 /* Estados de humor */
 .pet.happy .mouth {
-  border-radius: 50%;
+  border-radius: 20px;
   border-color: #333 transparent transparent transparent;
   transform: scaleY(-1);
   animation: happyMouth 2s infinite;
 }
 
 .pet.sad .mouth {
-  border-radius: 50%;
+  border-radius: 20px;
   border-color: #333 transparent transparent transparent;
   transform: scaleY(1);
   animation: sadMouth 2s infinite;
@@ -259,4 +283,51 @@
 @keyframes neutralMouth {
   0%, 100% { transform: scaleX(1); }
   50% { transform: scaleX(1.2); }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .pet {
+    width: 120px;
+    height: 120px;
+  }
+
+  .head {
+    width: 100px;
+    height: 80px;
+    top: 20px;
+    left: 10px;
+  }
+
+  .snout {
+    width: 50px;
+    height: 30px;
+    top: 50px;
+    left: 35px;
+  }
+
+  .ear {
+    width: 30px;
+    height: 45px;
+  }
+
+  .eye {
+    width: 12px;
+    height: 12px;
+    top: 35px;
+  }
+
+  .nose {
+    width: 15px;
+    height: 12px;
+    top: 55px;
+    left: 52px;
+  }
+
+  .mouth {
+    width: 30px;
+    height: 15px;
+    top: 65px;
+    left: 45px;
+  }
 } 
