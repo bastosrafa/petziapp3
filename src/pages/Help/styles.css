@@ -1,0 +1,182 @@
+.help-container {
+  padding: 2rem;
+  padding-bottom: 6rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: calc(100vh - 6rem);
+}
+
+.help-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.help-header h1 {
+  font-size: 2rem;
+  margin: 1rem 0;
+  color: var(--foreground);
+}
+
+.help-header p {
+  color: var(--muted-foreground);
+  margin-bottom: 2rem;
+}
+
+.search-box {
+  margin-bottom: 2rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  background-color: var(--background);
+  color: var(--foreground);
+  font-size: 1rem;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
+}
+
+.help-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.help-card {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.help-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.help-card-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary);
+  color: white;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.help-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: var(--foreground);
+}
+
+.help-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.help-card li {
+  padding: 0.5rem 0;
+  color: var(--muted-foreground);
+  border-bottom: 1px solid var(--border);
+}
+
+.help-card li:last-child {
+  border-bottom: none;
+}
+
+.help-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  color: var(--foreground);
+  font-weight: 500;
+}
+
+.help-item-header:hover {
+  color: var(--primary);
+}
+
+.help-item-content {
+  padding: 1rem 0;
+  color: var(--muted-foreground);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.contact-section {
+  text-align: center;
+  padding: 2rem;
+  background-color: var(--card);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+}
+
+.contact-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--foreground);
+}
+
+.contact-section p {
+  color: var(--muted-foreground);
+  margin-bottom: 1.5rem;
+}
+
+.contact-button {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.contact-button:hover {
+  background-color: var(--primary-hover);
+}
+
+@media (max-width: 768px) {
+  .help-container {
+    padding: 1rem;
+    padding-bottom: 6rem;
+  }
+
+  .help-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-section {
+    padding: 1.5rem;
+  }
+} 
