@@ -10,6 +10,7 @@ import { useAuthContext } from "./hooks/useAuthContext";
 import { useToast } from "./shadcn/components/ui/use-toast";
 import { ToastAction } from "./shadcn/components/ui/toast";
 import { useNavigate } from "react-router-dom";
+import ChangePassword from './pages/Profile/ChangePassword'
 
 function App() {
   const { user } = useAuthContext();

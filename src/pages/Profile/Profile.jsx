@@ -9,8 +9,7 @@ import { useUserContext } from "@/hooks/useUserContext";
 import Loading from "@/components/Loading";
 
 // TODO: Trocar pela URL da sua Cloud Function
-const url =
-  "https://us-central1-<PROJECT_ID>.cloudfunctions.net/changePassword";
+const url = "https://us-central1-petzia-f86b4.cloudfunctions.net/changePassword";
 
 export default function Profile({ rerender, setRerender }) {
   const { user } = useAuthContext();
@@ -20,7 +19,7 @@ export default function Profile({ rerender, setRerender }) {
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const isEmailProvider =
-    user.providerData &&
+    user?.providerData &&
     user.providerData.length &&
     user.providerData[0].providerId === "google.com"
       ? false
@@ -49,7 +48,7 @@ export default function Profile({ rerender, setRerender }) {
     });
   };
 
-  if (!userDoc) return <Loading />;
+  if (!userDoc || !user) return <Loading />;
 
   return (
     <div className="mt-5 px-0 py-5 w-full xl:w-3/5 mx-auto 2xl:w-1/3">
@@ -62,9 +61,9 @@ export default function Profile({ rerender, setRerender }) {
       <Card className="mt-2.5 w-full">
         <CardContent>
           <p className="mt-5 text-muted-foreground mb-1.5">Nome completo</p>
-          <Input disabled value={user.displayName} readOnly type="text" />
+          <Input disabled value={user?.displayName || ""} readOnly type="text" />
           <p className="mt-5 text-muted-foreground mb-1.5">E-mail</p>
-          <Input disabled value={user.email} readOnly type="email" />
+          <Input disabled value={user?.email || ""} readOnly type="email" />
           <div className="flex gap-5">
             <div>
               <p className="mt-5 text-muted-foreground mb-1.5">

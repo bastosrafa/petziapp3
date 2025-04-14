@@ -70,5 +70,13 @@ service cloud.firestore {
       allow update: if isSignedIn() && request.auth.uid == resource.data.userId;
       allow delete: if isSignedIn() && request.auth.uid == resource.data.userId;
     }
+
+    // Regras para a coleção tokens
+    match /tokens/{userId} {
+      allow read: if isSignedIn() && idsMatch(userId);
+      allow create: if isSignedIn() && idsMatch(userId);
+      allow update: if isSignedIn() && idsMatch(userId);
+      allow delete: if isSignedIn() && idsMatch(userId);
+    }
   }
 }

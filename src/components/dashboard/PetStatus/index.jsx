@@ -20,10 +20,10 @@ const PetStatus = () => {
       const hoursSinceLastFood = (now - lastFood) / (1000 * 60 * 60);
       if (hoursSinceLastFood > 24) {
         moodScore -= 2;
-        currentMessages.push('Está com fome!');
+        currentMessages.push('Au au! Meu barriguinha está roncando... Será que tem um biscoitinho pra mim? 🦴');
       } else if (hoursSinceLastFood < 4) {
         moodScore += 1;
-        currentMessages.push('Bem alimentado!');
+        currentMessages.push('Mmm... Que delícia! Agora estou com a barriguinha cheia! 🐾');
       }
     }
 
@@ -33,10 +33,10 @@ const PetStatus = () => {
       const daysSinceLastWalk = (now - lastWalk) / (1000 * 60 * 60 * 24);
       if (daysSinceLastWalk > 2) {
         moodScore -= 2;
-        currentMessages.push('Precisa de exercício!');
+        currentMessages.push('Estou com tanta energia! Vamos dar uma voltinha? Quero cheirar todas as árvores! 🌳');
       } else if (daysSinceLastWalk < 1) {
         moodScore += 1;
-        currentMessages.push('Bem exercitado!');
+        currentMessages.push('Que passeio incrível! Adoro quando você me leva pra passear! 🐕');
       }
     }
 
@@ -46,17 +46,17 @@ const PetStatus = () => {
       const daysSinceLastSession = (now - lastSession) / (1000 * 60 * 60 * 24);
       if (daysSinceLastSession > 3) {
         moodScore -= 1;
-        currentMessages.push('Precisa treinar!');
+        currentMessages.push('Hora de treinar! Quero mostrar pra você como sou esperto! 🎾');
       } else if (daysSinceLastSession < 1) {
         moodScore += 1;
-        currentMessages.push('Treinando bem!');
+        currentMessages.push('Uau! Aprendi tantas coisas novas hoje! Sou o melhor aluno! 🏆');
       }
     }
 
     // Verifica vacinas
     if (dashboardData.health?.vaccines?.status === 'pending') {
       moodScore -= 2;
-      currentMessages.push('Vacinas pendentes!');
+      currentMessages.push('Doutor, estou precisando de um check-up! Quero ficar sempre saudável! 🏥');
     }
 
     // Determina o humor
@@ -72,9 +72,9 @@ const PetStatus = () => {
   }, [dashboardData]);
 
   const moodDescriptions = {
-    happy: 'Feliz e contente!',
-    neutral: 'Tudo normal por aqui!',
-    sad: 'Precisando de atenção!'
+    happy: 'Estou super feliz! Tudo está perfeito! 🐶',
+    neutral: 'Estou tranquilo, mas sempre pronto para brincar! 🐕',
+    sad: 'Preciso de um pouco mais de atenção... 🥺'
   };
 
   return (

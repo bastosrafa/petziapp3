@@ -1,8 +1,16 @@
-import { createContext, useReducer, useEffect } from "react";
+import { createContext, useReducer, useEffect, useContext } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase/config";
 
 export const AuthContext = createContext();
+
+export const useAuthContext = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuthContext must be used within an AuthContextProvider');
+  }
+  return context;
+};
 
 export const authReducer = (state, action) => {
   switch (action.type) {
@@ -36,8 +44,18 @@ export function AuthContextProvider({ children }) {
 
   console.log("AuthContext state:", state);
 
+  const logout = async () => {
+    try {
+      await auth.signOut();
+      dispatch({ type: "LOGOUT" });
+    } catch (error) {
+      console.error("Error logging out:", error);
+      throw error;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ ...state, dispatch }}>
+    <AuthContext.Provider value={{ ...state, dispatch, logout }}>
       {children}
     </AuthContext.Provider>
   );

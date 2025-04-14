@@ -12,7 +12,7 @@ import { UserDocProvider } from "./contexts/UserDocContext";
 import useMediaQuery from "./hooks/useMediaQuery";
 import Topbar from "./components/Topbar";
 import PasswordRecovery from "./pages/Recover/Recover";
-import Help from "./pages/Help/Help";
+import Help from "./pages/Help/index";
 import Training from "./pages/Content/Training/index";
 import { ReferrerDocProvider } from "./contexts/ReferrerDocContext";
 import { db } from "./firebase/config";
@@ -38,6 +38,9 @@ import Diary from "./pages/Content/Diary";
 import Dashboard from "./pages/Dashboard";
 import { DashboardProvider } from "./pages/Dashboard/contexts/DashboardContext";
 import Notifications from "./pages/Notifications";
+import About from "./pages/About";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 
 function AppRoutes() {
   const { user, authIsReady } = useAuthContext();
@@ -173,6 +176,9 @@ function AppRoutes() {
                       <Route path="/vacinas" element={<Navigate to="/content/vaccines" replace />} />
                       <Route path="/profile" element={<Profile />} />
                       <Route path="/help" element={<Help />} />
+                      <Route path="/about" element={<About />} />
+                      <Route path="/terms" element={<Terms />} />
+                      <Route path="/privacy" element={<Privacy />} />
                       <Route path="/recover" element={<PasswordRecovery />} />
                       <Route path="*" element={<Navigate to="/" />} />
                     </Routes>

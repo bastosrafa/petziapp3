@@ -1,109 +1,164 @@
 .notifications-container {
-  max-width: 800px;
-  margin: 0 auto;
   padding: 2rem;
-  min-height: 100vh;
-  background-color: var(--background-color);
+  padding-bottom: 6rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: calc(100vh - 6rem);
+  position: relative;
 }
 
 .notifications-container h1 {
   font-size: 2rem;
-  color: var(--text-color);
   margin-bottom: 1rem;
+  color: var(--foreground);
 }
 
 .description {
-  color: var(--text-secondary);
+  color: var(--muted-foreground);
   margin-bottom: 2rem;
-  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.permission-button {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+
+.permission-button:hover {
+  background-color: var(--primary-hover);
 }
 
 .settings-grid {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
+  position: relative;
+  z-index: 0;
 }
 
 .setting-item {
+  background-color: var(--card);
+  padding: 1.5rem;
+  border-radius: 0.75rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem;
-  background-color: var(--card-background);
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.setting-item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--primary);
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
 .setting-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transform: translateY(-2px);
+}
+
+.setting-item:hover::after {
+  opacity: 0.05;
+}
+
+.setting-item.active {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.setting-item.active .toggle-indicator svg {
+  color: white;
 }
 
 .setting-info {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 1rem;
+  flex: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .setting-icon {
+  color: var(--primary);
   width: 24px;
   height: 24px;
-  color: var(--primary-color);
 }
 
 .setting-info h3 {
-  font-size: 1.1rem;
-  color: var(--text-color);
-  margin-bottom: 0.25rem;
+  margin: 0;
+  font-size: 1rem;
+  color: var(--foreground);
 }
 
 .setting-info p {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
 }
 
-.toggle-button {
-  width: 48px;
-  height: 48px;
+.toggle-indicator {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  border: none;
-  background-color: var(--background-color);
-  color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 1;
 }
 
-.toggle-button.active {
-  background-color: var(--primary-color);
+.toggle-indicator svg {
+  width: 20px;
+  height: 20px;
+  color: var(--muted-foreground);
+}
+
+.setting-item.active .toggle-indicator svg {
   color: white;
-}
-
-.toggle-button:hover {
-  transform: scale(1.1);
 }
 
 .status-message {
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  padding: 1rem 2rem;
-  border-radius: 8px;
+  padding: 1rem;
+  border-radius: 0.5rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   animation: slideIn 0.3s ease;
+  z-index: 100;
 }
 
 .status-message.success {
-  background-color: #4caf50;
+  background-color: var(--success);
   color: white;
 }
 
 .status-message.error {
-  background-color: #f44336;
+  background-color: var(--destructive);
   color: white;
 }
 
@@ -113,12 +168,9 @@
 }
 
 .loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
-  color: var(--text-secondary);
-  font-size: 1.2rem;
+  text-align: center;
+  color: var(--muted-foreground);
+  padding: 2rem;
 }
 
 @keyframes slideIn {
@@ -137,20 +189,13 @@
     padding: 1rem;
   }
 
-  .setting-item {
-    padding: 1rem;
+  .settings-grid {
+    grid-template-columns: 1fr;
   }
 
-  .setting-info h3 {
-    font-size: 1rem;
-  }
-
-  .setting-info p {
-    font-size: 0.8rem;
-  }
-
-  .toggle-button {
-    width: 40px;
-    height: 40px;
+  .status-message {
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
   }
 } 

@@ -18,7 +18,7 @@ export const routeOptions = [
   {
     route: "/adestramento",
     name: "Adestramento",
-    // badge: "🔥 hot",
+    // badge: "🔥 hot",
     // miniBadge: "🔥",
     icon: <PawPrintIcon className="h-6 sm:h-5" />,
   },
@@ -38,3 +38,10 @@ export const routeOptions = [
     icon: <AlignJustifyIcon className="h-6 sm:h-5" />,
   },
 ];
+
+const corsOptions = {
+  origin: ['http://localhost:5173', 'https://seu-dominio.com'],
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};

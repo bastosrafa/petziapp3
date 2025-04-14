@@ -1,0 +1,129 @@
+.dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* Seção Principal - Status do Pet */
+.dashboard-main-section {
+  background-color: #ffffff;
+  border-radius: 0 0 16px 16px;
+  padding: 0;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.pet-status-wrapper {
+  width: 100%;
+  max-width: 800px;
+  margin: auto;
+  transform: scale(1.2);
+}
+
+/* Seção de Atividades e Outras */
+.dashboard-secondary-section {
+  padding: 20px;
+  margin-top: -30px;
+}
+
+.dashboard-activities-section {
+  margin-bottom: 30px;
+}
+
+.dashboard-activities-section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.activities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* Seção de Treinamento */
+.dashboard-training-section {
+  margin-bottom: 30px;
+}
+
+.dashboard-training-section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Seção de Saúde */
+.dashboard-health-section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Estados de Loading e Error */
+.dashboard-loading,
+.dashboard-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.dashboard-error button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.dashboard-error button:hover {
+  background-color: #2980b9;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 0;
+  }
+
+  .dashboard-main-section {
+    padding: 20px;
+    min-height: 100vh;
+  }
+
+  .pet-status-wrapper {
+    transform: scale(1);
+  }
+
+  .activities-grid {
+    grid-template-columns: 1fr;
+  }
+} 
