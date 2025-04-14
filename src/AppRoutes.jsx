@@ -37,6 +37,7 @@ import { VaccineProvider } from "./pages/Content/Vaccines/contexts/VaccineContex
 import Diary from "./pages/Content/Diary";
 import Dashboard from "./pages/Dashboard";
 import { DashboardProvider } from "./pages/Dashboard/contexts/DashboardContext";
+import Notifications from "./pages/Notifications";
 
 function AppRoutes() {
   const { user, authIsReady } = useAuthContext();
@@ -96,6 +97,7 @@ function AppRoutes() {
                           <Dashboard />
                         </DashboardProvider>
                       } />
+                      <Route path="/notifications" element={<Notifications />} />
                       <Route path="/adestramento" element={<Content />} />
                       <Route path="/content/training" element={
                         <DashboardProvider>
@@ -171,6 +173,8 @@ function AppRoutes() {
                       <Route path="/vacinas" element={<Navigate to="/content/vaccines" replace />} />
                       <Route path="/profile" element={<Profile />} />
                       <Route path="/help" element={<Help />} />
+                      <Route path="/recover" element={<PasswordRecovery />} />
+                      <Route path="*" element={<Navigate to="/" />} />
                     </Routes>
                   </div>
                   {isMobile ? (
@@ -187,8 +191,8 @@ function AppRoutes() {
           ) : (
             <Routes>
               <Route path="/login" element={<Login />} />
-              <Route path="/password/recovery" element={<PasswordRecovery />} />
-              <Route path="*" element={<Login />} />
+              <Route path="/recover" element={<PasswordRecovery />} />
+              <Route path="*" element={<Navigate to="/login" />} />
             </Routes>
           )}
         </BrowserRouter>

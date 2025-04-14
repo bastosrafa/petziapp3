@@ -53,21 +53,27 @@ const SettingsMenu = ({ isOpen, onClose }) => {
     switch (itemId) {
       case 'profile':
         navigate('/profile');
+        onClose();
         break;
       case 'notifications':
         navigate('/notifications');
+        onClose();
         break;
       case 'help':
         navigate('/help');
+        onClose();
         break;
       case 'about':
         navigate('/about');
+        onClose();
         break;
       case 'terms':
         navigate('/terms');
+        onClose();
         break;
       case 'privacy':
         navigate('/privacy');
+        onClose();
         break;
       default:
         break;
