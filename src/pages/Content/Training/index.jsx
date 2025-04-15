@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { trainingModules } from "./config";
+import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
+import { useAuthContext } from "@/hooks/useAuthContext";
 
 const Container = styled.div`
   padding: 20px;
@@ -80,10 +82,40 @@ const LockIcon = styled.div`
 
 export default function Training() {
   const navigate = useNavigate();
+  const { user } = useAuthContext();
+  const { dashboardData } = useDashboard();
+  const [unlockedModules, setUnlockedModules] = useState({
+    starthere: true,
+    behavior: false,
+    socialization: false,
+    hygiene: false,
+    badhabits: false,
+    mental: false
+  });
+
+  useEffect(() => {
+    // Check localStorage for module unlock status
+    const checkModuleStatus = () => {
+      const status = {
+        starthere: true, // Always unlocked
+        behavior: localStorage.getItem("behavior_unlocked") === "true",
+        socialization: localStorage.getItem("socialization_unlocked") === "true",
+        hygiene: localStorage.getItem("hygiene_unlocked") === "true",
+        badhabits: localStorage.getItem("badhabits_unlocked") === "true",
+        mental: localStorage.getItem("mental_unlocked") === "true"
+      };
+      setUnlockedModules(status);
+    };
+
+    checkModuleStatus();
+    // Listen for storage changes
+    window.addEventListener('storage', checkModuleStatus);
+    return () => window.removeEventListener('storage', checkModuleStatus);
+  }, []);
 
   const handleModuleClick = (moduleId) => {
     const module = trainingModules.find(m => m.id === moduleId);
-    if (module && module.route) {
+    if (module && module.route && unlockedModules[moduleId]) {
       navigate(module.route);
     }
   };
@@ -96,20 +128,23 @@ export default function Training() {
           <ModuleCard
             key={module.id}
             onClick={() => handleModuleClick(module.id)}
-            locked={module.id !== "starthere" && module.id !== "behavior"}
+            locked={!unlockedModules[module.id]}
           >
             <ModuleHeader>
-              {module.icon && (
-                <ModuleIcon>
-                  {React.createElement(module.icon)}
-                </ModuleIcon>
-              )}
+              <ModuleIcon>
+                <module.icon size={24} />
+              </ModuleIcon>
               <ModuleTitle>{module.title}</ModuleTitle>
             </ModuleHeader>
             <ModuleDescription>{module.description}</ModuleDescription>
             <ModuleDuration>{module.duration}</ModuleDuration>
-            {module.id !== "starthere" && module.id !== "behavior" && (
-              <LockIcon>🔒</LockIcon>
+            {!unlockedModules[module.id] && (
+              <LockIcon>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+              </LockIcon>
             )}
           </ModuleCard>
         ))}

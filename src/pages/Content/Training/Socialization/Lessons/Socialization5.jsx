@@ -162,15 +162,30 @@ const Socialization5 = ({ onNextLesson }) => {
     setShowPopup(false);
   };
 
-  const handleNextModule = () => {
-    // Desbloqueia a primeira aula do módulo de higiene
-    localStorage.setItem("hygiene1_unlocked", "true");
-    
-    // Desbloqueia o módulo na página de adestramento
-    localStorage.setItem("hygiene_unlocked", "true");
-    
-    // Navega para a primeira aula do módulo de higiene
-    navigate("/content/training/hygiene");
+  const handleNextModule = async () => {
+    try {
+      // Update training progress in dashboard context
+      await updateTraining({
+        module: 'hygiene',
+        lesson: 'hygiene1',
+        status: 'unlocked',
+        completed: false,
+        lastAccessed: Timestamp.now()
+      });
+
+      // Desbloqueia a primeira aula do módulo de higiene
+      localStorage.setItem("hygiene1_unlocked", "true");
+      
+      // Desbloqueia o módulo na página de adestramento
+      localStorage.setItem("hygiene_unlocked", "true");
+      
+      // Navega para a primeira aula do módulo de higiene
+      navigate("/content/training/hygiene");
+    } catch (error) {
+      console.error('Error updating training progress:', error);
+      // Still navigate even if update fails
+      navigate("/content/training/hygiene");
+    }
   };
 
   return (

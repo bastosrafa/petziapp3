@@ -19,7 +19,7 @@ const BottomBar = () => {
           <span className="nav-label">Início</span>
         </Link>
 
-        <Link to="/adestramento" className={`nav-item ${isActive('/adestramento') ? 'active' : ''}`}>
+        <Link to="/content/training" className={`nav-item ${isActive('/content/training') ? 'active' : ''}`}>
           <span className="nav-icon">🎓</span>
           <span className="nav-label">Adestramento</span>
         </Link>

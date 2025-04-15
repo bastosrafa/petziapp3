@@ -185,7 +185,7 @@ export default function Hygiene4({ onNextLesson }) {
   const { updateTraining, refreshData } = useDashboard();
 
   const nextSlide = async () => {
-    if (currentSlide === 2) {
+    if (currentSlide === 3) {
       try {
         // Salvar no localStorage
         localStorage.setItem("hygiene4_completed", "true");
@@ -223,7 +223,7 @@ export default function Hygiene4({ onNextLesson }) {
         setShowPopup(true);
       }
     } else {
-      setCurrentSlide((prev) => (prev + 1) % 3);
+      setCurrentSlide((prev) => (prev + 1) % 4);
     }
   };
 
@@ -249,6 +249,17 @@ export default function Hygiene4({ onNextLesson }) {
     // Desbloqueia o módulo na página de adestramento geral
     localStorage.setItem("startHere", "true");
     localStorage.setItem("badhabits_unlocked", "true");
+    
+    // Atualiza o estado do módulo no Firestore
+    if (user) {
+      updateTraining({
+        completedLessons: 19,
+        currentLevel: 'intermediate',
+        lastSession: new Date(),
+        totalTime: 220,
+        unlockedModules: ['startHere', 'hygiene', 'badhabits']
+      });
+    }
     
     // Navega para a primeira aula do módulo de maus hábitos
     navigate("/content/training/badhabits");

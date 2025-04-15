@@ -2,9 +2,54 @@ import { useEffect } from "react";
 import VaccineForm from "./components/VaccineForm";
 import VaccineList from "./components/VaccineList";
 import { useVaccineReminders } from "./hooks/useVaccineReminders";
-import { Button } from "@/shadcn/components/ui/button";
-import { toast } from "@/shadcn/components/ui/use-toast";
+import styled from "styled-components";
 import { Bell } from "lucide-react";
+
+const Container = styled.div`
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+`;
+
+const Title = styled.h1`
+  font-size: 24px;
+  color: #333;
+  margin: 0;
+`;
+
+const NotificationButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
 
 export default function Vaccines() {
   const { requestNotificationPermission } = useVaccineReminders();
@@ -17,39 +62,24 @@ export default function Vaccines() {
   const handleEnableNotifications = async () => {
     const granted = await requestNotificationPermission();
     if (granted) {
-      toast({
-        title: "Notificações Ativadas",
-        description: "Você receberá lembretes para suas vacinas pendentes.",
-      });
-    } else {
-      toast({
-        title: "Notificações Desativadas",
-        description: "Você não receberá lembretes para suas vacinas.",
-        variant: "destructive",
-      });
+      // Notificação de sucesso será mostrada pelo componente VaccineList
     }
   };
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold tracking-tight">Carteira de Vacinação e Medicamentos</h1>
-          <Button onClick={handleEnableNotifications}>
-            <Bell className="mr-2 h-4 w-4" />
-            Ativar Lembretes
-          </Button>
-        </div>
-      </div>
+    <Container>
+      <Header>
+        <Title>Carteira de Vacinação e Medicamentos</Title>
+        <NotificationButton onClick={handleEnableNotifications}>
+          <Bell size={20} />
+          Ativar Lembretes
+        </NotificationButton>
+      </Header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-6">
-          <VaccineForm />
-        </div>
-        <div className="space-y-6">
-          <VaccineList />
-        </div>
-      </div>
-    </div>
+      <Grid>
+        <VaccineForm />
+        <VaccineList />
+      </Grid>
+    </Container>
   );
 } 

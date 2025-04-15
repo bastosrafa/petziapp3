@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, BellOff, CheckCircle2, XCircle } from 'lucide-react';
+import { 
+  Bell, 
+  BellOff, 
+  CheckCircle2, 
+  XCircle,
+  Utensils,
+  Dog,
+  Dumbbell,
+  Syringe,
+  Megaphone
+} from 'lucide-react';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
@@ -200,7 +210,7 @@ const Notifications = () => {
           onKeyPress={(e) => e.key === 'Enter' && handleToggle('foodReminders')}
         >
           <div className="setting-info">
-            <Bell className="setting-icon" />
+            <Utensils className="setting-icon" />
             <div>
               <h3>Lembretes de Alimentação</h3>
               <p>Receba notificações sobre horários de alimentação</p>
@@ -219,7 +229,7 @@ const Notifications = () => {
           onKeyPress={(e) => e.key === 'Enter' && handleToggle('walkReminders')}
         >
           <div className="setting-info">
-            <Bell className="setting-icon" />
+            <Dog className="setting-icon" />
             <div>
               <h3>Lembretes de Passeio</h3>
               <p>Alertas para horários de passeio</p>
@@ -238,7 +248,7 @@ const Notifications = () => {
           onKeyPress={(e) => e.key === 'Enter' && handleToggle('trainingReminders')}
         >
           <div className="setting-info">
-            <Bell className="setting-icon" />
+            <Dumbbell className="setting-icon" />
             <div>
               <h3>Lembretes de Treinamento</h3>
               <p>Notificações sobre sessões de treinamento</p>
@@ -257,9 +267,9 @@ const Notifications = () => {
           onKeyPress={(e) => e.key === 'Enter' && handleToggle('vaccineReminders')}
         >
           <div className="setting-info">
-            <Bell className="setting-icon" />
+            <Syringe className="setting-icon" />
             <div>
-              <h3>Lembretes de Vacinas</h3>
+              <h3>Lembretes de Vacina</h3>
               <p>Alertas para datas de vacinação</p>
             </div>
           </div>
@@ -276,10 +286,10 @@ const Notifications = () => {
           onKeyPress={(e) => e.key === 'Enter' && handleToggle('generalUpdates')}
         >
           <div className="setting-info">
-            <Bell className="setting-icon" />
+            <Megaphone className="setting-icon" />
             <div>
               <h3>Atualizações Gerais</h3>
-              <p>Notificações sobre novidades e dicas</p>
+              <p>Notificações sobre novidades e atualizações</p>
             </div>
           </div>
           <div className="toggle-indicator">
@@ -291,9 +301,10 @@ const Notifications = () => {
       {saveStatus === 'success' && (
         <div className="status-message success">
           <CheckCircle2 className="status-icon" />
-          Configurações salvas com sucesso!
+          Configurações salvas com sucesso
         </div>
       )}
+
       {saveStatus === 'error' && (
         <div className="status-message error">
           <XCircle className="status-icon" />

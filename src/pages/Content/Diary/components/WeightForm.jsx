@@ -1,156 +1,223 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shadcn/components/ui/card";
-import { Button } from "@/shadcn/components/ui/button";
-import { Input } from "@/shadcn/components/ui/input";
-import { Label } from "@/shadcn/components/ui/label";
-import { Textarea } from "@/shadcn/components/ui/textarea";
+import { useFirestore } from "@/hooks/useFirestore";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { Timestamp } from 'firebase/firestore';
+import styled from "styled-components";
 import { X } from "lucide-react";
-import { toast } from "@/shadcn/components/ui/use-toast";
+
+const FormContainer = styled.div`
+  padding: 20px;
+`;
+
+const FormHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const FormTitle = styled.h2`
+  font-size: 20px;
+  color: #333;
+  margin: 0;
+`;
+
+const CloseButton = styled.button`
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 20px;
+`;
+
+const Label = styled.label`
+  display: block;
+  margin-bottom: 8px;
+  color: #666;
+  font-weight: 500;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  
+  &:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+`;
+
+const TextArea = styled.textarea`
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  min-height: 100px;
+  resize: vertical;
+  
+  &:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+`;
+
+const Button = styled.button`
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+`;
+
+const SaveButton = styled(Button)`
+  background-color: #007bff;
+  color: white;
+  border: none;
+  
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const CancelButton = styled(Button)`
+  background-color: #f8f9fa;
+  color: #333;
+  border: 1px solid #ddd;
+  
+  &:hover {
+    background-color: #e9ecef;
+  }
+`;
+
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+`;
 
 export default function WeightForm({ onClose }) {
   const [formData, setFormData] = useState({
-    date: "",
-    time: "",
-    category: "peso",
+    date: new Date().toISOString().split('T')[0],
     weight: "",
     height: "",
     length: "",
-    chest: "",
-    neck: "",
     notes: "",
+    category: "peso"
   });
+
+  const { addDocument } = useFirestore('diary');
+  const { user } = useAuthContext();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // TODO: Implementar a lógica de salvamento
-      toast({
-        title: "Registro salvo com sucesso!",
-        description: "As medidas do pet foram registradas no diário.",
+      await addDocument({
+        ...formData,
+        date: Timestamp.fromDate(new Date(formData.date)),
+        userId: user.uid,
+        createdAt: Timestamp.now()
       });
       onClose();
     } catch (error) {
-      toast({
-        title: "Erro ao salvar",
-        description: "Não foi possível salvar o registro. Tente novamente.",
-        variant: "destructive",
-      });
+      console.error('Error adding record:', error);
     }
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Peso e Medidas</CardTitle>
-        <Button variant="ghost" size="icon" onClick={onClose}>
-          <X className="h-4 w-4" />
-        </Button>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="date">Data</Label>
-              <Input
-                id="date"
-                type="date"
-                value={formData.date}
-                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="time">Hora (opcional)</Label>
-              <Input
-                id="time"
-                type="time"
-                value={formData.time}
-                onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-              />
-            </div>
-          </div>
+    <FormContainer>
+      <FormHeader>
+        <FormTitle>Novo Registro de Peso e Medidas</FormTitle>
+        <CloseButton onClick={onClose}>
+          <X size={20} />
+        </CloseButton>
+      </FormHeader>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="weight">Peso (kg)</Label>
-              <Input
-                id="weight"
-                type="number"
-                step="0.1"
-                value={formData.weight}
-                onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
-                placeholder="Ex: 5.5"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="height">Altura (cm) (opcional)</Label>
-              <Input
-                id="height"
-                type="number"
-                step="0.1"
-                value={formData.height}
-                onChange={(e) => setFormData({ ...formData, height: e.target.value })}
-                placeholder="Ex: 45.0"
-              />
-            </div>
-          </div>
+      <form onSubmit={handleSubmit}>
+        <FormGroup>
+          <Label>Data</Label>
+          <Input
+            type="date"
+            value={formData.date}
+            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+            required
+          />
+        </FormGroup>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="length">Comprimento (cm) (opcional)</Label>
-              <Input
-                id="length"
-                type="number"
-                step="0.1"
-                value={formData.length}
-                onChange={(e) => setFormData({ ...formData, length: e.target.value })}
-                placeholder="Ex: 60.0"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="chest">Circunferência do Tórax (cm) (opcional)</Label>
-              <Input
-                id="chest"
-                type="number"
-                step="0.1"
-                value={formData.chest}
-                onChange={(e) => setFormData({ ...formData, chest: e.target.value })}
-                placeholder="Ex: 65.0"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="neck">Circunferência do Pescoço (cm) (opcional)</Label>
+        <Grid>
+          <FormGroup>
+            <Label>Peso (kg)</Label>
             <Input
-              id="neck"
               type="number"
               step="0.1"
-              value={formData.neck}
-              onChange={(e) => setFormData({ ...formData, neck: e.target.value })}
-              placeholder="Ex: 35.0"
+              value={formData.weight}
+              onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
+              placeholder="Ex: 5.2"
+              required
             />
-          </div>
+          </FormGroup>
 
-          <div className="space-y-2">
-            <Label htmlFor="notes">Observações (opcional)</Label>
-            <Textarea
-              id="notes"
-              value={formData.notes}
-              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              placeholder="Observações sobre as medidas ou mudanças notadas..."
+          <FormGroup>
+            <Label>Altura (cm)</Label>
+            <Input
+              type="number"
+              value={formData.height}
+              onChange={(e) => setFormData({ ...formData, height: e.target.value })}
+              placeholder="Ex: 25"
+              required
             />
-          </div>
+          </FormGroup>
+        </Grid>
 
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button type="submit">Salvar</Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+        <FormGroup>
+          <Label>Comprimento (cm)</Label>
+          <Input
+            type="number"
+            value={formData.length}
+            onChange={(e) => setFormData({ ...formData, length: e.target.value })}
+            placeholder="Ex: 40"
+            required
+          />
+        </FormGroup>
+
+        <FormGroup>
+          <Label>Observações</Label>
+          <TextArea
+            value={formData.notes}
+            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+            placeholder="Adicione observações relevantes..."
+          />
+        </FormGroup>
+
+        <ButtonGroup>
+          <CancelButton type="button" onClick={onClose}>
+            Cancelar
+          </CancelButton>
+          <SaveButton type="submit">
+            Salvar
+          </SaveButton>
+        </ButtonGroup>
+      </form>
+    </FormContainer>
   );
 } 

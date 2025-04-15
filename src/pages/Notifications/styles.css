@@ -1,187 +1,133 @@
 .notifications-container {
-  padding: 2rem;
-  padding-bottom: 6rem;
   max-width: 1200px;
   margin: 0 auto;
-  min-height: calc(100vh - 6rem);
-  position: relative;
+  padding: 2rem;
+  font-family: 'Inter', sans-serif;
 }
 
 .notifications-container h1 {
+  color: #1a1a1a;
   font-size: 2rem;
   margin-bottom: 1rem;
-  color: var(--foreground);
 }
 
 .description {
-  color: var(--muted-foreground);
+  color: #666;
   margin-bottom: 2rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
+  font-size: 1.1rem;
+  line-height: 1.6;
 }
 
 .permission-button {
-  background-color: var(--primary);
+  display: inline-block;
+  background-color: #2563eb;
   color: white;
-  border: none;
   padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  font-size: 0.875rem;
+  border-radius: 0.375rem;
+  margin-left: 1rem;
+  font-weight: 500;
   transition: background-color 0.2s;
 }
 
 .permission-button:hover {
-  background-color: var(--primary-hover);
+  background-color: #1d4ed8;
 }
 
 .settings-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
-  position: relative;
-  z-index: 0;
+  margin-top: 2rem;
 }
 
 .setting-item {
-  background-color: var(--card);
-  padding: 1.5rem;
+  background-color: white;
   border-radius: 0.75rem;
+  padding: 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid var(--border);
-  transition: all 0.2s ease;
   cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  z-index: 0;
-}
-
-.setting-item::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--primary);
-  opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .setting-item:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transform: translateY(-2px);
-}
-
-.setting-item:hover::after {
-  opacity: 0.05;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .setting-item.active {
-  border-color: var(--primary);
-  background-color: var(--primary);
-}
-
-.setting-item.active .toggle-indicator svg {
-  color: white;
+  border-color: #2563eb;
 }
 
 .setting-info {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 1rem;
-  flex: 1;
-  position: relative;
-  z-index: 1;
 }
 
 .setting-icon {
-  color: var(--primary);
-  width: 24px;
-  height: 24px;
-}
-
-.setting-info h3 {
-  margin: 0;
-  font-size: 1rem;
-  color: var(--foreground);
-}
-
-.setting-info p {
-  margin: 0.25rem 0 0;
-  font-size: 0.875rem;
-  color: var(--muted-foreground);
-}
-
-.toggle-indicator {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-  position: relative;
-  z-index: 1;
+  background-color: #f3f4f6;
+  border-radius: 0.5rem;
+  color: #2563eb;
 }
 
-.toggle-indicator svg {
-  width: 20px;
-  height: 20px;
-  color: var(--muted-foreground);
+.setting-info h3 {
+  color: #1a1a1a;
+  font-size: 1.125rem;
+  margin-bottom: 0.25rem;
 }
 
-.setting-item.active .toggle-indicator svg {
+.setting-info p {
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.toggle-indicator {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6;
+  border-radius: 0.5rem;
+  color: #2563eb;
+}
+
+.setting-item.active .toggle-indicator {
+  background-color: #2563eb;
   color: white;
 }
 
 .status-message {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  padding: 1rem;
-  border-radius: 0.5rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  animation: slideIn 0.3s ease;
-  z-index: 100;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+  font-weight: 500;
 }
 
 .status-message.success {
-  background-color: var(--success);
-  color: white;
+  background-color: #dcfce7;
+  color: #166534;
 }
 
 .status-message.error {
-  background-color: var(--destructive);
-  color: white;
+  background-color: #fee2e2;
+  color: #991b1b;
 }
 
 .status-icon {
-  width: 20px;
-  height: 20px;
-}
-
-.loading {
-  text-align: center;
-  color: var(--muted-foreground);
-  padding: 2rem;
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 @media (max-width: 768px) {
@@ -191,11 +137,5 @@
 
   .settings-grid {
     grid-template-columns: 1fr;
-  }
-
-  .status-message {
-    bottom: 1rem;
-    right: 1rem;
-    left: 1rem;
   }
 } 

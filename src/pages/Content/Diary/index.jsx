@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shadcn/components/ui/card";
-import { Button } from "@/shadcn/components/ui/button";
+import styled from "styled-components";
 import { Plus, Stethoscope, Scale, Dog, Utensils, BookOpen } from "lucide-react";
 import {
   Dialog,
@@ -11,6 +10,68 @@ import VeterinaryForm from "./components/VeterinaryForm";
 import WeightForm from "./components/WeightForm";
 import WalkForm from "./components/WalkForm";
 import FoodForm from "./components/FoodForm";
+import OtherForm from "./components/OtherForm";
+
+const Container = styled.div`
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const Title = styled.h1`
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 30px;
+`;
+
+const CategoriesGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+`;
+
+const CategoryCard = styled.div`
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
+  position: relative;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+`;
+
+const CategoryHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+`;
+
+const CategoryIcon = styled.div`
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
+  border-radius: 8px;
+  color: #007bff;
+`;
+
+const CategoryTitle = styled.h2`
+  font-size: 20px;
+  color: #333;
+  margin: 0;
+`;
+
+const CategoryDescription = styled.p`
+  color: #666;
+  margin-bottom: 15px;
+`;
 
 const categories = [
   {
@@ -51,6 +112,7 @@ const categories = [
     icon: BookOpen,
     description: "Registre outros acontecimentos importantes",
     color: "bg-gray-500",
+    form: OtherForm,
   },
 ];
 
@@ -74,10 +136,8 @@ export default function Diary() {
   };
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Diário do Pet</h1>
-      </div>
+    <Container>
+      <Title>Diário do Pet</Title>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl">
@@ -85,34 +145,25 @@ export default function Diary() {
         </DialogContent>
       </Dialog>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <CategoriesGrid>
         {categories.map((category) => {
           const Icon = category.icon;
           return (
-            <Card
+            <CategoryCard
               key={category.id}
-              className={`cursor-pointer transition-all hover:shadow-lg ${
-                selectedCategory === category.id ? "ring-2 ring-primary" : ""
-              }`}
               onClick={() => handleCategoryClick(category)}
             >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {category.title}
-                </CardTitle>
-                <div className={`p-2 rounded-full ${category.color}`}>
-                  <Icon className="h-4 w-4 text-white" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground">
-                  {category.description}
-                </p>
-              </CardContent>
-            </Card>
+              <CategoryHeader>
+                <CategoryIcon>
+                  <Icon size={24} />
+                </CategoryIcon>
+                <CategoryTitle>{category.title}</CategoryTitle>
+              </CategoryHeader>
+              <CategoryDescription>{category.description}</CategoryDescription>
+            </CategoryCard>
           );
         })}
-      </div>
-    </div>
+      </CategoriesGrid>
+    </Container>
   );
 } 

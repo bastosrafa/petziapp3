@@ -1,19 +1,143 @@
 import { useVaccineContext } from "../contexts/VaccineContext";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shadcn/components/ui/card";
-import { Button } from "@/shadcn/components/ui/button";
-import { Badge } from "@/shadcn/components/ui/badge";
+import styled from "styled-components";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "@/shadcn/components/ui/use-toast";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/shadcn/components/ui/tabs";
+import { useState } from "react";
+
+const Container = styled.div`
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const Header = styled.div`
+  margin-bottom: 20px;
+`;
+
+const Title = styled.h2`
+  font-size: 20px;
+  color: #333;
+  margin: 0;
+`;
+
+const TabsContainer = styled.div`
+  width: 100%;
+`;
+
+const TabsList = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+`;
+
+const TabButton = styled.button`
+  padding: 10px;
+  border: none;
+  background: ${props => props.active ? '#007bff' : '#f8f9fa'};
+  color: ${props => props.active ? 'white' : '#333'};
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: ${props => props.active ? '#0056b3' : '#e9ecef'};
+  }
+`;
+
+const TabContent = styled.div`
+  display: ${props => props.active ? 'block' : 'none'};
+`;
+
+const VaccineCard = styled.div`
+  padding: 15px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 15px;
+`;
+
+const VaccineHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+`;
+
+const VaccineTitle = styled.h3`
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+`;
+
+const VaccineInfo = styled.p`
+  font-size: 14px;
+  color: #666;
+  margin: 5px 0;
+`;
+
+const Badge = styled.span`
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  background-color: ${props => props.variant === 'success' ? '#28a745' : '#6c757d'};
+  color: white;
+`;
+
+const Button = styled.button`
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #f8f9fa;
+  }
+`;
+
+const LoadingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+`;
+
+const LoadingSpinner = styled.div`
+  width: 30px;
+  height: 30px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
+const LoadingText = styled.p`
+  color: #666;
+  margin: 0;
+`;
+
+const ErrorText = styled.p`
+  color: #dc3545;
+  text-align: center;
+  margin: 0;
+`;
 
 export default function VaccineList() {
   const { vaccines, loading, error, updateVaccineStatus } = useVaccineContext();
+  const [activeTab, setActiveTab] = useState('pending');
 
   console.log("Estado do VaccineList:", { loading, error, vaccinesCount: vaccines.length });
 
@@ -44,135 +168,103 @@ export default function VaccineList() {
 
   if (loading) {
     return (
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>Histórico de Vacinas e Medicamentos</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center p-8">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Carregando vacinas...</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <Container>
+        <Header>
+          <Title>Histórico de Vacinas e Medicamentos</Title>
+        </Header>
+        <LoadingContainer>
+          <LoadingSpinner />
+          <LoadingText>Carregando vacinas...</LoadingText>
+        </LoadingContainer>
+      </Container>
     );
   }
 
   if (error) {
     return (
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>Histórico de Vacinas e Medicamentos</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center text-red-500">
-            Erro ao carregar vacinas: {error}
-          </div>
-        </CardContent>
-      </Card>
+      <Container>
+        <Header>
+          <Title>Histórico de Vacinas e Medicamentos</Title>
+        </Header>
+        <ErrorText>Erro ao carregar vacinas: {error}</ErrorText>
+      </Container>
     );
   }
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>Histórico de Vacinas e Medicamentos</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Tabs defaultValue="pending" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="pending">
-              Pendentes ({pendingVaccines.length})
-            </TabsTrigger>
-            <TabsTrigger value="applied">
-              Aplicadas ({appliedVaccines.length})
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="pending">
-            <div className="space-y-4">
-              {pendingVaccines.length > 0 ? (
-                pendingVaccines.map((vaccine) => (
-                  <Card key={vaccine.id}>
-                    <CardContent className="pt-6">
-                      <div className="flex justify-between items-start">
-                        <div className="space-y-1">
-                          <h3 className="font-semibold">{vaccine.name}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            Tipo: {vaccine.type}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            Data:{" "}
-                            {format(new Date(vaccine.date), "dd 'de' MMMM 'de' yyyy", {
-                              locale: ptBR,
-                            })}
-                          </p>
-                          {vaccine.notes && (
-                            <p className="text-sm text-muted-foreground">
-                              Obs: {vaccine.notes}
-                            </p>
-                          )}
-                        </div>
-                        <div className="flex flex-col items-end gap-2">
-                          <Badge variant="secondary">Pendente</Badge>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleStatusUpdate(vaccine.id, "Aplicada")}
-                          >
-                            Marcar como Aplicada
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              ) : (
-                <p className="text-center text-muted-foreground">
-                  Nenhuma vacina pendente.
-                </p>
-              )}
-            </div>
-          </TabsContent>
-          <TabsContent value="applied">
-            <div className="space-y-4">
-              {appliedVaccines.length > 0 ? (
-                appliedVaccines.map((vaccine) => (
-                  <Card key={vaccine.id}>
-                    <CardContent className="pt-6">
-                      <div className="flex justify-between items-start">
-                        <div className="space-y-1">
-                          <h3 className="font-semibold">{vaccine.name}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            Tipo: {vaccine.type}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            Data:{" "}
-                            {format(new Date(vaccine.date), "dd 'de' MMMM 'de' yyyy", {
-                              locale: ptBR,
-                            })}
-                          </p>
-                          {vaccine.notes && (
-                            <p className="text-sm text-muted-foreground">
-                              Obs: {vaccine.notes}
-                            </p>
-                          )}
-                        </div>
-                        <Badge variant="success">Aplicada</Badge>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              ) : (
-                <p className="text-center text-muted-foreground">
-                  Nenhuma vacina aplicada.
-                </p>
-              )}
-            </div>
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
+    <Container>
+      <Header>
+        <Title>Histórico de Vacinas e Medicamentos</Title>
+      </Header>
+      <TabsContainer>
+        <TabsList>
+          <TabButton
+            active={activeTab === 'pending'}
+            onClick={() => setActiveTab('pending')}
+          >
+            Pendentes ({pendingVaccines.length})
+          </TabButton>
+          <TabButton
+            active={activeTab === 'applied'}
+            onClick={() => setActiveTab('applied')}
+          >
+            Aplicadas ({appliedVaccines.length})
+          </TabButton>
+        </TabsList>
+
+        <TabContent active={activeTab === 'pending'}>
+          {pendingVaccines.length > 0 ? (
+            pendingVaccines.map((vaccine) => (
+              <VaccineCard key={vaccine.id}>
+                <VaccineHeader>
+                  <div>
+                    <VaccineTitle>{vaccine.name}</VaccineTitle>
+                    <VaccineInfo>Tipo: {vaccine.type}</VaccineInfo>
+                    <VaccineInfo>
+                      Data: {format(new Date(vaccine.date), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                    </VaccineInfo>
+                    {vaccine.notes && (
+                      <VaccineInfo>Obs: {vaccine.notes}</VaccineInfo>
+                    )}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+                    <Badge>Pendente</Badge>
+                    <Button onClick={() => handleStatusUpdate(vaccine.id, "Aplicada")}>
+                      Marcar como Aplicada
+                    </Button>
+                  </div>
+                </VaccineHeader>
+              </VaccineCard>
+            ))
+          ) : (
+            <VaccineInfo style={{ textAlign: 'center' }}>Nenhuma vacina pendente.</VaccineInfo>
+          )}
+        </TabContent>
+
+        <TabContent active={activeTab === 'applied'}>
+          {appliedVaccines.length > 0 ? (
+            appliedVaccines.map((vaccine) => (
+              <VaccineCard key={vaccine.id}>
+                <VaccineHeader>
+                  <div>
+                    <VaccineTitle>{vaccine.name}</VaccineTitle>
+                    <VaccineInfo>Tipo: {vaccine.type}</VaccineInfo>
+                    <VaccineInfo>
+                      Data: {format(new Date(vaccine.date), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                    </VaccineInfo>
+                    {vaccine.notes && (
+                      <VaccineInfo>Obs: {vaccine.notes}</VaccineInfo>
+                    )}
+                  </div>
+                  <Badge variant="success">Aplicada</Badge>
+                </VaccineHeader>
+              </VaccineCard>
+            ))
+          ) : (
+            <VaccineInfo style={{ textAlign: 'center' }}>Nenhuma vacina aplicada.</VaccineInfo>
+          )}
+        </TabContent>
+      </TabsContainer>
+    </Container>
   );
 } 

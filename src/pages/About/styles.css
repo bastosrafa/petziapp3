@@ -2,7 +2,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  min-height: calc(100vh - 4rem);
+  font-family: 'Inter', sans-serif;
 }
 
 .about-header {
@@ -11,15 +11,14 @@
 }
 
 .about-header h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: var(--foreground);
+  color: #1a1a1a;
+  font-size: 2rem;
   margin-bottom: 1rem;
 }
 
 .about-header .subtitle {
-  font-size: 1.25rem;
-  color: var(--muted-foreground);
+  color: #666;
+  font-size: 1.1rem;
 }
 
 .about-content {
@@ -29,23 +28,22 @@
 }
 
 .about-section {
-  background-color: var(--background);
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  background-color: white;
+  border-radius: 0.75rem;
   padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .about-section h2 {
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: var(--foreground);
+  color: #1a1a1a;
+  font-size: 1.5rem;
   margin-bottom: 1.5rem;
 }
 
 .about-section p {
+  color: #666;
   font-size: 1.1rem;
   line-height: 1.6;
-  color: var(--muted-foreground);
   margin-bottom: 1.5rem;
 }
 
@@ -56,43 +54,39 @@
 }
 
 .feature-card {
-  background-color: var(--background);
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  background-color: white;
+  border-radius: 0.75rem;
   padding: 1.5rem;
-  transition: all 0.3s ease;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .feature-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .feature-icon {
+  width: 2.5rem;
+  height: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  background-color: var(--primary);
-  border-radius: 50%;
+  background-color: #f3f4f6;
+  color: #2563eb;
+  border-radius: 0.5rem;
   margin-bottom: 1rem;
 }
 
-.feature-icon svg {
-  color: white;
-}
-
 .feature-card h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--foreground);
+  color: #1a1a1a;
+  font-size: 1.125rem;
   margin-bottom: 0.5rem;
 }
 
 .feature-card p {
+  color: #666;
   font-size: 1rem;
-  color: var(--muted-foreground);
   margin-bottom: 0;
 }
 
@@ -108,7 +102,7 @@
   top: 0;
   bottom: 0;
   width: 2px;
-  background-color: var(--border);
+  background-color: #e5e7eb;
 }
 
 .milestone {
@@ -123,34 +117,32 @@
   top: 0;
   width: 1rem;
   height: 1rem;
-  background-color: var(--primary);
+  background-color: #2563eb;
   border-radius: 50%;
 }
 
 .milestone-year {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--primary);
+  color: #2563eb;
+  font-size: 1.125rem;
   margin-bottom: 0.5rem;
 }
 
 .milestone-content {
-  background-color: var(--background);
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  background-color: white;
+  border-radius: 0.75rem;
   padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .milestone-content h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--foreground);
+  color: #1a1a1a;
+  font-size: 1.125rem;
   margin-bottom: 0.5rem;
 }
 
 .milestone-content p {
+  color: #666;
   font-size: 1rem;
-  color: var(--muted-foreground);
   margin-bottom: 0;
 }
 
@@ -160,11 +152,11 @@
   }
 
   .about-header h1 {
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
 
   .about-header .subtitle {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
 
   .about-section {

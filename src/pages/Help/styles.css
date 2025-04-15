@@ -1,9 +1,8 @@
 .help-container {
-  padding: 2rem;
-  padding-bottom: 6rem;
   max-width: 1200px;
   margin: 0 auto;
-  min-height: calc(100vh - 6rem);
+  padding: 2rem;
+  font-family: 'Inter', sans-serif;
 }
 
 .help-header {
@@ -12,13 +11,13 @@
 }
 
 .help-header h1 {
+  color: #1a1a1a;
   font-size: 2rem;
   margin: 1rem 0;
-  color: var(--foreground);
 }
 
 .help-header p {
-  color: var(--muted-foreground);
+  color: #666;
   margin-bottom: 2rem;
 }
 
@@ -33,16 +32,16 @@
   width: 100%;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  background-color: var(--background);
-  color: var(--foreground);
+  border: 1px solid #e5e7eb;
+  background-color: white;
+  color: #1a1a1a;
   font-size: 1rem;
 }
 
 .search-input:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
 }
 
 .help-grid {
@@ -53,34 +52,34 @@
 }
 
 .help-card {
-  background-color: var(--card);
-  border: 1px solid var(--border);
+  background-color: white;
   border-radius: 0.75rem;
   padding: 1.5rem;
-  transition: all 0.2s ease;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .help-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .help-card-icon {
-  width: 48px;
-  height: 48px;
+  width: 2.5rem;
+  height: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--primary);
-  color: white;
+  background-color: #f3f4f6;
+  color: #2563eb;
   border-radius: 0.5rem;
   margin-bottom: 1rem;
 }
 
 .help-card h3 {
-  font-size: 1.25rem;
+  color: #1a1a1a;
+  font-size: 1.125rem;
   margin-bottom: 1rem;
-  color: var(--foreground);
 }
 
 .help-card ul {
@@ -91,8 +90,8 @@
 
 .help-card li {
   padding: 0.5rem 0;
-  color: var(--muted-foreground);
-  border-bottom: 1px solid var(--border);
+  color: #666;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .help-card li:last-child {
@@ -105,17 +104,16 @@
   align-items: center;
   cursor: pointer;
   padding: 0.5rem 0;
-  color: var(--foreground);
-  font-weight: 500;
+  color: #1a1a1a;
 }
 
 .help-item-header:hover {
-  color: var(--primary);
+  color: #2563eb;
 }
 
 .help-item-content {
   padding: 1rem 0;
-  color: var(--muted-foreground);
+  color: #666;
   font-size: 0.95rem;
   line-height: 1.5;
   animation: slideDown 0.3s ease-out;
@@ -135,24 +133,24 @@
 .contact-section {
   text-align: center;
   padding: 2rem;
-  background-color: var(--card);
+  background-color: white;
   border-radius: 0.75rem;
-  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .contact-section h2 {
+  color: #1a1a1a;
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
-  color: var(--foreground);
 }
 
 .contact-section p {
-  color: var(--muted-foreground);
+  color: #666;
   margin-bottom: 1.5rem;
 }
 
 .contact-button {
-  background-color: var(--primary);
+  background-color: #2563eb;
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -163,13 +161,12 @@
 }
 
 .contact-button:hover {
-  background-color: var(--primary-hover);
+  background-color: #1d4ed8;
 }
 
 @media (max-width: 768px) {
   .help-container {
     padding: 1rem;
-    padding-bottom: 6rem;
   }
 
   .help-grid {

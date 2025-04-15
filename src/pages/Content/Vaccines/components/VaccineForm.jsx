@@ -1,18 +1,135 @@
 import { useState } from "react";
 import { useVaccineContext } from "../contexts/VaccineContext";
-import { Button } from "@/shadcn/components/ui/button";
-import { Input } from "@/shadcn/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shadcn/components/ui/card";
-import { Label } from "@/shadcn/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shadcn/components/ui/select";
-import { toast } from "@/shadcn/components/ui/use-toast";
+import styled from "styled-components";
 import { X } from "lucide-react";
+
+const FormContainer = styled.div`
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const FormHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const FormTitle = styled.h2`
+  font-size: 20px;
+  color: #333;
+  margin: 0;
+`;
+
+const CloseButton = styled.button`
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 20px;
+`;
+
+const Label = styled.label`
+  display: block;
+  margin-bottom: 8px;
+  color: #666;
+  font-weight: 500;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  
+  &:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+`;
+
+const Select = styled.select`
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: white;
+  
+  &:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+`;
+
+const TextArea = styled.textarea`
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  min-height: 100px;
+  resize: vertical;
+  
+  &:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+`;
+
+const Button = styled.button`
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+`;
+
+const SaveButton = styled(Button)`
+  background-color: #007bff;
+  color: white;
+  border: none;
+  
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const CancelButton = styled(Button)`
+  background-color: #f8f9fa;
+  color: #333;
+  border: 1px solid #ddd;
+  
+  &:hover {
+    background-color: #e9ecef;
+  }
+`;
 
 export default function VaccineForm({ onClose }) {
   const { addVaccine } = useVaccineContext();
   const [formData, setFormData] = useState({
     name: "",
-    date: "",
+    date: new Date().toISOString().split('T')[0],
     status: "Pendente",
     type: "V8/V10",
     notes: "",
@@ -32,11 +149,6 @@ export default function VaccineForm({ onClose }) {
     e.preventDefault();
     
     if (!formData.name || !formData.date) {
-      toast({
-        title: "Erro",
-        description: "Por favor, preencha todos os campos obrigatórios.",
-        variant: "destructive",
-      });
       return;
     }
 
@@ -44,103 +156,94 @@ export default function VaccineForm({ onClose }) {
       await addVaccine(formData);
       setFormData({
         name: "",
-        date: "",
+        date: new Date().toISOString().split('T')[0],
         status: "Pendente",
         type: "V8/V10",
         notes: "",
       });
-      toast({
-        title: "Sucesso",
-        description: "Vacina registrada com sucesso!",
-      });
     } catch (error) {
-      toast({
-        title: "Erro",
-        description: "Erro ao registrar vacina. Tente novamente.",
-        variant: "destructive",
-      });
+      console.error('Error adding vaccine:', error);
     }
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>Adicionar Novo</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Nome</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Nome da vacina ou medicamento"
-              required
-            />
-          </div>
+    <FormContainer>
+      <FormHeader>
+        <FormTitle>Adicionar Novo</FormTitle>
+        {onClose && (
+          <CloseButton onClick={onClose}>
+            <X size={20} />
+          </CloseButton>
+        )}
+      </FormHeader>
 
-          <div className="space-y-2">
-            <Label htmlFor="type">Tipo</Label>
-            <Select
-              value={formData.type}
-              onValueChange={(value) => setFormData({ ...formData, type: value })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione o tipo" />
-              </SelectTrigger>
-              <SelectContent>
-                {vaccineTypes.map((type) => (
-                  <SelectItem key={type.value} value={type.value}>
-                    {type.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+      <form onSubmit={handleSubmit}>
+        <FormGroup>
+          <Label>Nome</Label>
+          <Input
+            type="text"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            placeholder="Nome da vacina ou medicamento"
+            required
+          />
+        </FormGroup>
 
-          <div className="space-y-2">
-            <Label htmlFor="date">Data de Aplicação</Label>
-            <Input
-              id="date"
-              type="date"
-              value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              required
-            />
-          </div>
+        <FormGroup>
+          <Label>Tipo</Label>
+          <Select
+            value={formData.type}
+            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+          >
+            {vaccineTypes.map((type) => (
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
+            ))}
+          </Select>
+        </FormGroup>
 
-          <div className="space-y-2">
-            <Label htmlFor="status">Status</Label>
-            <Select
-              value={formData.status}
-              onValueChange={(value) => setFormData({ ...formData, status: value })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione o status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Pendente">Pendente</SelectItem>
-                <SelectItem value="Aplicada">Aplicada</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        <FormGroup>
+          <Label>Data de Aplicação</Label>
+          <Input
+            type="date"
+            value={formData.date}
+            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+            required
+          />
+        </FormGroup>
 
-          <div className="space-y-2">
-            <Label htmlFor="notes">Observações</Label>
-            <Input
-              id="notes"
-              value={formData.notes}
-              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              placeholder="Observações adicionais"
-            />
-          </div>
+        <FormGroup>
+          <Label>Status</Label>
+          <Select
+            value={formData.status}
+            onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+          >
+            <option value="Pendente">Pendente</option>
+            <option value="Aplicada">Aplicada</option>
+          </Select>
+        </FormGroup>
 
-          <Button type="submit" className="w-full">
+        <FormGroup>
+          <Label>Observações</Label>
+          <TextArea
+            value={formData.notes}
+            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+            placeholder="Observações adicionais"
+          />
+        </FormGroup>
+
+        <ButtonGroup>
+          {onClose && (
+            <CancelButton type="button" onClick={onClose}>
+              Cancelar
+            </CancelButton>
+          )}
+          <SaveButton type="submit">
             Adicionar Vacina
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+          </SaveButton>
+        </ButtonGroup>
+      </form>
+    </FormContainer>
   );
 } 
