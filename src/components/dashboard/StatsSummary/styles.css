@@ -51,12 +51,16 @@
   padding: 1rem;
   border-radius: 0.5rem;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .datetime {
   color: #666;
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
+  text-align: center;
 }
 
 .activity-item .notes {
@@ -64,6 +68,7 @@
   color: #666;
   margin-top: 0.5rem;
   font-style: italic;
+  text-align: center;
 }
 
 /* Vaccine Card Styles */
@@ -137,16 +142,7 @@
   border-radius: 1rem;
   font-size: 0.85rem;
   font-weight: 500;
-}
-
-.status-badge.em-dia {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-}
-
-.status-badge.atrasado {
-  background-color: #ffebee;
-  color: #c62828;
+  margin-top: 0.5rem;
 }
 
 .status-badge.up_to_date {
@@ -155,6 +151,11 @@
 }
 
 .status-badge.pending {
+  background-color: #fff3e0;
+  color: #ef6c00;
+}
+
+.status-badge.atrasado {
   background-color: #fff3e0;
   color: #ef6c00;
 }

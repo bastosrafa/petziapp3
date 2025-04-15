@@ -7,75 +7,98 @@ const PetStatus = () => {
   const [mood, setMood] = useState('neutral');
   const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
-    if (!dashboardData) return;
-
-    const now = new Date();
-    let moodScore = 0;
-    let currentMessages = [];
-
-    // Verifica alimentação
-    if (dashboardData.activities?.food?.lastEntry) {
-      const lastFood = new Date(dashboardData.activities.food.lastEntry.timestamp);
-      const hoursSinceLastFood = (now - lastFood) / (1000 * 60 * 60);
-      if (hoursSinceLastFood > 24) {
-        moodScore -= 2;
-        currentMessages.push('Au au! Meu barriguinha está roncando... Será que tem um biscoitinho pra mim? 🦴');
-      } else if (hoursSinceLastFood < 4) {
-        moodScore += 1;
-        currentMessages.push('Mmm... Que delícia! Agora estou com a barriguinha cheia! 🐾');
-      }
-    }
-
-    // Verifica passeios
-    if (dashboardData.activities?.walk?.lastEntry) {
-      const lastWalk = new Date(dashboardData.activities.walk.lastEntry.timestamp);
-      const daysSinceLastWalk = (now - lastWalk) / (1000 * 60 * 60 * 24);
-      if (daysSinceLastWalk > 2) {
-        moodScore -= 2;
-        currentMessages.push('Estou com tanta energia! Vamos dar uma voltinha? Quero cheirar todas as árvores! 🌳');
-      } else if (daysSinceLastWalk < 1) {
-        moodScore += 1;
-        currentMessages.push('Que passeio incrível! Adoro quando você me leva pra passear! 🐕');
-      }
-    }
-
-    // Verifica treinamento
-    if (dashboardData.training?.lastSession) {
-      const lastSession = new Date(dashboardData.training.lastSession);
-      const daysSinceLastSession = (now - lastSession) / (1000 * 60 * 60 * 24);
-      if (daysSinceLastSession > 3) {
-        moodScore -= 1;
-        currentMessages.push('Hora de treinar! Quero mostrar pra você como sou esperto! 🎾');
-      } else if (daysSinceLastSession < 1) {
-        moodScore += 1;
-        currentMessages.push('Uau! Aprendi tantas coisas novas hoje! Sou o melhor aluno! 🏆');
-      }
-    }
-
-    // Verifica vacinas
-    if (dashboardData.health?.vaccines?.status === 'pending') {
-      moodScore -= 2;
-      currentMessages.push('Doutor, estou precisando de um check-up! Quero ficar sempre saudável! 🏥');
-    }
-
-    // Determina o humor
-    if (moodScore >= 2) {
-      setMood('happy');
-    } else if (moodScore <= -2) {
-      setMood('sad');
-    } else {
-      setMood('neutral');
-    }
-
-    setMessages(currentMessages);
-  }, [dashboardData]);
-
   const moodDescriptions = {
     happy: 'Estou super feliz! Tudo está perfeito! 🐶',
     neutral: 'Estou tranquilo, mas sempre pronto para brincar! 🐕',
     sad: 'Preciso de um pouco mais de atenção... 🥺'
   };
+
+  useEffect(() => {
+    if (dashboardData) {
+      const now = new Date();
+      const lastFood = dashboardData.activities?.food?.lastEntry?.timestamp ? new Date(dashboardData.activities.food.lastEntry.timestamp) : null;
+      const lastWalk = dashboardData.activities?.walk?.lastEntry?.timestamp ? new Date(dashboardData.activities.walk.lastEntry.timestamp) : null;
+      const lastTraining = dashboardData.activities?.training?.lastEntry?.timestamp ? new Date(dashboardData.activities.training.lastEntry.timestamp) : null;
+      const lastVaccine = dashboardData.health?.lastVaccine?.date ? new Date(dashboardData.health.lastVaccine.date) : null;
+
+      let score = 0;
+      let needs = [];
+
+      // Food check
+      if (lastFood) {
+        const hoursSinceFood = (now - lastFood) / (1000 * 60 * 60);
+        if (hoursSinceFood > 8) {
+          score -= 1;
+          needs.push("alimentação");
+        } else if (hoursSinceFood <= 4) {
+          score += 1;
+        }
+      } else {
+        score -= 1;
+        needs.push("alimentação");
+      }
+
+      // Walk check
+      if (lastWalk) {
+        const hoursSinceWalk = (now - lastWalk) / (1000 * 60 * 60);
+        if (hoursSinceWalk > 12) {
+          score -= 1;
+          needs.push("passeio");
+        } else if (hoursSinceWalk <= 6) {
+          score += 1;
+        }
+      } else {
+        score -= 1;
+        needs.push("passeio");
+      }
+
+      // Training check
+      if (lastTraining) {
+        const hoursSinceTraining = (now - lastTraining) / (1000 * 60 * 60);
+        if (hoursSinceTraining > 24) {
+          score -= 1;
+          needs.push("treinamento");
+        } else if (hoursSinceTraining <= 12) {
+          score += 1;
+        }
+      } else {
+        score -= 1;
+        needs.push("treinamento");
+      }
+
+      // Vaccine check
+      if (lastVaccine) {
+        const monthsSinceVaccine = (now - lastVaccine) / (1000 * 60 * 60 * 24 * 30);
+        if (monthsSinceVaccine > 12) {
+          score -= 1;
+          needs.push("vacinação");
+        } else if (monthsSinceVaccine <= 6) {
+          score += 1;
+        }
+      } else {
+        score -= 1;
+        needs.push("vacinação");
+      }
+
+      // Determine mood and message based on score and needs
+      if (score >= 2) {
+        setMood('happy');
+        setMessages(["Estou super feliz! Tudo está perfeito! 🐶"]);
+      } else if (score >= -1) {
+        setMood('neutral');
+        if (needs.length > 0) {
+          const needsText = needs.join(", ");
+          setMessages([`Será que podemos cuidar do meu ${needsText}? 🐾`]);
+        } else {
+          setMessages(["Estou tranquilo e pronto para brincar! 🐕"]);
+        }
+      } else {
+        setMood('sad');
+        const needsText = needs.join(", ");
+        setMessages([`Será que podemos cuidar do meu ${needsText}? 🥺`]);
+      }
+    }
+  }, [dashboardData]);
 
   return (
     <div className="pet-status-container">

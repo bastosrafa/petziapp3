@@ -58,40 +58,12 @@ const StatsSummary = () => {
     }
   };
 
-  const getStatus = (lastActivity) => {
-    if (!lastActivity) return 'Não registrado';
-    try {
-      const now = new Date();
-      let last = null;
-      
-      // Se já for um objeto Date, use diretamente
-      if (lastActivity instanceof Date) {
-        last = lastActivity;
-      }
-      // Se for uma string ISO, converta para Date
-      else if (typeof lastActivity === 'string') {
-        last = new Date(lastActivity);
-      }
-      // Se for um timestamp do Firestore, converta para Date
-      else if (lastActivity.toDate) {
-        last = lastActivity.toDate();
-      }
-      // Se for um objeto com propriedades de data
-      else if (lastActivity.date) {
-        last = lastActivity.date instanceof Date ? lastActivity.date : new Date(lastActivity.date);
-      }
-      
-      if (!last || isNaN(last.getTime())) {
-        console.error('Data inválida:', lastActivity);
-        return 'Data inválida';
-      }
-      
-      const hoursDiff = (now - last) / (1000 * 60 * 60);
-      return hoursDiff <= 24 ? 'Em dia' : 'Atrasado';
-    } catch (error) {
-      console.error('Error calculating status:', error);
-      return 'Data inválida';
-    }
+  const getStatus = (timestamp) => {
+    if (!timestamp) return 'Atrasado';
+    const now = new Date();
+    const lastActivity = new Date(timestamp);
+    const diffHours = (now - lastActivity) / (1000 * 60 * 60);
+    return diffHours <= 24 ? 'up_to_date' : 'atrasado';
   };
 
   return (
@@ -108,9 +80,9 @@ const StatsSummary = () => {
               {dashboardData.activities?.walk?.lastEntry?.notes && (
                 <p className="notes">{dashboardData.activities.walk.lastEntry.notes}</p>
               )}
-              <span className={`status-badge ${getStatus(dashboardData.activities?.walk?.lastEntry?.timestamp).toLowerCase()}`}>
-                {getStatus(dashboardData.activities?.walk?.lastEntry?.timestamp)}
-              </span>
+              <div className={`status-badge ${getStatus(dashboardData.activities?.walk?.lastEntry?.timestamp)}`}>
+                {getStatus(dashboardData.activities?.walk?.lastEntry?.timestamp) === 'up_to_date' ? 'Em dia' : 'Atrasado'}
+              </div>
             </div>
             <div className="activity-item">
               <h4>Última Alimentação</h4>
@@ -118,9 +90,9 @@ const StatsSummary = () => {
               {dashboardData.activities?.food?.lastEntry?.notes && (
                 <p className="notes">{dashboardData.activities.food.lastEntry.notes}</p>
               )}
-              <span className={`status-badge ${getStatus(dashboardData.activities?.food?.lastEntry?.timestamp).toLowerCase()}`}>
-                {getStatus(dashboardData.activities?.food?.lastEntry?.timestamp)}
-              </span>
+              <div className={`status-badge ${getStatus(dashboardData.activities?.food?.lastEntry?.timestamp)}`}>
+                {getStatus(dashboardData.activities?.food?.lastEntry?.timestamp) === 'up_to_date' ? 'Em dia' : 'Atrasado'}
+              </div>
             </div>
           </div>
         </div>
