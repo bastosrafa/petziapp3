@@ -21,20 +21,47 @@ const Title = styled.h1`
 const CarouselContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 400px;
+  height: 600px;
   overflow: hidden;
 `;
 
 const Slide = styled.div`
   position: absolute;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 100px); /* Reduzido para dar espaço aos botões */
   opacity: ${props => props.active === "true" ? 1 : 0};
   transition: opacity 0.5s ease-in-out;
-  padding: 2rem;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  pointer-events: ${props => props.active === "true" ? 'auto' : 'none'};
+`;
+
+const SlideContent = styled.div`
+  height: 100%;
+  padding: 2.5rem;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #4299E1 #F7FAFC;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #F7FAFC;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #4299E1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #3182CE;
+  }
 `;
 
 const SlideTitle = styled.h2`
@@ -46,8 +73,10 @@ const SlideTitle = styled.h2`
 
 const Text = styled.p`
   color: #4A5568;
-  margin-bottom: 1rem;
-  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+  font-size: 1.1rem;
+  word-wrap: break-word;
 `;
 
 const BulletList = styled.ul`
@@ -61,7 +90,9 @@ const BulletItem = styled.li`
   margin-bottom: 0.75rem;
   padding-left: 1.5rem;
   position: relative;
-  line-height: 1.6;
+  line-height: 1.8;
+  font-size: 1.1rem;
+  word-wrap: break-word;
 
   &:before {
     content: "🔹";
@@ -138,7 +169,16 @@ const NavigationButtons = styled.div`
   display: flex;
   justify-content: center;
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
 `;
 
 const Button = styled.button`
@@ -164,7 +204,16 @@ const Dots = styled.div`
   display: flex;
   justify-content: center;
   gap: 0.5rem;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  bottom: 70px; /* Ajustado para ficar acima dos botões */
+  left: 0;
+  right: 0;
+  z-index: 1;
 `;
 
 const Dot = styled.div`
@@ -247,72 +296,82 @@ export default function StartHere2({ onNextLesson }) {
       <CarouselContainer>
         {/* Slide 0: Introdução com Imagem */}
         <Slide active={(currentSlide === 0).toString()}>
-          <SlideTitle>Bem-vindo à Aula!</SlideTitle>
-          <ImageContainer>
-            <ImagePlaceholder>Imagem ilustrativa da comunicação com cães</ImagePlaceholder>
-          </ImageContainer>
-          <IntroductionText>
-            Nesta aula, vamos aprender como se comunicar efetivamente com seu cão através do tom de voz e da linguagem corporal.
-          </IntroductionText>
+          <SlideContent>
+            <SlideTitle>Bem-vindo à Aula!</SlideTitle>
+            <ImageContainer>
+              <ImagePlaceholder>Imagem ilustrativa da comunicação com cães</ImagePlaceholder>
+            </ImageContainer>
+            <IntroductionText>
+              Nesta aula, vamos aprender como se comunicar efetivamente com seu cão através do tom de voz e da linguagem corporal.
+            </IntroductionText>
+          </SlideContent>
         </Slide>
 
         {/* Slide 1: Como os Cães Interpretam o Mundo */}
         <Slide active={(currentSlide === 1).toString()}>
-          <SlideTitle>Como os Cães Interpretam o Mundo?</SlideTitle>
-          <Text>
-            Os cães não entendem palavras como os humanos, mas associam sons, gestos e expressões faciais ao que acontece em seguida.
-          </Text>
-          <BulletList>
-            <BulletItem>Tom de voz: Indica emoções e intenções.</BulletItem>
-            <BulletItem>Linguagem corporal: Reforça ou contradiz o que estamos pedindo.</BulletItem>
-            <BulletItem>Expressões faciais: Os cães percebem mudanças sutis no rosto do tutor.</BulletItem>
-          </BulletList>
+          <SlideContent>
+            <SlideTitle>Como os Cães Interpretam o Mundo?</SlideTitle>
+            <Text>
+              Os cães não entendem palavras como os humanos, mas associam sons, gestos e expressões faciais ao que acontece em seguida.
+            </Text>
+            <BulletList>
+              <BulletItem>Tom de voz: Indica emoções e intenções. Use um tom firme para comandos e animado para elogios.</BulletItem>
+              <BulletItem>Linguagem corporal: Reforça ou contradiz o que estamos pedindo. Mantenha postura relaxada e gestos claros.</BulletItem>
+              <BulletItem>Expressões faciais: Os cães percebem mudanças sutis no rosto do tutor. Sorria ao dar comandos positivos.</BulletItem>
+              <BulletItem>Timing: O momento certo de dar comandos e recompensas é crucial para o aprendizado.</BulletItem>
+              <BulletItem>Consistência: Use sempre os mesmos gestos e tons para os mesmos comandos.</BulletItem>
+            </BulletList>
+          </SlideContent>
         </Slide>
 
         {/* Slide 2: Como Usar o Tom de Voz Corretamente */}
         <Slide active={(currentSlide === 2).toString()}>
-          <SlideTitle>Como Usar o Tom de Voz Corretamente?</SlideTitle>
-          <BulletList>
-            <BulletItem>Tom neutro e firme (comandos de obediência) → Para comandos como "Senta", "Deita", "Fica".</BulletItem>
-            <BulletItem>Tom animado e motivacional (reforço positivo) → Para elogios, ex: "Muito bem!" ou "Bom garoto!".</BulletItem>
-            <BulletItem>Tom grave e firme (correção de comportamento) → Para redirecionar um mau comportamento sem assustar ("Não mordisca", "Ei, calma").</BulletItem>
-          </BulletList>
-          <Text>O que NÃO fazer:</Text>
-          <WarningList>
-            <WarningItem>Falar muito alto ou de forma agressiva → O cão pode ficar assustado.</WarningItem>
-            <WarningItem>Usar tom agudo para repreender → Soa como brincadeira e pode confundir o pet.</WarningItem>
-          </WarningList>
+          <SlideContent>
+            <SlideTitle>Como Usar o Tom de Voz Corretamente</SlideTitle>
+            <Text>
+              O tom de voz é uma ferramenta poderosa na comunicação com seu cão. Veja como usar de forma eficaz:
+            </Text>
+            <BulletList>
+              <BulletItem>Comandos básicos: Use um tom firme e neutro, sem gritar ou alterar muito o volume.</BulletItem>
+              <BulletItem>Elogios: Use um tom mais agudo e animado, mostrando entusiasmo genuíno.</BulletItem>
+              <BulletItem>Correções: Use um tom mais grave e curto, sem demonstrar raiva ou frustração.</BulletItem>
+              <BulletItem>Chamada: Use um tom convidativo e alegre para chamar a atenção do cão.</BulletItem>
+              <BulletItem>Evite gritar: Isso pode assustar o cão e prejudicar a comunicação.</BulletItem>
+            </BulletList>
+          </SlideContent>
         </Slide>
 
         {/* Slide 3: Exemplo Prático */}
         <Slide active={(currentSlide === 3).toString()}>
-          <SlideTitle>Exemplo Prático</SlideTitle>
-          <ExampleList>
-            <ExampleItem>Diga "Senta" com um tom firme e neutro.</ExampleItem>
-            <ExampleItem>Se ele acertar, elogie com um tom animado e feliz: "Isso, muito bem!"</ExampleItem>
-            <ExampleItem>Se ele errar, use um "Ei!" em tom firme e neutro, sem gritar.</ExampleItem>
-          </ExampleList>
+          <SlideContent>
+            <SlideTitle>Exemplo Prático</SlideTitle>
+            <ExampleList>
+              <ExampleItem>Diga "Senta" com um tom firme e neutro.</ExampleItem>
+              <ExampleItem>Se ele acertar, elogie com um tom animado e feliz: "Isso, muito bem!"</ExampleItem>
+              <ExampleItem>Se ele errar, use um "Ei!" em tom firme e neutro, sem gritar.</ExampleItem>
+            </ExampleList>
+          </SlideContent>
         </Slide>
+
+        <Dots>
+          {[0, 1, 2, 3].map((index) => (
+            <Dot
+              key={index}
+              active={currentSlide === index}
+              onClick={() => goToSlide(index)}
+            />
+          ))}
+        </Dots>
+
+        <NavigationButtons>
+          <Button onClick={prevSlide} disabled={currentSlide === 0}>
+            Anterior
+          </Button>
+          <Button onClick={nextSlide}>
+            {currentSlide === 3 ? "Próxima Aula" : "Próximo"}
+          </Button>
+        </NavigationButtons>
       </CarouselContainer>
-
-      <NavigationButtons>
-        <Button onClick={prevSlide} disabled={currentSlide === 0}>
-          Anterior
-        </Button>
-        <Button onClick={nextSlide}>
-          {currentSlide === 3 ? "Próxima Aula" : "Próximo"}
-        </Button>
-      </NavigationButtons>
-
-      <Dots>
-        {[0, 1, 2, 3].map((index) => (
-          <Dot
-            key={index}
-            active={currentSlide === index}
-            onClick={() => goToSlide(index)}
-          />
-        ))}
-      </Dots>
     </LessonContainer>
   );
 }

@@ -20,20 +20,28 @@ const Title = styled.h1`
 
 const CarouselContainer = styled.div`
   position: relative;
-  height: 400px;
+  height: 600px;
   overflow: hidden;
 `;
 
 const Slide = styled.div`
   position: absolute;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 80px);
   opacity: ${props => (props.active ? 1 : 0)};
   transition: opacity 0.3s ease-in-out;
   padding: 20px;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+`;
+
+const SlideContent = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 10px;
 `;
 
 const SlideTitle = styled.h2`
@@ -59,10 +67,33 @@ const ContentText = styled.p`
   margin-bottom: 15px;
 `;
 
+const ImageContainer = styled.div`
+  width: 100%;
+  height: 200px;
+  margin: 20px 0;
+  background: #f5f5f5;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+`;
+
+const Image = styled.img`
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+`;
+
 const NavigationButtons = styled.div`
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  padding: 0 20px;
+  z-index: 10;
 `;
 
 const Button = styled.button`
@@ -85,10 +116,14 @@ const Button = styled.button`
 `;
 
 const Dots = styled.div`
+  position: absolute;
+  bottom: 60px;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: center;
-  margin-top: 20px;
   gap: 10px;
+  z-index: 10;
 `;
 
 const Dot = styled.div`
@@ -193,31 +228,42 @@ export default function Behavior1({ onNextLesson, onBack }) {
       
       <CarouselContainer>
         <Slide active={currentSlide === 0}>
+          <SlideContent>
           <SlideTitle>Introdução</SlideTitle>
           <ContentSection>
             <ContentText>
-              Bem-vindo à aula sobre os comandos básicos "Senta" e "Deita". 
-              Estes são comandos fundamentais que ajudarão você a ter mais controle 
-              sobre seu cão em diferentes situações.
+                Bem-vindo à aula sobre os comandos "Senta" e "Deita". 
+                Estes são os primeiros comandos que você deve ensinar ao seu cão, 
+                pois são a base para outros comportamentos.
             </ContentText>
           </ContentSection>
+            <ImageContainer>
+              <Image src="/images/training/sit-down-intro.jpg" alt="Cão sentado" />
+            </ImageContainer>
+          </SlideContent>
         </Slide>
 
         <Slide active={currentSlide === 1}>
+          <SlideContent>
           <SlideTitle>Como Ensinar</SlideTitle>
           <ContentSection>
             <SectionTitle>Passo a Passo</SectionTitle>
             <ContentText>
-              1. Comece com o comando "Senta" usando um petisco como isca
-              2. Mova o petisco sobre a cabeça do cão, fazendo com que ele olhe para cima
-              3. Naturalmente, ele se sentará para manter o equilíbrio
-              4. Recompense imediatamente quando ele se sentar
-              5. Repita o processo várias vezes
+                1. Comece com o comando "Senta"
+                2. Use um petisco para guiar o movimento
+                3. Recompense imediatamente quando o cão sentar
+                4. Repita várias vezes em sessões curtas
+                5. Introduza o comando "Deita" após dominar o "Senta"
             </ContentText>
           </ContentSection>
+            <ImageContainer>
+              <Image src="/images/training/sit-down-steps.jpg" alt="Passos para ensinar sentar e deitar" />
+            </ImageContainer>
+          </SlideContent>
         </Slide>
 
         <Slide active={currentSlide === 2}>
+          <SlideContent>
           <SlideTitle>Prática e Dicas</SlideTitle>
           <ContentSection>
             <SectionTitle>Dicas Importantes</SectionTitle>
@@ -229,6 +275,10 @@ export default function Behavior1({ onNextLesson, onBack }) {
               • Mantenha as sessões curtas e divertidas
             </ContentText>
           </ContentSection>
+            <ImageContainer>
+              <Image src="/images/training/sit-down-tips.jpg" alt="Dicas para treinamento" />
+            </ImageContainer>
+          </SlideContent>
         </Slide>
       </CarouselContainer>
 

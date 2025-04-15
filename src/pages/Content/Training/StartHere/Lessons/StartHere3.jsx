@@ -21,20 +21,47 @@ const Title = styled.h1`
 const CarouselContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 400px;
+  height: 600px;
   overflow: hidden;
 `;
 
 const Slide = styled.div`
   position: absolute;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 100px); /* Reduzido para dar espaço aos botões */
   opacity: ${props => props.active === "true" ? 1 : 0};
   transition: opacity 0.5s ease-in-out;
-  padding: 2rem;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  pointer-events: ${props => props.active === "true" ? 'auto' : 'none'};
+`;
+
+const SlideContent = styled.div`
+  height: 100%;
+  padding: 2.5rem;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #4299E1 #F7FAFC;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #F7FAFC;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #4299E1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #3182CE;
+  }
 `;
 
 const SlideTitle = styled.h2`
@@ -171,7 +198,16 @@ const NavigationButtons = styled.div`
   display: flex;
   justify-content: center;
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
 `;
 
 const Button = styled.button`
@@ -197,7 +233,16 @@ const Dots = styled.div`
   display: flex;
   justify-content: center;
   gap: 0.5rem;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  bottom: 70px;
+  left: 0;
+  right: 0;
+  z-index: 1;
 `;
 
 const Dot = styled.div`
@@ -280,44 +325,52 @@ export default function StartHere3({ onNextLesson }) {
       <CarouselContainer>
         {/* Slide 0: Introdução com Imagem */}
         <Slide active={(currentSlide === 0).toString()}>
-          <SlideTitle>Bem-vindo à Aula!</SlideTitle>
-          <ImageContainer>
-            <ImagePlaceholder>Imagem ilustrativa da linguagem corporal com cães</ImagePlaceholder>
-          </ImageContainer>
-          <IntroductionText>
-            Nesta aula, vamos aprender como usar a linguagem corporal para nos comunicar efetivamente com nosso cão.
-          </IntroductionText>
+          <SlideContent>
+            <SlideTitle>Bem-vindo à Aula!</SlideTitle>
+            <ImageContainer>
+              <ImagePlaceholder>Imagem ilustrativa da linguagem corporal com cães</ImagePlaceholder>
+            </ImageContainer>
+            <IntroductionText>
+              Nesta aula, vamos aprender como usar a linguagem corporal para nos comunicar efetivamente com nosso cão.
+            </IntroductionText>
+          </SlideContent>
         </Slide>
 
         {/* Slide 1: O que fazer */}
         <Slide active={(currentSlide === 1).toString()}>
-          <SlideTitle>O que fazer:</SlideTitle>
-          <BulletList>
-            <BulletItem>Postura relaxada → O cão se sente seguro e confortável.</BulletItem>
-            <BulletItem>Movimentos calmos e suaves → Evita excitação excessiva ou medo.</BulletItem>
-            <BulletItem>Contato visual moderado → Ajuda a manter a atenção do cão.</BulletItem>
-            <BulletItem>Usar gestos claros junto com os comandos → Exemplo: apontar para o chão ao dizer "Deita".</BulletItem>
-          </BulletList>
+          <SlideContent>
+            <SlideTitle>O que fazer:</SlideTitle>
+            <BulletList>
+              <BulletItem>Postura relaxada → O cão se sente seguro e confortável.</BulletItem>
+              <BulletItem>Movimentos calmos e suaves → Evita excitação excessiva ou medo.</BulletItem>
+              <BulletItem>Contato visual moderado → Ajuda a manter a atenção do cão.</BulletItem>
+              <BulletItem>Usar gestos claros junto com os comandos → Exemplo: apontar para o chão ao dizer "Deita".</BulletItem>
+            </BulletList>
+          </SlideContent>
         </Slide>
 
         {/* Slide 2: O que NÃO fazer */}
         <Slide active={(currentSlide === 2).toString()}>
-          <SlideTitle>O que NÃO fazer:</SlideTitle>
-          <WarningList>
-            <WarningItem>Inclinar-se para frente ou fazer movimentos bruscos → Pode soar ameaçador.</WarningItem>
-            <WarningItem>Apontar o dedo na cara do cão → Pode gerar estresse.</WarningItem>
-            <WarningItem>Olhar fixamente nos olhos por muito tempo → Alguns cães interpretam isso como desafio.</WarningItem>
-          </WarningList>
+          <SlideContent>
+            <SlideTitle>O que NÃO fazer:</SlideTitle>
+            <WarningList>
+              <WarningItem>Inclinar-se para frente ou fazer movimentos bruscos → Pode soar ameaçador.</WarningItem>
+              <WarningItem>Apontar o dedo na cara do cão → Pode gerar estresse.</WarningItem>
+              <WarningItem>Olhar fixamente nos olhos por muito tempo → Alguns cães interpretam isso como desafio.</WarningItem>
+            </WarningList>
+          </SlideContent>
         </Slide>
 
         {/* Slide 3: Exemplo Prático */}
         <Slide active={(currentSlide === 3).toString()}>
-          <SlideTitle>Exemplo Prático</SlideTitle>
-          <ExampleList>
-            <ExampleItem>Quando pedir "Senta", levante a mão com a palma para cima.</ExampleItem>
-            <ExampleItem>Quando pedir "Fica", estenda a mão aberta como um sinal de "Pare".</ExampleItem>
-            <ExampleItem>Sempre use o mesmo gesto para o mesmo comando para reforçar o aprendizado.</ExampleItem>
-          </ExampleList>
+          <SlideContent>
+            <SlideTitle>Exemplo Prático</SlideTitle>
+            <ExampleList>
+              <ExampleItem>Quando pedir "Senta", levante a mão com a palma para cima.</ExampleItem>
+              <ExampleItem>Quando pedir "Fica", estenda a mão aberta como um sinal de "Pare".</ExampleItem>
+              <ExampleItem>Sempre use o mesmo gesto para o mesmo comando para reforçar o aprendizado.</ExampleItem>
+            </ExampleList>
+          </SlideContent>
         </Slide>
 
         {/* Slide 4: Exercício Prático */}
@@ -330,26 +383,26 @@ export default function StartHere3({ onNextLesson }) {
             <ExerciseItem>Repita os exercícios diariamente → A comunicação eficaz melhora com a repetição.</ExerciseItem>
           </ExerciseList>
         </Slide>
+
+        <Dots>
+          {[0, 1, 2, 3].map((index) => (
+            <Dot
+              key={index}
+              active={currentSlide === index}
+              onClick={() => goToSlide(index)}
+            />
+          ))}
+        </Dots>
+
+        <NavigationButtons>
+          <Button onClick={prevSlide} disabled={currentSlide === 0}>
+            Anterior
+          </Button>
+          <Button onClick={nextSlide}>
+            {currentSlide === 3 ? "Próxima Aula" : "Próximo"}
+          </Button>
+        </NavigationButtons>
       </CarouselContainer>
-
-      <NavigationButtons>
-        <Button onClick={prevSlide} disabled={currentSlide === 0}>
-          Anterior
-        </Button>
-        <Button onClick={nextSlide}>
-          {currentSlide === 4 ? "Próxima Aula" : "Próximo"}
-        </Button>
-      </NavigationButtons>
-
-      <Dots>
-        {[0, 1, 2, 3, 4].map((index) => (
-          <Dot
-            key={index}
-            active={currentSlide === index}
-            onClick={() => goToSlide(index)}
-          />
-        ))}
-      </Dots>
     </LessonContainer>
   );
 } 

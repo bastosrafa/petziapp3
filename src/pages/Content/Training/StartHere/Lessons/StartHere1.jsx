@@ -20,34 +20,71 @@ const Title = styled.h1`
 
 const CarouselContainer = styled.div`
   position: relative;
-  width: 100%;
-  height: 400px;
+  height: 500px;
   overflow: hidden;
 `;
 
 const Slide = styled.div`
   position: absolute;
   width: 100%;
-  height: 100%;
-  opacity: ${props => props.active ? 1 : 0};
-  transition: opacity 0.5s ease-in-out;
-  padding: 2rem;
+  height: calc(100% - 80px);
+  opacity: ${props => (props.active ? 1 : 0)};
+  transition: opacity 0.3s ease-in-out;
+  padding: 20px;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  pointer-events: ${props => props.active ? 'auto' : 'none'};
+  z-index: ${props => props.active ? 1 : 0};
+`;
+
+const SlideContent = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 10px;
+  max-height: 420px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #4299E1 #F7FAFC;
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #F7FAFC;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #4299E1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #3182CE;
+  }
 `;
 
 const SlideTitle = styled.h2`
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   color: #2D3748;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
   text-align: center;
 `;
 
-const Text = styled.p`
-  color: #4A5568;
-  margin-bottom: 1rem;
+const ContentText = styled.p`
+  font-size: 1rem;
   line-height: 1.6;
+  color: #333;
+  margin-bottom: 15px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
 `;
 
 const ExerciseSteps = styled.ol`
@@ -162,6 +199,33 @@ const NextLessonButton = styled.button`
   }
 `;
 
+const BulletList = styled.ul`
+  list-style: disc;
+  padding-left: 20px;
+  margin-bottom: 1.5rem;
+`;
+
+const BulletItem = styled.li`
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 10px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+`;
+
+const WarningList = styled.ul`
+  list-style: disc;
+  padding-left: 20px;
+  margin-bottom: 1rem;
+`;
+
+const WarningItem = styled.li`
+  color: #4A5568;
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+`;
+
 export default function StartHere1({ onNextLesson }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { user } = useAuthContext();
@@ -249,36 +313,83 @@ export default function StartHere1({ onNextLesson }) {
 
         {/* Slide 1: Conceitos Básicos */}
         <Slide active={currentSlide === 1}>
-          <SlideTitle>Conceitos Básicos</SlideTitle>
-          <Text>
-            Os cães aprendem através de associação e repetição.
-          </Text>
-          <Text>
-            O reforço positivo (dar petiscos, carinho ou elogios quando fazem algo certo) é a forma mais eficaz.
-          </Text>
-          <Text>
-            O reforço negativo e punições não são recomendados, pois podem gerar medo e ansiedade.
-          </Text>
+          <SlideContent>
+            <SlideTitle>Como os Cães Aprendem?</SlideTitle>
+            <ContentText>
+              Os cães aprendem através de associação e repetição. Quando um comportamento é seguido por algo agradável (como um petisco ou carinho), eles tendem a repetir esse comportamento.
+            </ContentText>
+            <ContentText>
+              O reforço positivo (dar petiscos, carinho ou elogios quando fazem algo certo) é a forma mais eficaz de treinamento, pois:
+            </ContentText>
+            <BulletList>
+              <BulletItem>Cria uma associação positiva com o aprendizado</BulletItem>
+              <BulletItem>Fortaleca o vínculo entre tutor e pet</BulletItem>
+              <BulletItem>Reduz o estresse e a ansiedade</BulletItem>
+              <BulletItem>Estimula o cão a pensar e tomar decisões</BulletItem>
+              <BulletItem>Torna o treinamento mais divertido para ambos</BulletItem>
+            </BulletList>
+            <ContentText>
+              O reforço negativo e punições não são recomendados, pois podem:
+            </ContentText>
+            <WarningList>
+              <WarningItem>Gerar medo e ansiedade</WarningItem>
+              <WarningItem>Danificar a confiança do cão</WarningItem>
+              <WarningItem>Criar associações negativas com o treinamento</WarningItem>
+              <WarningItem>Inibir o comportamento natural do cão</WarningItem>
+              <WarningItem>Prejudicar o relacionamento entre tutor e pet</WarningItem>
+            </WarningList>
+          </SlideContent>
         </Slide>
 
         {/* Slide 2: Exercício Prático */}
         <Slide active={currentSlide === 2}>
-          <SlideTitle>Exercício Prático</SlideTitle>
-          <ExerciseSteps>
-            <ExerciseStep>Pegue um petisco e segure na mão.</ExerciseStep>
-            <ExerciseStep>Quando o cão olhar para você ou sentar espontaneamente, recompense imediatamente.</ExerciseStep>
-            <ExerciseStep>Repita 5 a 10 vezes para ensinar que prestar atenção no tutor traz benefícios.</ExerciseStep>
-          </ExerciseSteps>
+          <SlideContent>
+            <SlideTitle>Exercício Prático: Reforço Positivo</SlideTitle>
+            <ContentText>
+              Vamos praticar o reforço positivo com um exercício simples:
+            </ContentText>
+            <ExerciseSteps>
+              <ExerciseStep>Pegue um petisco e segure na mão</ExerciseStep>
+              <ExerciseStep>Quando o cão olhar para você ou sentar espontaneamente, recompense imediatamente</ExerciseStep>
+              <ExerciseStep>Repita 5 a 10 vezes para ensinar que prestar atenção no tutor traz benefícios</ExerciseStep>
+            </ExerciseSteps>
+            <ContentText>
+              Dicas importantes:
+            </ContentText>
+            <BulletList>
+              <BulletItem>Escolha um petisco que seu cão goste muito</BulletItem>
+              <BulletItem>Recompense imediatamente após o comportamento desejado</BulletItem>
+              <BulletItem>Mantenha as sessões curtas (5-10 minutos)</BulletItem>
+              <BulletItem>Escolha um ambiente calmo e sem distrações</BulletItem>
+              <BulletItem>Use um tom de voz animado e entusiasmado ao dar a recompensa, isso ajuda a criar uma associação positiva com o treinamento</BulletItem>
+              <BulletItem>Se o cão não responder, tente com um petisco mais atraente ou reduza as distrações do ambiente</BulletItem>
+            </BulletList>
+            <ContentText>
+              Lembre-se:
+            </ContentText>
+            <BulletList>
+              <BulletItem>Seja paciente - cada cão tem seu próprio ritmo de aprendizado</BulletItem>
+              <BulletItem>Celebre pequenos progressos, mesmo que pareçam insignificantes</BulletItem>
+              <BulletItem>Termine sempre com uma nota positiva, mesmo que o cão não tenha respondido como esperado</BulletItem>
+              <BulletItem>Consistência é fundamental - use sempre os mesmos comandos e gestos</BulletItem>
+              <BulletItem>O treinamento deve ser uma experiência positiva para ambos</BulletItem>
+            </BulletList>
+          </SlideContent>
         </Slide>
 
-        {/* Slide 3: Resumo Rápido */}
+        {/* Slide 3: Resumo */}
         <Slide active={currentSlide === 3}>
           <SlideTitle>Resumo Rápido</SlideTitle>
           <SummaryList>
-            <SummaryItem>Use reforço positivo sempre.</SummaryItem>
-            <SummaryItem>Recompense rapidamente o comportamento correto.</SummaryItem>
-            <SummaryItem>Evite punições – cães aprendem melhor com estímulos positivos.</SummaryItem>
+            <SummaryItem>Use reforço positivo sempre - recompense os comportamentos desejados</SummaryItem>
+            <SummaryItem>Recompense rapidamente o comportamento correto para criar associações claras</SummaryItem>
+            <SummaryItem>Evite punições - cães aprendem melhor com estímulos positivos</SummaryItem>
+            <SummaryItem>Mantenha as sessões curtas e divertidas para ambos</SummaryItem>
+            <SummaryItem>Seja consistente - use sempre os mesmos comandos e recompensas</SummaryItem>
           </SummaryList>
+          <ContentText>
+            Pronto para começar? Vamos praticar esses conceitos na próxima aula!
+          </ContentText>
         </Slide>
       </CarouselContainer>
 
@@ -286,20 +397,19 @@ export default function StartHere1({ onNextLesson }) {
         <Button onClick={prevSlide} disabled={currentSlide === 0}>
           Anterior
         </Button>
+        <Dots>
+          {[0, 1, 2, 3].map((index) => (
+            <Dot
+              key={index}
+              active={currentSlide === index}
+              onClick={() => goToSlide(index)}
+            />
+          ))}
+        </Dots>
         <Button onClick={nextSlide}>
           {currentSlide === 3 ? "Próxima Aula" : "Próximo"}
         </Button>
       </NavigationButtons>
-
-      <Dots>
-        {[0, 1, 2, 3].map((index) => (
-          <Dot
-            key={index}
-            active={currentSlide === index}
-            onClick={() => goToSlide(index)}
-          />
-        ))}
-      </Dots>
     </LessonContainer>
   );
 }

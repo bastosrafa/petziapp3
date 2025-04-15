@@ -1,29 +1,33 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import { trainingModules } from "./config";
+import React from 'react';
+import styled from 'styled-components';
+
+interface ModuleCardProps {
+  locked?: boolean;
+}
 
 const Container = styled.div`
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
+  min-height: calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
 `;
 
 const Title = styled.h1`
-  font-size: 28px;
+  font-size: 24px;
   color: #333;
   margin-bottom: 30px;
+  padding-top: 20px;
 `;
 
 const ModulesGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
+  width: 100%;
+  flex: 1;
 `;
-
-interface ModuleCardProps {
-  locked?: boolean;
-}
 
 const ModuleCard = styled.div<ModuleCardProps>`
   background: white;
@@ -34,6 +38,12 @@ const ModuleCard = styled.div<ModuleCardProps>`
   opacity: ${props => (props.locked ? 0.7 : 1)};
   transition: transform 0.2s;
   position: relative;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 
   &:hover {
     transform: ${props => (props.locked ? "none" : "translateY(-2px)")};
@@ -45,79 +55,182 @@ const ModuleHeader = styled.div`
   align-items: center;
   gap: 15px;
   margin-bottom: 15px;
-`;
-
-const ModuleIcon = styled.div`
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f0f0f0;
-  border-radius: 8px;
-  color: #007bff;
+  flex-wrap: wrap;
+  width: 100%;
+  overflow: hidden;
 `;
 
 const ModuleTitle = styled.h2`
-  font-size: 20px;
+  font-size: 15px;
   color: #333;
   margin: 0;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 260px;
 `;
 
 const ModuleDescription = styled.p`
   color: #666;
   margin-bottom: 15px;
+  flex: 1;
+  min-height: 60px;
+  width: 100%;
 `;
 
-const ModuleDuration = styled.span`
-  color: #007bff;
-  font-size: 14px;
-  font-weight: 500;
+const ModuleCardContent = styled.div`
+  flex: 1;
 `;
 
-const LockIcon = styled.div`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  color: #ff4444;
+const ModuleCardFooter = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
 `;
 
-export default function Training() {
-  const navigate = useNavigate();
+const ModuleCardButton = styled.button`
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 
-  const handleModuleClick = (moduleId: string) => {
-    const module = trainingModules.find(m => m.id === moduleId);
-    if (module && module.route) {
-      navigate(module.route);
-    }
-  };
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
 
-  return (
-    <Container>
-      <Title>Módulos de Treinamento</Title>
-      <ModulesGrid>
-        {trainingModules.map((module) => (
-          <ModuleCard
-            key={module.id}
-            onClick={() => handleModuleClick(module.id)}
-            locked={module.id !== "starthere" && module.id !== "behavior"}
-          >
-            <ModuleHeader>
-              {module.icon && (
-                <ModuleIcon>
-                  {React.createElement(module.icon)}
-                </ModuleIcon>
-              )}
-              <ModuleTitle>{module.title}</ModuleTitle>
-            </ModuleHeader>
-            <ModuleDescription>{module.description}</ModuleDescription>
-            <ModuleDuration>{module.duration}</ModuleDuration>
-            {module.id !== "starthere" && module.id !== "behavior" && (
-              <LockIcon>🔒</LockIcon>
-            )}
-          </ModuleCard>
-        ))}
-      </ModulesGrid>
-    </Container>
-  );
-} 
+const ModuleCardLocked = styled.div`
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  padding: 8px 16px;
+  text-align: center;
+`;
+
+const ModuleCardLockedText = styled.span`
+  color: #666;
+`;
+
+const ModuleCardLockedIcon = styled.span`
+  margin-left: 8px;
+`;
+
+const ModuleCardLockedContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const ModuleCardLockedTitle = styled.h3`
+  font-size: 18px;
+  color: #333;
+  margin: 0;
+`;
+
+const ModuleCardLockedDescription = styled.p`
+  color: #666;
+  margin-bottom: 15px;
+`;
+
+const ModuleCardLockedButton = styled.button`
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const ModuleCardLockedContentText = styled.span`
+  color: #666;
+`;
+
+const ModuleCardLockedContentIcon = styled.span`
+  margin-left: 8px;
+`;
+
+const ModuleCardLockedContentButton = styled.button`
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const ModuleCardLockedContentTextButton = styled.span`
+  color: #666;
+`;
+
+const ModuleCardLockedContentIconButton = styled.span`
+  margin-left: 8px;
+`;
+
+const ModuleCardLockedContentTextButtonIcon = styled.span`
+  margin-left: 8px;
+`;
+
+const ModuleCardLockedContentTextButtonIconButton = styled.button`
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const ModuleCardLockedContentTextButtonIconButtonIcon = styled.span`
+  margin-left: 8px;
+`;
+
+const ModuleCardLockedContentTextButtonIconButtonIconButtonIcon = styled.button`
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const ModuleCardLockedContentTextButtonIconButtonIconButtonIconButtonIcon = styled.span`
+  margin-left: 8px;
+`;
+
+const ModuleCardLockedContentTextButtonIconButtonIconButtonIconButtonIcon = styled.button`
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;

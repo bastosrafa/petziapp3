@@ -10,9 +10,12 @@ import { trainingModules } from "../config";
 import { DashboardProvider } from "@/pages/Dashboard/contexts/DashboardContext";
 
 const Container = styled.div`
-  padding: 2rem;
+  padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
+  min-height: calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
 `;
 
 const Header = styled.div`
@@ -20,11 +23,13 @@ const Header = styled.div`
   align-items: center;
   gap: 1rem;
   margin-bottom: 2rem;
+  padding-top: 20px;
 `;
 
 const Title = styled.h1`
-  font-size: 2.5rem;
+  font-size: 24px;
   color: #333;
+  margin: 0;
 `;
 
 const Description = styled.p`
