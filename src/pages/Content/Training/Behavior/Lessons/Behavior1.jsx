@@ -18,30 +18,61 @@ const Title = styled.h1`
   margin-bottom: 20px;
 `;
 
+const SubTitle = styled.h2`
+  font-size: 18px;
+  color: #444;
+  margin-bottom: 20px;
+`;
+
 const CarouselContainer = styled.div`
   position: relative;
-  height: 600px;
+  height: 500px;
   overflow: hidden;
 `;
 
 const Slide = styled.div`
   position: absolute;
   width: 100%;
-  height: calc(100% - 80px);
+  height: 100%;
   opacity: ${props => (props.active ? 1 : 0)};
   transition: opacity 0.3s ease-in-out;
-  padding: 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
 `;
 
 const SlideContent = styled.div`
   flex: 1;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
   overflow-y: auto;
-  padding-right: 10px;
+  max-height: 420px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #4299E1 #F7FAFC;
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #F7FAFC;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #4299E1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #3182CE;
+  }
 `;
 
 const SlideTitle = styled.h2`
@@ -51,7 +82,9 @@ const SlideTitle = styled.h2`
 `;
 
 const ContentSection = styled.div`
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 `;
 
 const SectionTitle = styled.h3`
@@ -61,16 +94,27 @@ const SectionTitle = styled.h3`
 `;
 
 const ContentText = styled.p`
-  font-size: 16px;
+  font-size: 1rem;
   line-height: 1.6;
-  color: #666;
+  color: #333;
   margin-bottom: 15px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+`;
+
+const BulletItem = styled.li`
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 10px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
 `;
 
 const ImageContainer = styled.div`
   width: 100%;
   height: 200px;
-  margin: 20px 0;
+  margin-bottom: 20px;
   background: #f5f5f5;
   border-radius: 8px;
   display: flex;
@@ -86,10 +130,6 @@ const Image = styled.img`
 `;
 
 const NavigationButtons = styled.div`
-  position: absolute;
-  bottom: 20px;
-  left: 0;
-  right: 0;
   display: flex;
   justify-content: space-between;
   padding: 0 20px;
@@ -116,13 +156,10 @@ const Button = styled.button`
 `;
 
 const Dots = styled.div`
-  position: absolute;
-  bottom: 60px;
-  left: 0;
-  right: 0;
   display: flex;
   justify-content: center;
   gap: 10px;
+  margin-bottom: 20px;
   z-index: 10;
 `;
 
@@ -224,80 +261,103 @@ export default function Behavior1({ onNextLesson, onBack }) {
 
   return (
     <LessonContainer>
-      <Title>Senta e Deita</Title>
+      <Title>Módulo 2: Comportamento</Title>
+      <SubTitle>Senta e Deita</SubTitle>
       
       <CarouselContainer>
         <Slide active={currentSlide === 0}>
           <SlideContent>
-          <SlideTitle>Introdução</SlideTitle>
-          <ContentSection>
-            <ContentText>
-                Bem-vindo à aula sobre os comandos "Senta" e "Deita". 
-                Estes são os primeiros comandos que você deve ensinar ao seu cão, 
-                pois são a base para outros comportamentos.
-            </ContentText>
-          </ContentSection>
             <ImageContainer>
               <Image src="/images/training/sit-down-intro.jpg" alt="Cão sentado" />
             </ImageContainer>
+            <ContentSection>
+              <SlideTitle>Bem-vindo à Aula: Senta e Deita</SlideTitle>
+              <ContentText>
+                Nesta aula, você aprenderá a ensinar dois dos comandos mais importantes para o seu cão: "Senta" e "Deita". 
+                Estes são os primeiros comandos que você deve ensinar ao seu cão, 
+                pois são a base para outros comportamentos e ajudam a estabelecer uma boa comunicação entre vocês.
+              </ContentText>
+            </ContentSection>
           </SlideContent>
+          <Dots>
+            {[0, 1, 2].map((index) => (
+              <Dot
+                key={index}
+                active={currentSlide === index}
+                onClick={() => goToSlide(index)}
+              />
+            ))}
+          </Dots>
+          <NavigationButtons>
+            <Button onClick={onBack}>Voltar</Button>
+            <Button onClick={nextSlide}>
+              {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
+            </Button>
+          </NavigationButtons>
         </Slide>
 
         <Slide active={currentSlide === 1}>
           <SlideContent>
-          <SlideTitle>Como Ensinar</SlideTitle>
-          <ContentSection>
-            <SectionTitle>Passo a Passo</SectionTitle>
-            <ContentText>
+            <ContentSection>
+              <SlideTitle>Como Ensinar</SlideTitle>
+              <SectionTitle>Passo a Passo</SectionTitle>
+              <ContentText>
                 1. Comece com o comando "Senta"
                 2. Use um petisco para guiar o movimento
                 3. Recompense imediatamente quando o cão sentar
                 4. Repita várias vezes em sessões curtas
                 5. Introduza o comando "Deita" após dominar o "Senta"
-            </ContentText>
-          </ContentSection>
-            <ImageContainer>
-              <Image src="/images/training/sit-down-steps.jpg" alt="Passos para ensinar sentar e deitar" />
-            </ImageContainer>
+              </ContentText>
+            </ContentSection>
           </SlideContent>
+          <Dots>
+            {[0, 1, 2].map((index) => (
+              <Dot
+                key={index}
+                active={currentSlide === index}
+                onClick={() => goToSlide(index)}
+              />
+            ))}
+          </Dots>
+          <NavigationButtons>
+            <Button onClick={onBack}>Voltar</Button>
+            <Button onClick={nextSlide}>
+              {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
+            </Button>
+          </NavigationButtons>
         </Slide>
 
         <Slide active={currentSlide === 2}>
           <SlideContent>
-          <SlideTitle>Prática e Dicas</SlideTitle>
-          <ContentSection>
-            <SectionTitle>Dicas Importantes</SectionTitle>
-            <ContentText>
-              • Pratique em diferentes ambientes
-              • Use recompensas variadas (petiscos, carinho, brincadeiras)
-              • Seja paciente e consistente
-              • Não force fisicamente o cão
-              • Mantenha as sessões curtas e divertidas
-            </ContentText>
-          </ContentSection>
-            <ImageContainer>
-              <Image src="/images/training/sit-down-tips.jpg" alt="Dicas para treinamento" />
-            </ImageContainer>
+            <ContentSection>
+              <SlideTitle>Prática e Dicas</SlideTitle>
+              <SectionTitle>Dicas Importantes</SectionTitle>
+              <ContentText>
+                • Pratique em diferentes ambientes
+                • Use recompensas variadas (petiscos, carinho, brincadeiras)
+                • Seja paciente e consistente
+                • Não force fisicamente o cão
+                • Mantenha as sessões curtas e divertidas
+              </ContentText>
+            </ContentSection>
           </SlideContent>
+          <Dots>
+            {[0, 1, 2].map((index) => (
+              <Dot
+                key={index}
+                active={currentSlide === index}
+                onClick={() => goToSlide(index)}
+              />
+            ))}
+          </Dots>
+          <NavigationButtons>
+            <Button onClick={onBack}>Voltar</Button>
+            <Button onClick={nextSlide}>
+              {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
+            </Button>
+          </NavigationButtons>
         </Slide>
       </CarouselContainer>
-
-      <NavigationButtons>
-        <Button onClick={onBack}>Voltar</Button>
-        <Button onClick={nextSlide}>
-          {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
-        </Button>
-      </NavigationButtons>
-
-      <Dots>
-        {[0, 1, 2].map((index) => (
-          <Dot
-            key={index}
-            active={currentSlide === index}
-            onClick={() => goToSlide(index)}
-          />
-        ))}
-      </Dots>
     </LessonContainer>
   );
 } 

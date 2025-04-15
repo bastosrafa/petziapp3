@@ -18,22 +18,35 @@ const Title = styled.h1`
   margin-bottom: 20px;
 `;
 
+const SubTitle = styled.h2`
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 20px;
+`;
+
 const CarouselContainer = styled.div`
   position: relative;
-  height: 400px;
+  height: 600px;
   overflow: hidden;
 `;
 
 const Slide = styled.div`
   position: absolute;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 100px);
   opacity: ${props => (props.active ? 1 : 0)};
   transition: opacity 0.3s ease-in-out;
   padding: 20px;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const SlideContent = styled.div`
+  position: relative;
+  height: 100%;
+  overflow-y: auto;
+  padding-bottom: 20px;
 `;
 
 const SlideTitle = styled.h2`
@@ -59,10 +72,31 @@ const ContentText = styled.p`
   margin-bottom: 15px;
 `;
 
+const ImageContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 200px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f5f5f5;
+`;
+
+const Image = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
 const NavigationButtons = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  padding: 20px;
+  z-index: 10;
 `;
 
 const Button = styled.button`
@@ -79,10 +113,15 @@ const Button = styled.button`
 `;
 
 const Dots = styled.div`
+  position: absolute;
+  bottom: 60px;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: center;
-  margin-top: 20px;
   gap: 10px;
+  padding: 10px;
+  z-index: 10;
 `;
 
 const Dot = styled.div`
@@ -182,58 +221,92 @@ export default function Behavior2({ onNextLesson, onBack }) {
 
   return (
     <LessonContainer>
-      <Title>Fica e Vem</Title>
+      <Title>Módulo 2: Comportamento</Title>
+      <SubTitle>Não Pular nas Pessoas</SubTitle>
       
       <CarouselContainer>
         <Slide active={currentSlide === 0}>
-          <SlideTitle>Introdução</SlideTitle>
+          <SlideContent>
+            <ImageContainer>
+              <Image src="/images/training/no-jump-intro.jpg" alt="Cão pulando em pessoa" />
+            </ImageContainer>
           <ContentSection>
             <ContentText>
-              Bem-vindo à aula sobre os comandos "Fica" e "Vem". 
-              Estes comandos são essenciais para manter seu cão seguro e sob controle 
-              em diferentes situações.
+                Nesta aula, você aprenderá a ensinar seu cão a não pular nas pessoas. 
+                Este é um comportamento comum que pode ser corrigido com paciência e consistência.
             </ContentText>
           </ContentSection>
+          </SlideContent>
+          <Dots>
+            {[0, 1, 2].map((index) => (
+              <Dot
+                key={index}
+                active={currentSlide === index}
+                onClick={() => goToSlide(index)}
+              />
+            ))}
+          </Dots>
+          <NavigationButtons>
+            <Button onClick={onBack}>Voltar</Button>
+            <Button onClick={nextSlide}>
+              {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
+            </Button>
+          </NavigationButtons>
         </Slide>
 
         <Slide active={currentSlide === 1}>
+          <SlideContent>
+            <ContentSection>
           <SlideTitle>Como Ensinar</SlideTitle>
-          <ContentSection>
             <SectionTitle>Passo a Passo</SectionTitle>
             <ContentText>
-              1. Comece com o comando "Fica" após o cão estar sentado
-              2. Dê um passo para trás e volte rapidamente se ele ficar
-              3. Aumente gradualmente a distância e o tempo
-              4. Para o comando "Vem", use um tom animado e recompense generosamente
-              5. Pratique em diferentes ambientes e situações
+                1. Ignore o cão quando ele pular
+                <br />
+                2. Vire as costas e não faça contato visual
+                <br />
+                3. Recompense quando ele estiver com as patas no chão
+                <br />
+                4. Pratique com diferentes pessoas
+                <br />
+                5. Seja consistente em todas as situações
             </ContentText>
           </ContentSection>
+          </SlideContent>
+          <Dots>
+            {[0, 1, 2].map((index) => (
+              <Dot
+                key={index}
+                active={currentSlide === index}
+                onClick={() => goToSlide(index)}
+              />
+            ))}
+          </Dots>
+          <NavigationButtons>
+            <Button onClick={onBack}>Voltar</Button>
+            <Button onClick={nextSlide}>
+              {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
+            </Button>
+          </NavigationButtons>
         </Slide>
 
         <Slide active={currentSlide === 2}>
+          <SlideContent>
+            <ContentSection>
           <SlideTitle>Prática e Dicas</SlideTitle>
-          <ContentSection>
             <SectionTitle>Dicas Importantes</SectionTitle>
             <ContentText>
-              • Comece em um ambiente controlado
-              • Use recompensas de alto valor
-              • Nunca puna o cão por vir quando chamado
-              • Pratique regularmente
-              • Aumente a dificuldade gradualmente
+                • Mantenha a calma e não grite
+                <br />
+                • Ensine um comportamento alternativo (como sentar)
+                <br />
+                • Recompense comportamentos calmos
+                <br />
+                • Pratique com visitas
+                <br />
+                • Seja paciente e consistente
             </ContentText>
           </ContentSection>
-        </Slide>
-      </CarouselContainer>
-
-      <NavigationButtons>
-        <Button onClick={prevSlide} disabled={currentSlide === 0}>
-          Anterior
-        </Button>
-        <Button onClick={nextSlide}>
-          {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
-        </Button>
-      </NavigationButtons>
-
+          </SlideContent>
       <Dots>
         {[0, 1, 2].map((index) => (
           <Dot
@@ -243,6 +316,14 @@ export default function Behavior2({ onNextLesson, onBack }) {
           />
         ))}
       </Dots>
+          <NavigationButtons>
+            <Button onClick={onBack}>Voltar</Button>
+            <Button onClick={nextSlide}>
+              {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
+            </Button>
+          </NavigationButtons>
+        </Slide>
+      </CarouselContainer>
     </LessonContainer>
   );
 } 

@@ -17,6 +17,12 @@ const Title = styled.h1`
   margin-bottom: 20px;
 `;
 
+const SubTitle = styled.h2`
+  font-size: 18px;
+  color: #444;
+  margin-bottom: 20px;
+`;
+
 const CarouselContainer = styled.div`
   position: relative;
   height: 400px;
@@ -33,6 +39,11 @@ const Slide = styled.div`
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const SlideContent = styled.div`
+  position: relative;
+  height: 100%;
 `;
 
 const SlideTitle = styled.h2`
@@ -56,6 +67,20 @@ const ContentText = styled.p`
   line-height: 1.6;
   color: #666;
   margin-bottom: 15px;
+`;
+
+const ImageContainer = styled.div`
+  position: relative;
+  height: 200px;
+  margin-bottom: 20px;
+`;
+
+const Image = styled.img`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
 `;
 
 const NavigationButtons = styled.div`
@@ -158,66 +183,103 @@ export default function Behavior3({ onNextLesson }) {
 
   return (
     <LessonContainer>
-      <Title>Andar na Coleira</Title>
+      <Title>Módulo 2: Comportamento</Title>
+      <SubTitle>Junto e Solto</SubTitle>
       
       <CarouselContainer>
         <Slide active={currentSlide === 0}>
-          <SlideTitle>Introdução</SlideTitle>
-          <ContentSection>
-            <ContentText>
-              Bem-vindo à aula sobre como ensinar seu cão a andar corretamente na coleira. 
-              Um passeio tranquilo e controlado é essencial para o bem-estar do seu pet.
-            </ContentText>
-          </ContentSection>
+          <SlideContent>
+            <ImageContainer>
+              <Image src="/images/training/heel-off-leash-intro.jpg" alt="Cão caminhando junto" />
+            </ImageContainer>
+            <ContentSection>
+              <SlideTitle>Bem-vindo à Aula: Junto e Solto</SlideTitle>
+              <ContentText>
+                Nesta aula, você aprenderá a ensinar seu cão a caminhar corretamente ao seu lado 
+                e a se comportar adequadamente quando estiver solto. Estes são comportamentos 
+                essenciais para passeios agradáveis e seguros.
+              </ContentText>
+            </ContentSection>
+          </SlideContent>
+          <Dots>
+            {[0, 1, 2].map((index) => (
+              <Dot
+                key={index}
+                active={currentSlide === index}
+                onClick={() => goToSlide(index)}
+              />
+            ))}
+          </Dots>
+          <NavigationButtons>
+            <Button onClick={prevSlide}>Voltar</Button>
+            <Button onClick={nextSlide}>
+              {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
+            </Button>
+          </NavigationButtons>
         </Slide>
 
         <Slide active={currentSlide === 1}>
-          <SlideTitle>Como Ensinar</SlideTitle>
-          <ContentSection>
-            <SectionTitle>Passo a Passo</SectionTitle>
-            <ContentText>
-              1. Comece em um ambiente calmo e familiar
-              2. Mantenha a coleira frouxa, sem tensionar
-              3. Recompense quando o cão andar ao seu lado
-              4. Use um comando consistente como "Junto"
-              5. Pratique mudanças de direção e velocidade
-            </ContentText>
-          </ContentSection>
+          <SlideContent>
+            <ContentSection>
+              <SlideTitle>Como Ensinar</SlideTitle>
+              <SectionTitle>Passo a Passo</SectionTitle>
+              <ContentText>
+                1. Comece com o comando "Junto" usando guia curta
+                2. Recompense quando o cão estiver na posição correta
+                3. Pratique mudanças de direção
+                4. Introduza o comando "Solto" em áreas seguras
+                5. Aumente gradualmente as distrações
+              </ContentText>
+            </ContentSection>
+          </SlideContent>
+          <Dots>
+            {[0, 1, 2].map((index) => (
+              <Dot
+                key={index}
+                active={currentSlide === index}
+                onClick={() => goToSlide(index)}
+              />
+            ))}
+          </Dots>
+          <NavigationButtons>
+            <Button onClick={prevSlide}>Voltar</Button>
+            <Button onClick={nextSlide}>
+              {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
+            </Button>
+          </NavigationButtons>
         </Slide>
 
         <Slide active={currentSlide === 2}>
-          <SlideTitle>Prática e Dicas</SlideTitle>
-          <ContentSection>
-            <SectionTitle>Dicas Importantes</SectionTitle>
-            <ContentText>
-              • Use uma coleira adequada ao tamanho do cão
-              • Mantenha as sessões curtas inicialmente
-              • Não puxe a coleira
-              • Recompense comportamentos desejados
-              • Aumente gradualmente as distrações
-            </ContentText>
-          </ContentSection>
+          <SlideContent>
+            <ContentSection>
+              <SlideTitle>Prática e Dicas</SlideTitle>
+              <SectionTitle>Dicas Importantes</SectionTitle>
+              <ContentText>
+                • Mantenha a guia relaxada
+                • Use recompensas de alto valor
+                • Pratique em diferentes ambientes
+                • Seja consistente com os comandos
+                • Mantenha as sessões curtas e positivas
+              </ContentText>
+            </ContentSection>
+          </SlideContent>
+          <Dots>
+            {[0, 1, 2].map((index) => (
+              <Dot
+                key={index}
+                active={currentSlide === index}
+                onClick={() => goToSlide(index)}
+              />
+            ))}
+          </Dots>
+          <NavigationButtons>
+            <Button onClick={prevSlide}>Voltar</Button>
+            <Button onClick={nextSlide}>
+              {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
+            </Button>
+          </NavigationButtons>
         </Slide>
       </CarouselContainer>
-
-      <NavigationButtons>
-        <Button onClick={prevSlide} disabled={currentSlide === 0}>
-          Anterior
-        </Button>
-        <Button onClick={nextSlide}>
-          {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
-        </Button>
-      </NavigationButtons>
-
-      <Dots>
-        {[0, 1, 2].map((index) => (
-          <Dot
-            key={index}
-            active={currentSlide === index}
-            onClick={() => goToSlide(index)}
-          />
-        ))}
-      </Dots>
     </LessonContainer>
   );
 } 

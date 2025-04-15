@@ -17,22 +17,35 @@ const Title = styled.h1`
   margin-bottom: 20px;
 `;
 
+const SubTitle = styled.h2`
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 20px;
+`;
+
 const CarouselContainer = styled.div`
   position: relative;
-  height: 400px;
+  height: 600px;
   overflow: hidden;
 `;
 
 const Slide = styled.div`
   position: absolute;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 100px);
   opacity: ${props => (props.active ? 1 : 0)};
   transition: opacity 0.3s ease-in-out;
   padding: 20px;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const SlideContent = styled.div`
+  position: relative;
+  height: 100%;
+  overflow-y: auto;
+  padding-bottom: 20px;
 `;
 
 const SlideTitle = styled.h2`
@@ -58,10 +71,31 @@ const ContentText = styled.p`
   margin-bottom: 15px;
 `;
 
+const ImageContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 200px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+`;
+
+const Image = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
 const NavigationButtons = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  padding: 20px;
+  background: white;
+  border-top: 1px solid #eee;
 `;
 
 const Button = styled.button`
@@ -78,10 +112,15 @@ const Button = styled.button`
 `;
 
 const Dots = styled.div`
+  position: absolute;
+  bottom: 70px;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: center;
-  margin-top: 20px;
   gap: 10px;
+  padding: 10px;
+  background: white;
 `;
 
 const Dot = styled.div`
@@ -158,66 +197,103 @@ export default function Behavior4({ onNextLesson }) {
 
   return (
     <LessonContainer>
-      <Title>Não Pular nas Pessoas</Title>
+      <Title>Módulo 2: Comportamento</Title>
+      <SubTitle>Deitar e Rolar</SubTitle>
       
       <CarouselContainer>
         <Slide active={currentSlide === 0}>
-          <SlideTitle>Introdução</SlideTitle>
-          <ContentSection>
-            <ContentText>
-              Bem-vindo à aula sobre como evitar que seu cão pule nas pessoas. 
-              Este é um comportamento comum que pode ser corrigido com paciência e consistência.
-            </ContentText>
-          </ContentSection>
+          <SlideContent>
+            <ImageContainer>
+              <Image src="/images/training/lie-roll-intro.jpg" alt="Cão deitado e rolando" />
+            </ImageContainer>
+            <ContentSection>
+              <SlideTitle>Bem-vindo à Aula: Deitar e Rolar</SlideTitle>
+              <ContentText>
+                Nesta aula, você aprenderá a ensinar seu cão dois comandos divertidos e úteis: 
+                "Deitar" e "Rolar". Estes truques não só são impressionantes, mas também ajudam 
+                a fortalecer o vínculo entre você e seu pet.
+              </ContentText>
+            </ContentSection>
+          </SlideContent>
+          <Dots>
+            {[0, 1, 2].map((index) => (
+              <Dot
+                key={index}
+                active={currentSlide === index}
+                onClick={() => goToSlide(index)}
+              />
+            ))}
+          </Dots>
+          <NavigationButtons>
+            <Button onClick={prevSlide}>Voltar</Button>
+            <Button onClick={nextSlide}>
+              {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
+            </Button>
+          </NavigationButtons>
         </Slide>
 
         <Slide active={currentSlide === 1}>
-          <SlideTitle>Como Ensinar</SlideTitle>
-          <ContentSection>
-            <SectionTitle>Passo a Passo</SectionTitle>
-            <ContentText>
-              1. Ignore o cão quando ele pular
-              2. Vire as costas e não faça contato visual
-              3. Recompense quando ele estiver com as patas no chão
-              4. Pratique com diferentes pessoas
-              5. Seja consistente em todas as situações
-            </ContentText>
-          </ContentSection>
+          <SlideContent>
+            <ContentSection>
+              <SlideTitle>Como Ensinar</SlideTitle>
+              <SectionTitle>Passo a Passo</SectionTitle>
+              <ContentText>
+                1. Comece com o comando "Deitar" usando um petisco como guia
+                2. Recompense quando o cão estiver completamente deitado
+                3. Introduza o comando verbal "Deita"
+                4. Para "Rolar", guie o cão com o petisco em círculo
+                5. Pratique os movimentos separadamente antes de combiná-los
+              </ContentText>
+            </ContentSection>
+          </SlideContent>
+          <Dots>
+            {[0, 1, 2].map((index) => (
+              <Dot
+                key={index}
+                active={currentSlide === index}
+                onClick={() => goToSlide(index)}
+              />
+            ))}
+          </Dots>
+          <NavigationButtons>
+            <Button onClick={prevSlide}>Voltar</Button>
+            <Button onClick={nextSlide}>
+              {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
+            </Button>
+          </NavigationButtons>
         </Slide>
 
         <Slide active={currentSlide === 2}>
-          <SlideTitle>Prática e Dicas</SlideTitle>
-          <ContentSection>
-            <SectionTitle>Dicas Importantes</SectionTitle>
-            <ContentText>
-              • Mantenha a calma e não grite
-              • Ensine um comportamento alternativo (como sentar)
-              • Recompense comportamentos calmos
-              • Pratique com visitas
-              • Seja paciente e consistente
-            </ContentText>
-          </ContentSection>
+          <SlideContent>
+            <ContentSection>
+              <SlideTitle>Prática e Dicas</SlideTitle>
+              <SectionTitle>Dicas Importantes</SectionTitle>
+              <ContentText>
+                • Use um tapete ou superfície confortável
+                • Mantenha as sessões curtas e divertidas
+                • Recompense cada pequeno progresso
+                • Não force o movimento
+                • Pratique em diferentes locais
+              </ContentText>
+            </ContentSection>
+          </SlideContent>
+          <Dots>
+            {[0, 1, 2].map((index) => (
+              <Dot
+                key={index}
+                active={currentSlide === index}
+                onClick={() => goToSlide(index)}
+              />
+            ))}
+          </Dots>
+          <NavigationButtons>
+            <Button onClick={prevSlide}>Voltar</Button>
+            <Button onClick={nextSlide}>
+              {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
+            </Button>
+          </NavigationButtons>
         </Slide>
       </CarouselContainer>
-
-      <NavigationButtons>
-        <Button onClick={prevSlide} disabled={currentSlide === 0}>
-          Anterior
-        </Button>
-        <Button onClick={nextSlide}>
-          {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
-        </Button>
-      </NavigationButtons>
-
-      <Dots>
-        {[0, 1, 2].map((index) => (
-          <Dot
-            key={index}
-            active={currentSlide === index}
-            onClick={() => goToSlide(index)}
-          />
-        ))}
-      </Dots>
     </LessonContainer>
   );
 } 
