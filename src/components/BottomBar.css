@@ -31,13 +31,21 @@
   background-color: #f5f5f5;
 }
 
+/* Estilo para todos os botões quando ativos */
 .nav-item.active {
+  background-color: #f5f5f5;
+}
+
+/* Cor verde apenas para os ícones dos dois primeiros botões (Início e Adestramento) */
+.nav-item.active:first-child .nav-icon,
+.nav-item.active:nth-child(2) .nav-icon {
   color: #4CAF50;
 }
 
 .nav-icon {
   font-size: 1.5rem;
   margin-bottom: 4px;
+  color: #666;
 }
 
 .nav-label {
