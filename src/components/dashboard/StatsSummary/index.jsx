@@ -58,8 +58,13 @@ const StatsSummary = () => {
     }
   };
 
-  const getStatus = (timestamp) => {
-    if (!timestamp) return 'Atrasado';
+  const getStatus = (timestamp, type = 'activity') => {
+    if (!timestamp) return type === 'vaccine' ? 'pending' : 'atrasado';
+    
+    if (type === 'vaccine') {
+      return timestamp.status === 'Aplicada' ? 'up_to_date' : 'pending';
+    }
+    
     const now = new Date();
     const lastActivity = new Date(timestamp);
     const diffHours = (now - lastActivity) / (1000 * 60 * 60);
@@ -75,21 +80,25 @@ const StatsSummary = () => {
           <h3>Passeio e Alimentação</h3>
           <div className="activity-section">
             <div className="activity-item">
-              <h4>Último Passeio</h4>
-              <p className="datetime">{formatDateTime(dashboardData.activities?.walk?.lastEntry?.timestamp)}</p>
-              {dashboardData.activities?.walk?.lastEntry?.notes && (
-                <p className="notes">{dashboardData.activities.walk.lastEntry.notes}</p>
-              )}
+              <div className="content">
+                <h4>Último Passeio</h4>
+                <p className="datetime">{formatDateTime(dashboardData.activities?.walk?.lastEntry?.timestamp)}</p>
+                {dashboardData.activities?.walk?.lastEntry?.notes && (
+                  <p className="notes">{dashboardData.activities.walk.lastEntry.notes}</p>
+                )}
+              </div>
               <div className={`status-badge ${getStatus(dashboardData.activities?.walk?.lastEntry?.timestamp)}`}>
                 {getStatus(dashboardData.activities?.walk?.lastEntry?.timestamp) === 'up_to_date' ? 'Em dia' : 'Atrasado'}
               </div>
             </div>
             <div className="activity-item">
-              <h4>Última Alimentação</h4>
-              <p className="datetime">{formatDateTime(dashboardData.activities?.food?.lastEntry?.timestamp)}</p>
-              {dashboardData.activities?.food?.lastEntry?.notes && (
-                <p className="notes">{dashboardData.activities.food.lastEntry.notes}</p>
-              )}
+              <div className="content">
+                <h4>Última Alimentação</h4>
+                <p className="datetime">{formatDateTime(dashboardData.activities?.food?.lastEntry?.timestamp)}</p>
+                {dashboardData.activities?.food?.lastEntry?.notes && (
+                  <p className="notes">{dashboardData.activities.food.lastEntry.notes}</p>
+                )}
+              </div>
               <div className={`status-badge ${getStatus(dashboardData.activities?.food?.lastEntry?.timestamp)}`}>
                 {getStatus(dashboardData.activities?.food?.lastEntry?.timestamp) === 'up_to_date' ? 'Em dia' : 'Atrasado'}
               </div>
@@ -97,43 +106,47 @@ const StatsSummary = () => {
           </div>
         </div>
 
-        {/* Card de Vacinação */}
-        <div className="stat-card vaccine-card">
-          <h3>Vacinação</h3>
-          <div className="vaccine-section">
-            <div className="vaccine-status">
-              <span className={`status-badge ${dashboardData.health?.vaccines?.status || 'pending'}`}>
-                {dashboardData.health?.vaccines?.status === 'up_to_date' ? 'Em dia' : 'Pendente'}
-              </span>
-            </div>
-            {dashboardData.health?.vaccines?.nextVaccine && (
-              <div className="next-dose">
-                <h4>Próxima Dose</h4>
-                <p className="datetime">{formatDateTime(dashboardData.health.vaccines.nextVaccine)}</p>
+        {/* Card de Vacinação e Treinamento */}
+        <div className="stat-card health-training-card">
+          <h3>Saúde e Treinamento</h3>
+          <div className="health-training-section">
+            <div className="vaccine-section">
+              <div className="content">
+                <h4>Vacinação</h4>
+                {dashboardData.health?.vaccines?.nextVaccine && (
+                  <div className="next-dose">
+                    <p className="datetime">Próxima dose: {formatDateTime(dashboardData.health.vaccines.nextVaccine)}</p>
+                  </div>
+                )}
+                <div className="vaccine-history">
+                  <p className="datetime">Última dose: {formatDateTime(dashboardData.health?.vaccines?.lastVaccine)}</p>
+                </div>
               </div>
-            )}
-            <div className="vaccine-history">
-              <h4>Histórico Recente</h4>
-              <p>Última dose: {formatDateTime(dashboardData.health?.vaccines?.lastVaccine)}</p>
+              <div className="vaccine-status">
+                <span className={`status-badge ${getStatus(dashboardData.health?.vaccines?.lastVaccine, 'vaccine')}`}>
+                  {getStatus(dashboardData.health?.vaccines?.lastVaccine, 'vaccine') === 'up_to_date' ? 'Em dia' : 'Pendente'}
+                </span>
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* Card de Treinamento */}
-        <div className="stat-card training-card">
-          <h3>Treinamento</h3>
-          <div className="training-section">
-            <div className="training-progress">
-              <h4>Progresso</h4>
-              <p>Nível: {dashboardData.training?.currentLevel || 'Iniciante'}</p>
-              <p>Lições completadas: {dashboardData.training?.completedLessons || 0}</p>
-            </div>
-            {dashboardData.training?.lastSession && (
-              <div className="last-session">
-                <h4>Última Sessão</h4>
-                <p className="datetime">{formatDateTime(dashboardData.training.lastSession)}</p>
+            <div className="training-section">
+              <div className="content">
+                <h4>Treinamento</h4>
+                <div className="training-progress">
+                  <p>Progresso: {dashboardData.training?.completedLessons || 0} aulas concluídas</p>
+                  <div className="progress-bar">
+                    <div 
+                      className="progress-fill" 
+                      style={{ 
+                        width: `${(dashboardData.training?.completedLessons || 0) * 10}%`,
+                        backgroundColor: '#4CAF50'
+                      }} 
+                    />
+                  </div>
+                </div>
               </div>
-            )}
+              <p className="level-badge">Nível: {dashboardData.training?.currentLevel || 'Iniciante'}</p>
+            </div>
           </div>
         </div>
       </div>
