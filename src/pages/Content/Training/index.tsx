@@ -199,11 +199,11 @@ const ModuleCardLockedContentTextButtonIconButton = styled.button`
   }
 `;
 
-const ModuleCardLockedContentTextButtonIconButtonIcon = styled.span`
+const ModuleCardLockedContentTextButtonIconButtonIconButtonIcon = styled.span`
   margin-left: 8px;
 `;
 
-const ModuleCardLockedContentTextButtonIconButtonIconButtonIcon = styled.button`
+const ModuleCardLockedContentTextButtonIconButtonIconButtonIconButtonIcon = styled.button`
   background-color: #007bff;
   color: white;
   border: none;
@@ -217,11 +217,11 @@ const ModuleCardLockedContentTextButtonIconButtonIconButtonIcon = styled.button`
   }
 `;
 
-const ModuleCardLockedContentTextButtonIconButtonIconButtonIconButtonIcon = styled.span`
+const ModuleCardLockedContentTextButtonIconButtonIconButtonIconButtonIconSpan = styled.span`
   margin-left: 8px;
 `;
 
-const ModuleCardLockedContentTextButtonIconButtonIconButtonIconButtonIcon = styled.button`
+const ModuleCardLockedContentTextButtonIconButtonIconButtonIconButtonIconButton = styled.button`
   background-color: #007bff;
   color: white;
   border: none;

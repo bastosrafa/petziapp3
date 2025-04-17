@@ -1,136 +1,341 @@
 import React, { useState } from "react";
-import styled from "styled-components";
+import LessonBase from "@/components/LessonBase";
 import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useFirestore } from "@/hooks/useFirestore";
+import { useCollection } from "@/hooks/useCollection";
 import { Timestamp } from 'firebase/firestore';
 
-const LessonContainer = styled.div`
-  padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
-`;
-
-const Title = styled.h1`
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 20px;
-`;
-
-const SubTitle = styled.h2`
-  font-size: 18px;
-  color: #444;
-  margin-bottom: 20px;
-`;
-
-const CarouselContainer = styled.div`
-  position: relative;
-  height: 400px;
-  overflow: hidden;
-`;
-
-const Slide = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  opacity: ${props => (props.active ? 1 : 0)};
-  transition: opacity 0.3s ease-in-out;
-  padding: 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-const SlideContent = styled.div`
-  position: relative;
-  height: 100%;
-`;
-
-const SlideTitle = styled.h2`
-  font-size: 20px;
-  color: #333;
-  margin-bottom: 15px;
-`;
-
-const ContentSection = styled.div`
-  margin-bottom: 20px;
-`;
-
-const SectionTitle = styled.h3`
-  font-size: 18px;
-  color: #444;
-  margin-bottom: 10px;
-`;
-
-const ContentText = styled.p`
-  font-size: 16px;
-  line-height: 1.6;
-  color: #666;
-  margin-bottom: 15px;
-`;
-
-const ImageContainer = styled.div`
-  position: relative;
-  height: 200px;
-  margin-bottom: 20px;
-`;
-
-const Image = styled.img`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
-`;
-
-const NavigationButtons = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-`;
-
-const Button = styled.button`
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  &:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-`;
-
-const Dots = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  gap: 10px;
-`;
-
-const Dot = styled.div`
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: ${props => (props.active ? "#007bff" : "#ccc")};
-  cursor: pointer;
-`;
-
-export default function Behavior3({ onNextLesson }) {
+export default function Behavior3({ onNextLesson, onBack }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { user } = useAuthContext();
   const { addDocument: addProgress } = useFirestore("progress");
   const { updateTraining, refreshData } = useDashboard();
+  const { documents: progressDocs } = useCollection(
+    "progress",
+    ["userId", "==", user.uid],
+    null,
+    ["courseId", "==", "9DwWIAtShVCPXyRPSbqF"]
+  );
+
+  const slides = [
+    {
+      title: "Latidos Excessivos",
+      image: "/images/training/barking-intro.jpg",
+      imageAlt: "Cão latindo",
+      imageHeight: "200px",
+      content: (
+        <>
+          <p>
+            Nesta aula, você aprenderá a controlar os latidos excessivos do seu cão. 
+            Este é um comportamento natural, mas que pode ser gerenciado de forma adequada.
+          </p>
+        </>
+      )
+    },
+    {
+      title: "Como Controlar",
+      content: (
+        <>
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
+            marginBottom: '15px',
+            fontWeight: '600'
+          }}>Passo a Passo</h3>
+          <ol style={{ 
+            paddingLeft: '25px',
+            marginTop: '15px',
+            lineHeight: '1.8',
+            listStyleType: 'none',
+            counterReset: 'item'
+          }}>
+            <li style={{ 
+              marginBottom: '15px',
+              position: 'relative',
+              paddingLeft: '30px'
+            }}>
+              <span style={{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                color: '#007bff',
+                fontWeight: 'bold',
+                fontSize: '1.1em'
+              }}>1.</span>
+              <span style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '500'
+              }}>Identifique o motivo do latido</span>
+              <br />
+              <span style={{ 
+                fontSize: '14px',
+                color: '#666',
+                display: 'block',
+                marginTop: '5px'
+              }}>Observe quando e por que seu cão late</span>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              position: 'relative',
+              paddingLeft: '30px'
+            }}>
+              <span style={{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                color: '#007bff',
+                fontWeight: 'bold',
+                fontSize: '1.1em'
+              }}>2.</span>
+              <span style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '500'
+              }}>Remova o estímulo quando possível</span>
+              <br />
+              <span style={{ 
+                fontSize: '14px',
+                color: '#666',
+                display: 'block',
+                marginTop: '5px'
+              }}>Afaste o cão da fonte de estresse</span>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              position: 'relative',
+              paddingLeft: '30px'
+            }}>
+              <span style={{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                color: '#007bff',
+                fontWeight: 'bold',
+                fontSize: '1.1em'
+              }}>3.</span>
+              <span style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '500'
+              }}>Ensine o comando "quieto"</span>
+              <br />
+              <span style={{ 
+                fontSize: '14px',
+                color: '#666',
+                display: 'block',
+                marginTop: '5px'
+              }}>Recompense quando ele parar de latir</span>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              position: 'relative',
+              paddingLeft: '30px'
+            }}>
+              <span style={{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                color: '#007bff',
+                fontWeight: 'bold',
+                fontSize: '1.1em'
+              }}>4.</span>
+              <span style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '500'
+              }}>Pratique em diferentes situações</span>
+              <br />
+              <span style={{ 
+                fontSize: '14px',
+                color: '#666',
+                display: 'block',
+                marginTop: '5px'
+              }}>Comece em ambientes controlados</span>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              position: 'relative',
+              paddingLeft: '30px'
+            }}>
+              <span style={{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                color: '#007bff',
+                fontWeight: 'bold',
+                fontSize: '1.1em'
+              }}>5.</span>
+              <span style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '500'
+              }}>Seja consistente no treinamento</span>
+              <br />
+              <span style={{ 
+                fontSize: '14px',
+                color: '#666',
+                display: 'block',
+                marginTop: '5px'
+              }}>Mantenha a mesma abordagem sempre</span>
+            </li>
+          </ol>
+        </>
+      )
+    },
+    {
+      title: "Dicas e Prevenção",
+      content: (
+        <>
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
+            marginBottom: '15px',
+            fontWeight: '600'
+          }}>Dicas Importantes</h3>
+          <ul style={{ 
+            paddingLeft: '25px',
+            marginTop: '15px',
+            lineHeight: '1.8',
+            listStyleType: 'none'
+          }}>
+            <li style={{ 
+              marginBottom: '15px',
+              position: 'relative',
+              paddingLeft: '30px'
+            }}>
+              <span style={{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                color: '#007bff',
+                fontSize: '1.2em'
+              }}>•</span>
+              <span style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '500'
+              }}>Exercite seu cão regularmente</span>
+              <br />
+              <span style={{ 
+                fontSize: '14px',
+                color: '#666',
+                display: 'block',
+                marginTop: '5px'
+              }}>Cães cansados latem menos</span>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              position: 'relative',
+              paddingLeft: '30px'
+            }}>
+              <span style={{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                color: '#007bff',
+                fontSize: '1.2em'
+              }}>•</span>
+              <span style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '500'
+              }}>Proporcione enriquecimento ambiental</span>
+              <br />
+              <span style={{ 
+                fontSize: '14px',
+                color: '#666',
+                display: 'block',
+                marginTop: '5px'
+              }}>Brinquedos e atividades mentais ajudam</span>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              position: 'relative',
+              paddingLeft: '30px'
+            }}>
+              <span style={{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                color: '#007bff',
+                fontSize: '1.2em'
+              }}>•</span>
+              <span style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '500'
+              }}>Evite reforçar o latido</span>
+              <br />
+              <span style={{ 
+                fontSize: '14px',
+                color: '#666',
+                display: 'block',
+                marginTop: '5px'
+              }}>Não dê atenção quando ele latir sem motivo</span>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              position: 'relative',
+              paddingLeft: '30px'
+            }}>
+              <span style={{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                color: '#007bff',
+                fontSize: '1.2em'
+              }}>•</span>
+              <span style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '500'
+              }}>Considere treinamento profissional</span>
+              <br />
+              <span style={{ 
+                fontSize: '14px',
+                color: '#666',
+                display: 'block',
+                marginTop: '5px'
+              }}>Se o problema persistir, busque ajuda</span>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              position: 'relative',
+              paddingLeft: '30px'
+            }}>
+              <span style={{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                color: '#007bff',
+                fontSize: '1.2em'
+              }}>•</span>
+              <span style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '500'
+              }}>Seja paciente e consistente</span>
+              <br />
+              <span style={{ 
+                fontSize: '14px',
+                color: '#666',
+                display: 'block',
+                marginTop: '5px'
+              }}>Mudanças de comportamento levam tempo</span>
+            </li>
+          </ul>
+        </>
+      )
+    }
+  ];
 
   const nextSlide = async () => {
     if (currentSlide === 2) {
       // Salvar no localStorage primeiro
       localStorage.setItem("behavior3_completed", "true");
       window.dispatchEvent(new Event('storage'));
-      
-      // Avançar para a próxima lição imediatamente
-      onNextLesson();
       
       // Tentar salvar no Firestore em segundo plano
       try {
@@ -150,12 +355,27 @@ export default function Behavior3({ onNextLesson }) {
             addProgress(progressData),
             new Promise(resolve => setTimeout(resolve, 2000)) // Timeout de 2 segundos
           ]).then(() => {
+            // Calcular o progresso total
+            const updatedProgressDocs = progressDocs ? [...progressDocs] : [];
+            updatedProgressDocs.push(progressData);
+            
+            // Calcular o número total de lições completadas
+            const completedLessons = updatedProgressDocs.filter(doc => doc.status === "completed").length;
+            
+            // Calcular o tempo total de treinamento
+            const totalTime = updatedProgressDocs.reduce((acc, doc) => acc + (doc.duration || 0), 0);
+            
+            // Determinar o nível com base no número de lições
+            const currentLevel = completedLessons < 10 ? 'beginner' : 
+                               completedLessons < 20 ? 'intermediate' : 
+                               completedLessons < 30 ? 'advanced' : 'expert';
+            
             // Atualizar o dashboard em segundo plano
             updateTraining({
-              completedLessons: 3,
-              currentLevel: 'beginner',
+              completedLessons,
+              currentLevel,
               lastSession: new Date(),
-              totalTime: 15
+              totalTime
             }).catch(err => console.error("Erro ao atualizar dashboard:", err));
             
             refreshData().catch(err => console.error("Erro ao atualizar dados:", err));
@@ -168,13 +388,16 @@ export default function Behavior3({ onNextLesson }) {
       } catch (error) {
         console.error("Erro ao processar progresso da lição:", error);
       }
+      
+      // Avançar para a próxima lição imediatamente
+      onNextLesson();
     } else {
-      setCurrentSlide((prev) => (prev + 1) % 3);
+      setCurrentSlide(prev => prev + 1);
     }
   };
 
   const prevSlide = () => {
-    setCurrentSlide(prev => (prev - 1 + 3) % 3);
+    setCurrentSlide(prev => prev - 1);
   };
 
   const goToSlide = (index) => {
@@ -182,104 +405,16 @@ export default function Behavior3({ onNextLesson }) {
   };
 
   return (
-    <LessonContainer>
-      <Title>Módulo 2: Comportamento</Title>
-      <SubTitle>Junto e Solto</SubTitle>
-      
-      <CarouselContainer>
-        <Slide active={currentSlide === 0}>
-          <SlideContent>
-            <ImageContainer>
-              <Image src="/images/training/heel-off-leash-intro.jpg" alt="Cão caminhando junto" />
-            </ImageContainer>
-            <ContentSection>
-              <SlideTitle>Bem-vindo à Aula: Junto e Solto</SlideTitle>
-              <ContentText>
-                Nesta aula, você aprenderá a ensinar seu cão a caminhar corretamente ao seu lado 
-                e a se comportar adequadamente quando estiver solto. Estes são comportamentos 
-                essenciais para passeios agradáveis e seguros.
-              </ContentText>
-            </ContentSection>
-          </SlideContent>
-          <Dots>
-            {[0, 1, 2].map((index) => (
-              <Dot
-                key={index}
-                active={currentSlide === index}
-                onClick={() => goToSlide(index)}
-              />
-            ))}
-          </Dots>
-          <NavigationButtons>
-            <Button onClick={prevSlide}>Voltar</Button>
-            <Button onClick={nextSlide}>
-              {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
-            </Button>
-          </NavigationButtons>
-        </Slide>
-
-        <Slide active={currentSlide === 1}>
-          <SlideContent>
-            <ContentSection>
-              <SlideTitle>Como Ensinar</SlideTitle>
-              <SectionTitle>Passo a Passo</SectionTitle>
-              <ContentText>
-                1. Comece com o comando "Junto" usando guia curta
-                2. Recompense quando o cão estiver na posição correta
-                3. Pratique mudanças de direção
-                4. Introduza o comando "Solto" em áreas seguras
-                5. Aumente gradualmente as distrações
-              </ContentText>
-            </ContentSection>
-          </SlideContent>
-          <Dots>
-            {[0, 1, 2].map((index) => (
-              <Dot
-                key={index}
-                active={currentSlide === index}
-                onClick={() => goToSlide(index)}
-              />
-            ))}
-          </Dots>
-          <NavigationButtons>
-            <Button onClick={prevSlide}>Voltar</Button>
-            <Button onClick={nextSlide}>
-              {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
-            </Button>
-          </NavigationButtons>
-        </Slide>
-
-        <Slide active={currentSlide === 2}>
-          <SlideContent>
-            <ContentSection>
-              <SlideTitle>Prática e Dicas</SlideTitle>
-              <SectionTitle>Dicas Importantes</SectionTitle>
-              <ContentText>
-                • Mantenha a guia relaxada
-                • Use recompensas de alto valor
-                • Pratique em diferentes ambientes
-                • Seja consistente com os comandos
-                • Mantenha as sessões curtas e positivas
-              </ContentText>
-            </ContentSection>
-          </SlideContent>
-          <Dots>
-            {[0, 1, 2].map((index) => (
-              <Dot
-                key={index}
-                active={currentSlide === index}
-                onClick={() => goToSlide(index)}
-              />
-            ))}
-          </Dots>
-          <NavigationButtons>
-            <Button onClick={prevSlide}>Voltar</Button>
-            <Button onClick={nextSlide}>
-              {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
-            </Button>
-          </NavigationButtons>
-        </Slide>
-      </CarouselContainer>
-    </LessonContainer>
+    <LessonBase
+      title="Latidos Excessivos"
+      slides={slides}
+      currentSlide={currentSlide}
+      onNextSlide={nextSlide}
+      onPrevSlide={prevSlide}
+      onGoToSlide={goToSlide}
+      height="600px"
+      contentHeight="calc(100% - 100px)"
+      scrollable={true}
+    />
   );
 } 

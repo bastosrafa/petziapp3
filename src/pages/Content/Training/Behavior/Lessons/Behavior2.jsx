@@ -1,150 +1,335 @@
 import React, { useState } from "react";
-import styled from "styled-components";
+import LessonBase from "@/components/LessonBase";
 import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useFirestore } from "@/hooks/useFirestore";
 import { useCollection } from "@/hooks/useCollection";
 import { Timestamp } from 'firebase/firestore';
 
-const LessonContainer = styled.div`
-  padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
-`;
-
-const Title = styled.h1`
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 20px;
-`;
-
-const SubTitle = styled.h2`
-  font-size: 18px;
-  color: #666;
-  margin-bottom: 20px;
-`;
-
-const CarouselContainer = styled.div`
-  position: relative;
-  height: 600px;
-  overflow: hidden;
-`;
-
-const Slide = styled.div`
-  position: absolute;
-  width: 100%;
-  height: calc(100% - 100px);
-  opacity: ${props => (props.active ? 1 : 0)};
-  transition: opacity 0.3s ease-in-out;
-  padding: 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-const SlideContent = styled.div`
-  position: relative;
-  height: 100%;
-  overflow-y: auto;
-  padding-bottom: 20px;
-`;
-
-const SlideTitle = styled.h2`
-  font-size: 20px;
-  color: #333;
-  margin-bottom: 15px;
-`;
-
-const ContentSection = styled.div`
-  margin-bottom: 20px;
-`;
-
-const SectionTitle = styled.h3`
-  font-size: 18px;
-  color: #444;
-  margin-bottom: 10px;
-`;
-
-const ContentText = styled.p`
-  font-size: 16px;
-  line-height: 1.6;
-  color: #666;
-  margin-bottom: 15px;
-`;
-
-const ImageContainer = styled.div`
-  position: relative;
-  width: 100%;
-  height: 200px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #f5f5f5;
-`;
-
-const Image = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-`;
-
-const NavigationButtons = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-between;
-  padding: 20px;
-  z-index: 10;
-`;
-
-const Button = styled.button`
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  &:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-`;
-
-const Dots = styled.div`
-  position: absolute;
-  bottom: 60px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  padding: 10px;
-  z-index: 10;
-`;
-
-const Dot = styled.div`
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: ${props => (props.active ? "#007bff" : "#ccc")};
-  cursor: pointer;
-`;
-
 export default function Behavior2({ onNextLesson, onBack }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { user } = useAuthContext();
   const { addDocument: addProgress } = useFirestore("progress");
   const { updateTraining, refreshData } = useDashboard();
-  
-  // Buscar todos os documentos de progresso do usuário
   const { documents: progressDocs } = useCollection(
     "progress",
     ["userId", "==", user.uid],
     null,
     ["courseId", "==", "9DwWIAtShVCPXyRPSbqF"]
   );
+
+  const slides = [
+    {
+      title: "Não Pular nas Pessoas",
+      image: "/images/training/no-jump-intro.jpg",
+      imageAlt: "Cão pulando em pessoa",
+      imageHeight: "200px",
+      content: (
+        <>
+          <p>
+            Nesta aula, você aprenderá a ensinar seu cão a não pular nas pessoas. 
+            Este é um comportamento comum que pode ser corrigido com paciência e consistência.
+          </p>
+        </>
+      )
+    },
+    {
+      title: "Como Ensinar",
+      content: (
+        <>
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
+            marginBottom: '15px',
+            fontWeight: '600'
+          }}>Passo a Passo</h3>
+          <ol style={{ 
+            paddingLeft: '25px',
+            marginTop: '15px',
+            lineHeight: '1.8',
+            listStyleType: 'none',
+            counterReset: 'item'
+          }}>
+            <li style={{ 
+              marginBottom: '15px',
+              position: 'relative',
+              paddingLeft: '30px'
+            }}>
+              <span style={{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                color: '#007bff',
+                fontWeight: 'bold',
+                fontSize: '1.1em'
+              }}>1.</span>
+              <span style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '500'
+              }}>Ignore o cão quando ele pular</span>
+              <br />
+              <span style={{ 
+                fontSize: '14px',
+                color: '#666',
+                display: 'block',
+                marginTop: '5px'
+              }}>Não faça contato visual ou fale com ele</span>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              position: 'relative',
+              paddingLeft: '30px'
+            }}>
+              <span style={{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                color: '#007bff',
+                fontWeight: 'bold',
+                fontSize: '1.1em'
+              }}>2.</span>
+              <span style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '500'
+              }}>Vire as costas e não faça contato visual</span>
+              <br />
+              <span style={{ 
+                fontSize: '14px',
+                color: '#666',
+                display: 'block',
+                marginTop: '5px'
+              }}>Mostre que pulando ele não receberá atenção</span>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              position: 'relative',
+              paddingLeft: '30px'
+            }}>
+              <span style={{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                color: '#007bff',
+                fontWeight: 'bold',
+                fontSize: '1.1em'
+              }}>3.</span>
+              <span style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '500'
+              }}>Recompense quando ele estiver com as patas no chão</span>
+              <br />
+              <span style={{ 
+                fontSize: '14px',
+                color: '#666',
+                display: 'block',
+                marginTop: '5px'
+              }}>Use petiscos ou carinho como recompensa</span>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              position: 'relative',
+              paddingLeft: '30px'
+            }}>
+              <span style={{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                color: '#007bff',
+                fontWeight: 'bold',
+                fontSize: '1.1em'
+              }}>4.</span>
+              <span style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '500'
+              }}>Pratique com diferentes pessoas</span>
+              <br />
+              <span style={{ 
+                fontSize: '14px',
+                color: '#666',
+                display: 'block',
+                marginTop: '5px'
+              }}>Isso ajuda a generalizar o comportamento</span>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              position: 'relative',
+              paddingLeft: '30px'
+            }}>
+              <span style={{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                color: '#007bff',
+                fontWeight: 'bold',
+                fontSize: '1.1em'
+              }}>5.</span>
+              <span style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '500'
+              }}>Seja consistente em todas as situações</span>
+              <br />
+              <span style={{ 
+                fontSize: '14px',
+                color: '#666',
+                display: 'block',
+                marginTop: '5px'
+              }}>A consistência é fundamental para o sucesso</span>
+            </li>
+          </ol>
+        </>
+      )
+    },
+    {
+      title: "Prática e Dicas",
+      content: (
+        <>
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
+            marginBottom: '15px',
+            fontWeight: '600'
+          }}>Dicas Importantes</h3>
+          <ul style={{ 
+            paddingLeft: '25px',
+            marginTop: '15px',
+            lineHeight: '1.8',
+            listStyleType: 'none'
+          }}>
+            <li style={{ 
+              marginBottom: '15px',
+              position: 'relative',
+              paddingLeft: '30px'
+            }}>
+              <span style={{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                color: '#007bff',
+                fontSize: '1.2em'
+              }}>•</span>
+              <span style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '500'
+              }}>Mantenha a calma e não grite</span>
+              <br />
+              <span style={{ 
+                fontSize: '14px',
+                color: '#666',
+                display: 'block',
+                marginTop: '5px'
+              }}>O cão precisa de um líder calmo e confiante</span>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              position: 'relative',
+              paddingLeft: '30px'
+            }}>
+              <span style={{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                color: '#007bff',
+                fontSize: '1.2em'
+              }}>•</span>
+              <span style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '500'
+              }}>Ensine um comportamento alternativo</span>
+              <br />
+              <span style={{ 
+                fontSize: '14px',
+                color: '#666',
+                display: 'block',
+                marginTop: '5px'
+              }}>Como sentar para receber atenção</span>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              position: 'relative',
+              paddingLeft: '30px'
+            }}>
+              <span style={{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                color: '#007bff',
+                fontSize: '1.2em'
+              }}>•</span>
+              <span style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '500'
+              }}>Recompense comportamentos calmos</span>
+              <br />
+              <span style={{ 
+                fontSize: '14px',
+                color: '#666',
+                display: 'block',
+                marginTop: '5px'
+              }}>Valorize quando o cão estiver tranquilo</span>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              position: 'relative',
+              paddingLeft: '30px'
+            }}>
+              <span style={{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                color: '#007bff',
+                fontSize: '1.2em'
+              }}>•</span>
+              <span style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '500'
+              }}>Pratique com visitas</span>
+              <br />
+              <span style={{ 
+                fontSize: '14px',
+                color: '#666',
+                display: 'block',
+                marginTop: '5px'
+              }}>Peça ajuda de amigos e familiares</span>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              position: 'relative',
+              paddingLeft: '30px'
+            }}>
+              <span style={{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                color: '#007bff',
+                fontSize: '1.2em'
+              }}>•</span>
+              <span style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '500'
+              }}>Seja paciente e consistente</span>
+              <br />
+              <span style={{ 
+                fontSize: '14px',
+                color: '#666',
+                display: 'block',
+                marginTop: '5px'
+              }}>O treinamento leva tempo e dedicação</span>
+            </li>
+          </ul>
+        </>
+      )
+    }
+  ];
 
   const nextSlide = async () => {
     if (currentSlide === 2) {
@@ -207,12 +392,12 @@ export default function Behavior2({ onNextLesson, onBack }) {
       // Avançar para a próxima lição imediatamente
       onNextLesson();
     } else {
-      setCurrentSlide((prev) => (prev + 1) % 3);
+      setCurrentSlide(prev => prev + 1);
     }
   };
 
   const prevSlide = () => {
-    setCurrentSlide(prev => (prev - 1 + 3) % 3);
+    setCurrentSlide(prev => prev - 1);
   };
 
   const goToSlide = (index) => {
@@ -220,110 +405,16 @@ export default function Behavior2({ onNextLesson, onBack }) {
   };
 
   return (
-    <LessonContainer>
-      <Title>Módulo 2: Comportamento</Title>
-      <SubTitle>Não Pular nas Pessoas</SubTitle>
-      
-      <CarouselContainer>
-        <Slide active={currentSlide === 0}>
-          <SlideContent>
-            <ImageContainer>
-              <Image src="/images/training/no-jump-intro.jpg" alt="Cão pulando em pessoa" />
-            </ImageContainer>
-          <ContentSection>
-            <ContentText>
-                Nesta aula, você aprenderá a ensinar seu cão a não pular nas pessoas. 
-                Este é um comportamento comum que pode ser corrigido com paciência e consistência.
-            </ContentText>
-          </ContentSection>
-          </SlideContent>
-          <Dots>
-            {[0, 1, 2].map((index) => (
-              <Dot
-                key={index}
-                active={currentSlide === index}
-                onClick={() => goToSlide(index)}
-              />
-            ))}
-          </Dots>
-          <NavigationButtons>
-            <Button onClick={onBack}>Voltar</Button>
-            <Button onClick={nextSlide}>
-              {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
-            </Button>
-          </NavigationButtons>
-        </Slide>
-
-        <Slide active={currentSlide === 1}>
-          <SlideContent>
-            <ContentSection>
-          <SlideTitle>Como Ensinar</SlideTitle>
-            <SectionTitle>Passo a Passo</SectionTitle>
-            <ContentText>
-                1. Ignore o cão quando ele pular
-                <br />
-                2. Vire as costas e não faça contato visual
-                <br />
-                3. Recompense quando ele estiver com as patas no chão
-                <br />
-                4. Pratique com diferentes pessoas
-                <br />
-                5. Seja consistente em todas as situações
-            </ContentText>
-          </ContentSection>
-          </SlideContent>
-          <Dots>
-            {[0, 1, 2].map((index) => (
-              <Dot
-                key={index}
-                active={currentSlide === index}
-                onClick={() => goToSlide(index)}
-              />
-            ))}
-          </Dots>
-          <NavigationButtons>
-            <Button onClick={onBack}>Voltar</Button>
-            <Button onClick={nextSlide}>
-              {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
-            </Button>
-          </NavigationButtons>
-        </Slide>
-
-        <Slide active={currentSlide === 2}>
-          <SlideContent>
-            <ContentSection>
-          <SlideTitle>Prática e Dicas</SlideTitle>
-            <SectionTitle>Dicas Importantes</SectionTitle>
-            <ContentText>
-                • Mantenha a calma e não grite
-                <br />
-                • Ensine um comportamento alternativo (como sentar)
-                <br />
-                • Recompense comportamentos calmos
-                <br />
-                • Pratique com visitas
-                <br />
-                • Seja paciente e consistente
-            </ContentText>
-          </ContentSection>
-          </SlideContent>
-      <Dots>
-        {[0, 1, 2].map((index) => (
-          <Dot
-            key={index}
-            active={currentSlide === index}
-            onClick={() => goToSlide(index)}
-          />
-        ))}
-      </Dots>
-          <NavigationButtons>
-            <Button onClick={onBack}>Voltar</Button>
-            <Button onClick={nextSlide}>
-              {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
-            </Button>
-          </NavigationButtons>
-        </Slide>
-      </CarouselContainer>
-    </LessonContainer>
+    <LessonBase
+      title="Não Pular nas Pessoas"
+      slides={slides}
+      currentSlide={currentSlide}
+      onNextSlide={nextSlide}
+      onPrevSlide={prevSlide}
+      onGoToSlide={goToSlide}
+      height="600px"
+      contentHeight="calc(100% - 100px)"
+      scrollable={true}
+    />
   );
 } 

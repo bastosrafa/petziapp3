@@ -1,249 +1,138 @@
 import React, { useState } from "react";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import ModuleCompletionPopup from "../../../../../components/ModuleCompletionPopup";
+import LessonBase from "@/components/LessonBase";
 import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useFirestore } from "@/hooks/useFirestore";
+import { useCollection } from "@/hooks/useCollection";
 import { Timestamp } from 'firebase/firestore';
+import { useNavigate } from "react-router-dom";
 
-const LessonContainer = styled.div`
-  padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
-`;
-
-const Title = styled.h1`
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 20px;
-`;
-
-const CarouselContainer = styled.div`
-  position: relative;
-  height: 400px;
-  overflow: hidden;
-`;
-
-const Slide = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  opacity: ${props => (props.active ? 1 : 0)};
-  transition: opacity 0.3s ease-in-out;
-  padding: 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-const SlideTitle = styled.h2`
-  font-size: 20px;
-  color: #333;
-  margin-bottom: 15px;
-`;
-
-const ContentSection = styled.div`
-  margin-bottom: 20px;
-`;
-
-const SectionTitle = styled.h3`
-  font-size: 18px;
-  color: #444;
-  margin-bottom: 10px;
-`;
-
-const ContentText = styled.p`
-  font-size: 16px;
-  line-height: 1.6;
-  color: #666;
-  margin-bottom: 15px;
-`;
-
-const NavigationButtons = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-`;
-
-const Button = styled.button`
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  &:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-`;
-
-const Dots = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  gap: 10px;
-`;
-
-const Dot = styled.div`
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: ${props => (props.active ? "#007bff" : "#ccc")};
-  cursor: pointer;
-`;
-
-export default function Behavior5({ onNextLesson }) {
+export default function Behavior5() {
   const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [showPopup, setShowPopup] = useState(false);
   const { user } = useAuthContext();
   const { addDocument: addProgress } = useFirestore("progress");
   const { updateTraining, refreshData } = useDashboard();
+  const { documents: progressDocs } = useCollection(
+    "progress",
+    ["userId", "==", user.uid],
+    null,
+    ["courseId", "==", "9DwWIAtShVCPXyRPSbqF"]
+  );
 
-  const nextSlide = async () => {
-    if (currentSlide === 2) {
-      // Salvar no localStorage primeiro
-      localStorage.setItem("behavior5_completed", "true");
-      window.dispatchEvent(new Event('storage'));
-      
-      // Mostrar o popup imediatamente
-      setShowPopup(true);
-      
-      // Tentar salvar no Firestore em segundo plano
-      try {
-        if (user) {
-          const progressData = {
-            lessonId: "behavior5",
-            moduleId: "behavior",
-            courseId: "9DwWIAtShVCPXyRPSbqF",
-            userId: user.uid,
-            status: "completed",
-            completedAt: Timestamp.fromDate(new Date()),
-            duration: 5
-          };
-          
-          // Usar Promise.race para não bloquear a navegação
-          Promise.race([
-            addProgress(progressData),
-            new Promise(resolve => setTimeout(resolve, 2000)) // Timeout de 2 segundos
-          ]).then(() => {
-            // Atualizar o dashboard em segundo plano
-            updateTraining({
-              completedLessons: 5,
-              currentLevel: 'beginner',
-              lastSession: new Date(),
-              totalTime: 25
-            }).catch(err => console.error("Erro ao atualizar dashboard:", err));
-            
-            refreshData().catch(err => console.error("Erro ao atualizar dados:", err));
-            
-            console.log("Progresso da lição Behavior5 salvo com sucesso");
-          }).catch(error => {
-            console.error("Erro ao salvar progresso da lição:", error);
-          });
-        }
-      } catch (error) {
-        console.error("Erro ao processar progresso da lição:", error);
-      }
+  const slides = [
+    {
+      title: "Introdução",
+      image: "/images/behavior/behavior5-1.jpg",
+      imageAlt: "Cão ansioso",
+      content: (
+        <div>
+          <p>A ansiedade de separação é um problema comum em cães que pode causar comportamentos destrutivos e vocalizações excessivas quando o tutor se ausenta.</p>
+          <p>Nesta aula, vamos aprender técnicas para ajudar seu cão a lidar melhor com a separação.</p>
+        </div>
+      )
+    },
+    {
+      title: "Como Ensinar",
+      content: (
+        <div>
+          <ol style={{ paddingLeft: '25px', marginTop: '15px', lineHeight: '1.8' }}>
+            <li style={{ marginBottom: '15px' }}>
+              <span style={{ color: '#007bff', fontWeight: '500' }}>1. Comece com ausências curtas</span>
+              <p style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>
+                Saia por alguns minutos e volte, aumentando gradualmente o tempo.
+              </p>
+            </li>
+            <li style={{ marginBottom: '15px' }}>
+              <span style={{ color: '#007bff', fontWeight: '500' }}>2. Crie uma rotina de despedida</span>
+              <p style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>
+                Mantenha um ritual consistente ao sair e voltar.
+              </p>
+            </li>
+            <li style={{ marginBottom: '15px' }}>
+              <span style={{ color: '#007bff', fontWeight: '500' }}>3. Proporcione distrações</span>
+              <p style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>
+                Deixe brinquedos interativos e petiscos para o cão.
+              </p>
+            </li>
+            <li style={{ marginBottom: '15px' }}>
+              <span style={{ color: '#007bff', fontWeight: '500' }}>4. Ignore comportamentos ansiosos</span>
+              <p style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>
+                Não recompense a ansiedade com atenção.
+              </p>
+            </li>
+            <li style={{ marginBottom: '15px' }}>
+              <span style={{ color: '#007bff', fontWeight: '500' }}>5. Considere o uso de feromônios</span>
+              <p style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>
+                Produtos como Adaptil podem ajudar a acalmar o cão.
+              </p>
+            </li>
+          </ol>
+        </div>
+      )
+    },
+    {
+      title: "Prática e Dicas",
+      content: (
+        <div>
+          <ul style={{ paddingLeft: '25px', marginTop: '15px', lineHeight: '1.8' }}>
+            <li style={{ marginBottom: '15px' }}>
+              <span style={{ color: '#007bff', fontWeight: '500' }}>• Mantenha a calma</span>
+              <p style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>
+                Evite demonstrações excessivas de afeto ao sair e voltar.
+              </p>
+            </li>
+            <li style={{ marginBottom: '15px' }}>
+              <span style={{ color: '#007bff', fontWeight: '500' }}>• Exercite antes de sair</span>
+              <p style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>
+                Um cão cansado tende a ficar mais relaxado.
+              </p>
+            </li>
+            <li style={{ marginBottom: '15px' }}>
+              <span style={{ color: '#007bff', fontWeight: '500' }}>• Grave o comportamento</span>
+              <p style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>
+                Use câmeras para monitorar o comportamento do cão.
+              </p>
+            </li>
+            <li style={{ marginBottom: '15px' }}>
+              <span style={{ color: '#007bff', fontWeight: '500' }}>• Consulte um profissional</span>
+              <p style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>
+                Em casos graves, busque ajuda de um especialista em comportamento.
+              </p>
+            </li>
+          </ul>
+        </div>
+      )
+    }
+  ];
+
+  const nextSlide = () => {
+    if (currentSlide < slides.length - 1) {
+      setCurrentSlide(currentSlide + 1);
     } else {
-      setCurrentSlide((prev) => (prev + 1) % 3);
+      // Lógica para próxima aula
+      navigate("/content/training/socialization");
     }
   };
 
   const prevSlide = () => {
-    setCurrentSlide(prev => (prev - 1 + 3) % 3);
+    setCurrentSlide(prev => prev - 1);
   };
 
   const goToSlide = (index) => {
     setCurrentSlide(index);
   };
 
-  const handleClosePopup = () => {
-    setShowPopup(false);
-  };
-
-  const handleNextModule = () => {
-    // Desbloqueia a primeira aula do módulo de socialização
-    localStorage.setItem("socialization1_unlocked", "true");
-    
-    // Desbloqueia o módulo na página de adestramento
-    localStorage.setItem("socialization_unlocked", "true");
-    
-    // Navega para a primeira aula do módulo de socialização
-    navigate("/content/training/socialization");
-  };
-
   return (
-    <LessonContainer>
-      <Title>Não Latir Excessivamente</Title>
-      
-      <CarouselContainer>
-        <Slide active={currentSlide === 0}>
-          <SlideTitle>Introdução</SlideTitle>
-          <ContentSection>
-            <ContentText>
-              Bem-vindo à aula sobre como controlar a latência excessiva do seu cão. 
-              Vamos aprender técnicas para reduzir latidos indesejados de forma positiva.
-            </ContentText>
-          </ContentSection>
-        </Slide>
-
-        <Slide active={currentSlide === 1}>
-          <SlideTitle>Como Ensinar</SlideTitle>
-          <ContentSection>
-            <SectionTitle>Passo a Passo</SectionTitle>
-            <ContentText>
-              1. Identifique os gatilhos dos latidos
-              2. Ensine o comando "Silêncio"
-              3. Recompense quando parar de latir
-              4. Pratique em diferentes situações
-              5. Use distrações positivas
-            </ContentText>
-          </ContentSection>
-        </Slide>
-
-        <Slide active={currentSlide === 2}>
-          <SlideTitle>Prática e Dicas</SlideTitle>
-          <ContentSection>
-            <SectionTitle>Dicas Importantes</SectionTitle>
-            <ContentText>
-              • Não grite com o cão
-              • Mantenha a calma
-              • Use recompensas valiosas
-              • Pratique regularmente
-              • Seja paciente e consistente
-            </ContentText>
-          </ContentSection>
-        </Slide>
-      </CarouselContainer>
-
-      <NavigationButtons>
-        <Button onClick={prevSlide} disabled={currentSlide === 0}>
-          Anterior
-        </Button>
-        <Button onClick={nextSlide}>
-          {currentSlide === 2 ? "Concluir Aula" : "Próximo"}
-        </Button>
-      </NavigationButtons>
-
-      <Dots>
-        {[0, 1, 2].map((index) => (
-          <Dot
-            key={index}
-            active={currentSlide === index}
-            onClick={() => goToSlide(index)}
-          />
-        ))}
-      </Dots>
-
-      {showPopup && (
-        <ModuleCompletionPopup
-          onClose={handleClosePopup}
-          onNextModule={handleNextModule}
-        />
-      )}
-    </LessonContainer>
+    <LessonBase
+      title="Aula 5: Ansiedade de Separação"
+      slides={slides}
+      currentSlide={currentSlide}
+      onNextSlide={nextSlide}
+      onPrevSlide={prevSlide}
+      onGoToSlide={goToSlide}
+      isLastLesson={true}
+      nextModulePath="/content/training/socialization"
+    />
   );
 } 
