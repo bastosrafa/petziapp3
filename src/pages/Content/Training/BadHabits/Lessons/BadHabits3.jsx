@@ -185,11 +185,13 @@ export default function BadHabits3({ onNextLesson }) {
   };
 
   const prevSlide = () => {
-    setCurrentSlide(prev => (prev - 1 + 4) % 4);
+    setCurrentSlide(prev => (prev - 1 + 3) % 3);
   };
 
   const goToSlide = (index) => {
-    setCurrentSlide(index);
+    if (index >= 0 && index < 3) {
+      setCurrentSlide(index);
+    }
   };
 
   return (
@@ -201,10 +203,10 @@ export default function BadHabits3({ onNextLesson }) {
         <Slide active={currentSlide === 0}>
           <SlideTitle>Bem-vindo à Aula!</SlideTitle>
           <ImageContainer>
-            <ImagePlaceholder>Imagem ilustrativa de cão aprendendo a não pular nas pessoas</ImagePlaceholder>
+            <ImagePlaceholder>Imagem ilustrativa de cão sentado calmamente</ImagePlaceholder>
           </ImageContainer>
           <IntroductionText>
-            Nesta aula, vamos aprender como ensinar seu cão a não pular nas pessoas e manter um comportamento mais calmo durante as interações sociais.
+            Nesta aula, vamos aprender como ensinar seu cão a não pular nas pessoas e a manter um comportamento mais calmo durante os cumprimentos.
           </IntroductionText>
         </Slide>
 
@@ -212,7 +214,7 @@ export default function BadHabits3({ onNextLesson }) {
         <Slide active={currentSlide === 1}>
           <SlideTitle>Por que ensinar?</SlideTitle>
           <Text>
-            Pular nas pessoas pode ser perigoso, especialmente com crianças ou idosos. Além disso, é um comportamento que pode incomodar visitas e pessoas na rua.
+            Cães que pulam nas pessoas podem causar acidentes, especialmente com crianças e idosos. Ensinar um comportamento mais adequado torna as interações mais seguras e agradáveis.
           </Text>
         </Slide>
 
@@ -220,22 +222,12 @@ export default function BadHabits3({ onNextLesson }) {
         <Slide active={currentSlide === 2}>
           <SlideTitle>Passo a Passo</SlideTitle>
           <StepList>
-            <StepItem>Ignore completamente: Quando o cão pular, vire as costas e ignore-o até que ele se acalme.</StepItem>
-            <StepItem>Recompense o comportamento calmo: Só dê atenção quando ele estiver com as quatro patas no chão.</StepItem>
-            <StepItem>Ensine comandos alternativos: Treine "Senta" ou "Deita" para dar ao cão uma alternativa ao pulo.</StepItem>
-            <StepItem>Pratique com visitas: Peça para amigos ajudarem no treino, seguindo as mesmas regras.</StepItem>
-            <StepItem>Seja consistente: Todos da família devem seguir as mesmas regras para não confundir o cão.</StepItem>
+            <StepItem>Ignore o comportamento indesejado: Vire as costas quando o cão pular e só dê atenção quando ele estiver com as quatro patas no chão.</StepItem>
+            <StepItem>Ensine o comando "Senta": Recompense quando o cão se sentar ao invés de pular.</StepItem>
+            <StepItem>Pratique em diferentes situações: Treine com diferentes pessoas e em diferentes ambientes.</StepItem>
+            <StepItem>Use reforço positivo: Elogie e recompense quando o cão se comportar adequadamente.</StepItem>
+            <StepItem>Mantenha a consistência: Todos na casa devem seguir as mesmas regras.</StepItem>
           </StepList>
-        </Slide>
-
-        {/* Slide 3: Resumo Rápido */}
-        <Slide active={currentSlide === 3}>
-          <SlideTitle>Resumo Rápido</SlideTitle>
-          <SummaryList>
-            <SummaryItem>Ignore o comportamento de pular e recompense a calma.</SummaryItem>
-            <SummaryItem>Ensine comandos alternativos como "Senta" e "Deita".</SummaryItem>
-            <SummaryItem>Mantenha consistência no treinamento com toda a família.</SummaryItem>
-          </SummaryList>
         </Slide>
       </CarouselContainer>
 
@@ -244,12 +236,12 @@ export default function BadHabits3({ onNextLesson }) {
           Anterior
         </Button>
         <Button onClick={nextSlide}>
-          {currentSlide === 3 ? "Próxima Aula" : "Próximo"}
+          {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
         </Button>
       </NavigationButtons>
 
       <Dots>
-        {[0, 1, 2, 3].map((index) => (
+        {[0, 1, 2].map((index) => (
           <Dot
             key={index}
             active={currentSlide === index}

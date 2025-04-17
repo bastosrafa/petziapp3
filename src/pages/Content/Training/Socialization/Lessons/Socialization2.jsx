@@ -30,24 +30,258 @@ export default function Socialization2({ onNextLesson }) {
     {
       title: "Métodos de Socialização",
       content: (
-        <div>
-          <p>
-            Existem várias maneiras de socializar seu cão com pessoas, incluindo:
-            encontros controlados, passeios em locais movimentados, visitas a
-            parques e praças, e interações com convidados em casa.
-          </p>
+        <div style={{ 
+          flex: 1,
+          overflowY: 'auto',
+          paddingRight: '10px',
+          maxHeight: '420px',
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#4299E1 #F7FAFC',
+          pointerEvents: 'auto',
+          position: 'relative',
+          zIndex: 1
+        }}>
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
+            marginBottom: '15px',
+            fontWeight: '600'
+          }}>Técnicas de Socialização</h3>
+          <ul style={{ 
+            listStyle: 'none',
+            padding: '0',
+            marginBottom: '20px',
+            overflow: 'visible'
+          }}>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Encontros Controlados</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Organize encontros com pessoas conhecidas em ambientes controlados, permitindo que seu cão se acostume gradualmente.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Passeios em Locais Movimentados</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Leve seu cão para passear em parques e praças movimentadas, expondo-o a diferentes tipos de pessoas e situações.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Visitas a Estabelecimentos</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Visite pet shops, clínicas veterinárias e outros locais pet-friendly para acostumar seu cão a diferentes ambientes.
+              </p>
+            </li>
+          </ul>
         </div>
       )
     },
     {
       title: "Dicas para Socialização Segura",
       content: (
-        <div>
-          <p>
-            Para garantir uma socialização segura e positiva, é importante:
-            começar gradualmente, usar reforço positivo, observar os sinais de
-            estresse do seu cão e nunca forçar interações.
-          </p>
+        <div style={{ 
+          flex: 1,
+          overflowY: 'auto',
+          paddingRight: '10px',
+          maxHeight: '420px',
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#4299E1 #F7FAFC',
+          pointerEvents: 'auto',
+          position: 'relative',
+          zIndex: 1
+        }}>
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
+            marginBottom: '15px',
+            fontWeight: '600'
+          }}>Recomendações Importantes</h3>
+          <ol style={{ 
+            listStyle: 'none',
+            padding: '0',
+            marginBottom: '20px',
+            counterReset: 'item'
+          }}>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>1. Comece Gradualmente</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Inicie com interações curtas e em ambientes tranquilos, aumentando gradualmente a duração e a complexidade.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>2. Use Reforço Positivo</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Recompense comportamentos calmos e positivos com petiscos, carinho e elogios para criar associações positivas.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>3. Observe os Sinais</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Fique atento aos sinais de estresse ou desconforto do seu cão e respeite seus limites, interrompendo a interação se necessário.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>4. Mantenha a Calma</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Seu cão percebe suas emoções, então mantenha a calma e transmita confiança durante as interações.
+              </p>
+            </li>
+          </ol>
         </div>
       )
     }

@@ -127,25 +127,231 @@ const Socialization5 = ({ onNextLesson }) => {
     {
       title: "Tipos de Ambientes",
       content: (
-        <div>
-          <p>
-            Existem vários tipos de ambientes desafiadores que seu cão pode
-            encontrar, incluindo: locais movimentados, transportes públicos,
-            parques com muitas distrações, e ambientes com diferentes
-            superfícies e texturas.
-          </p>
+        <div style={{ 
+          flex: 1,
+          overflowY: 'auto',
+          paddingRight: '10px',
+          maxHeight: '420px',
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#4299E1 #F7FAFC',
+          pointerEvents: 'auto',
+          position: 'relative',
+          zIndex: 1
+        }}>
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
+            marginBottom: '15px',
+            fontWeight: '600'
+          }}>Ambientes Desafiadores</h3>
+          <ol style={{ 
+            listStyle: 'none',
+            padding: '0',
+            marginBottom: '20px',
+            counterReset: 'item',
+            overflow: 'visible'
+          }}>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>1. Locais Movimentados</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Praças, parques e ruas movimentadas, onde há muitas pessoas, sons e estímulos visuais diferentes.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>2. Transportes Públicos</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Ônibus, metrôs e trens, onde o cão precisa se adaptar a espaços confinados e diferentes sons e movimentos.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>3. Ambientes com Diferentes Superfícies</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Locais com pisos escorregadios, escadas, grama, areia e outras texturas que podem ser desconhecidas para o cão.
+              </p>
+            </li>
+          </ol>
         </div>
       )
     },
     {
       title: "Estratégias de Adaptação",
       content: (
-        <div>
-          <p>
-            Para ajudar seu cão a se adaptar a ambientes desafiadores, é
-            importante: começar gradualmente, usar reforço positivo, manter
-            a calma e ser paciente, e sempre respeitar os limites do seu pet.
-          </p>
+        <div style={{ 
+          flex: 1,
+          overflowY: 'auto',
+          paddingRight: '10px',
+          maxHeight: '420px',
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#4299E1 #F7FAFC',
+          pointerEvents: 'auto',
+          position: 'relative',
+          zIndex: 1
+        }}>
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
+            marginBottom: '15px',
+            fontWeight: '600'
+          }}>Dicas para Adaptação</h3>
+          <ul style={{ 
+            listStyle: 'none',
+            padding: '0',
+            marginBottom: '20px',
+            overflow: 'visible'
+          }}>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Exposição Gradual</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Comece com exposições curtas e em horários mais tranquilos, aumentando gradualmente a duração e a complexidade.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Reforço Positivo</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Recompense comportamentos calmos e positivos com petiscos, carinho e elogios para criar associações positivas.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Observação dos Sinais</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Fique atento aos sinais de estresse ou desconforto do seu cão e respeite seus limites, interrompendo a exposição se necessário.
+              </p>
+            </li>
+          </ul>
         </div>
       )
     }

@@ -190,11 +190,13 @@ export default function BadHabits4({ onNextLesson }) {
   };
 
   const prevSlide = () => {
-    setCurrentSlide(prev => (prev - 1 + 4) % 4);
+    setCurrentSlide(prev => (prev - 1 + 3) % 3);
   };
 
   const goToSlide = (index) => {
-    setCurrentSlide(index);
+    if (index >= 0 && index < 3) {
+      setCurrentSlide(index);
+    }
   };
 
   const handleClosePopup = () => {
@@ -222,17 +224,17 @@ export default function BadHabits4({ onNextLesson }) {
 
   return (
     <LessonContainer>
-      <Title>Evitando Destruição de Objetos</Title>
+      <Title>Evitar que o Cão Puxe na Coleira</Title>
       
       <CarouselContainer>
         {/* Slide 0: Introdução com Imagem */}
         <Slide active={currentSlide === 0}>
           <SlideTitle>Bem-vindo à Aula!</SlideTitle>
           <ImageContainer>
-            <ImagePlaceholder>Imagem ilustrativa de cão aprendendo a não destruir móveis</ImagePlaceholder>
+            <ImagePlaceholder>Imagem ilustrativa de cão andando calmamente na coleira</ImagePlaceholder>
           </ImageContainer>
           <IntroductionText>
-            Nesta aula, vamos aprender como prevenir que seu cão destrua móveis e objetos da casa, redirecionando seu comportamento destrutivo para atividades apropriadas.
+            Nesta aula, vamos aprender como ensinar seu cão a não puxar na coleira durante os passeios, tornando as caminhadas mais agradáveis para ambos.
           </IntroductionText>
         </Slide>
 
@@ -240,7 +242,7 @@ export default function BadHabits4({ onNextLesson }) {
         <Slide active={currentSlide === 1}>
           <SlideTitle>Por que ensinar?</SlideTitle>
           <Text>
-            A destruição de móveis e objetos pode ser perigosa para o cão, além de causar prejuízos financeiros. Este comportamento geralmente está relacionado ao tédio, ansiedade ou excesso de energia.
+            Cães que puxam na coleira podem causar desconforto e até mesmo lesões no tutor. Além disso, passeios mais calmos são mais seguros e agradáveis para todos.
           </Text>
         </Slide>
 
@@ -248,22 +250,12 @@ export default function BadHabits4({ onNextLesson }) {
         <Slide active={currentSlide === 2}>
           <SlideTitle>Passo a Passo</SlideTitle>
           <StepList>
-            <StepItem>Forneça brinquedos apropriados: Ofereça brinquedos resistentes e seguros para mastigar.</StepItem>
-            <StepItem>Exercite seu cão: Garanta exercício físico e mental diário para gastar energia.</StepItem>
-            <StepItem>Supervisione: Mantenha o cão sob supervisão e interrompa comportamentos destrutivos.</StepItem>
-            <StepItem>Use repelentes: Aplique sprays anti-mordida em móveis que o cão costuma destruir.</StepItem>
-            <StepItem>Recompense o uso correto: Elogie quando ele mastigar seus próprios brinquedos.</StepItem>
+            <StepItem>Pare quando o cão puxar: Pare imediatamente quando sentir a tensão na coleira e só continue quando o cão relaxar.</StepItem>
+            <StepItem>Recompense o comportamento correto: Dê petiscos e elogios quando o cão andar ao seu lado sem puxar.</StepItem>
+            <StepItem>Use equipamentos adequados: Coleiras peitorais ou peitorais anti-puxão podem ajudar no treinamento.</StepItem>
+            <StepItem>Mantenha a consistência: Treine regularmente e siga sempre o mesmo método.</StepItem>
+            <StepItem>Seja paciente: O treinamento pode levar tempo, mas os resultados valem a pena.</StepItem>
           </StepList>
-        </Slide>
-
-        {/* Slide 3: Resumo Rápido */}
-        <Slide active={currentSlide === 3}>
-          <SlideTitle>Resumo Rápido</SlideTitle>
-          <SummaryList>
-            <SummaryItem>Ofereça brinquedos apropriados e exercício regular.</SummaryItem>
-            <SummaryItem>Supervisione e interrompa comportamentos destrutivos.</SummaryItem>
-            <SummaryItem>Recompense quando usar os brinquedos corretos.</SummaryItem>
-          </SummaryList>
         </Slide>
       </CarouselContainer>
 
@@ -272,12 +264,12 @@ export default function BadHabits4({ onNextLesson }) {
           Anterior
         </Button>
         <Button onClick={nextSlide}>
-          {currentSlide === 3 ? "Concluir Aula" : "Próximo"}
+          {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
         </Button>
       </NavigationButtons>
 
       <Dots>
-        {[0, 1, 2, 3].map((index) => (
+        {[0, 1, 2].map((index) => (
           <Dot
             key={index}
             active={currentSlide === index}
@@ -289,7 +281,7 @@ export default function BadHabits4({ onNextLesson }) {
       {showPopup && (
         <ModuleCompletionPopup
           onClose={handleClosePopup}
-          onNextModule={handleNextModule}
+          onNext={handleNextModule}
         />
       )}
     </LessonContainer>

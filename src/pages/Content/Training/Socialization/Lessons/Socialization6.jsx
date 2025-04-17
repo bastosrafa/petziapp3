@@ -31,26 +31,349 @@ export default function Socialization6({ onNextLesson }) {
       )
     },
     {
-      title: "Revisão dos Conceitos",
+      title: "Técnicas de Socialização",
       content: (
-        <div>
-          <p>
-            Vamos revisar os principais conceitos aprendidos: socialização com
-            pessoas, socialização com outros cães, controle de impulsos e
-            adaptação a ambientes desafiadores.
-          </p>
+        <div style={{ 
+          flex: 1,
+          overflowY: 'auto',
+          paddingRight: '10px',
+          maxHeight: '420px',
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#4299E1 #F7FAFC',
+          pointerEvents: 'auto',
+          position: 'relative',
+          zIndex: 1
+        }}>
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
+            marginBottom: '15px',
+            fontWeight: '600'
+          }}>Métodos de Treinamento</h3>
+          <ol style={{ 
+            listStyle: 'none',
+            padding: '0',
+            marginBottom: '20px',
+            counterReset: 'item',
+            overflow: 'visible'
+          }}>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>1. Dessensibilização</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Exposição gradual a estímulos que causam medo ou ansiedade, começando com intensidade baixa e aumentando progressivamente.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>2. Contracondicionamento</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Associar situações estressantes a experiências positivas, como petiscos e carinho, para mudar a resposta emocional do cão.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>3. Modelagem de Comportamento</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Reforçar pequenos passos em direção ao comportamento desejado, ajudando o cão a se sentir confortável em situações novas.
+              </p>
+            </li>
+          </ol>
+        </div>
+      )
+    },
+    {
+      title: "Dicas Finais",
+      content: (
+        <div style={{ 
+          flex: 1,
+          overflowY: 'auto',
+          paddingRight: '10px',
+          maxHeight: '420px',
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#4299E1 #F7FAFC',
+          pointerEvents: 'auto',
+          position: 'relative',
+          zIndex: 1
+        }}>
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
+            marginBottom: '15px',
+            fontWeight: '600'
+          }}>Recomendações Importantes</h3>
+          <ul style={{ 
+            listStyle: 'none',
+            padding: '0',
+            marginBottom: '20px',
+            overflow: 'visible'
+          }}>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Paciência e Consistência</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Cada cão tem seu próprio ritmo de aprendizado. Mantenha a consistência no treinamento e seja paciente com o progresso.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Ambiente Seguro</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Certifique-se de que o ambiente de treinamento seja seguro e controlado, minimizando riscos e distrações.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Observação Contínua</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Mantenha-se atento aos sinais de estresse ou desconforto do seu cão, ajustando o treinamento conforme necessário.
+              </p>
+            </li>
+          </ul>
         </div>
       )
     },
     {
       title: "Prática Final",
       content: (
-        <div>
-          <p>
-            É hora de colocar em prática tudo o que foi aprendido. Vamos
-            realizar exercícios que combinam diferentes situações e desafios,
-            sempre mantendo o foco no bem-estar e na segurança do seu cão.
-          </p>
+        <div style={{ 
+          flex: 1,
+          overflowY: 'auto',
+          paddingRight: '10px',
+          maxHeight: '420px',
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#4299E1 #F7FAFC',
+          pointerEvents: 'auto',
+          position: 'relative',
+          zIndex: 1
+        }}>
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
+            marginBottom: '15px',
+            fontWeight: '600'
+          }}>Exercícios Práticos</h3>
+          <ol style={{ 
+            listStyle: 'none',
+            padding: '0',
+            marginBottom: '20px',
+            counterReset: 'item',
+            overflow: 'visible'
+          }}>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>1. Socialização em Ambientes Diversos</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Pratique em diferentes locais: parques, ruas movimentadas, transportes públicos e ambientes com diferentes superfícies.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>2. Interação com Diferentes Pessoas</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Exponha seu cão a pessoas de diferentes idades, aparências e comportamentos, sempre com supervisão e controle.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>3. Controle de Estímulos</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Pratique o controle de impulsos em situações com diferentes níveis de distração e estímulos.
+              </p>
+            </li>
+          </ol>
         </div>
       )
     }

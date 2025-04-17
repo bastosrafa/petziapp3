@@ -181,24 +181,231 @@ const Socialization4 = ({ onNextLesson }) => {
     {
       title: "Técnicas de Controle",
       content: (
-        <div>
-          <p>
-            Existem várias técnicas para desenvolver o controle de impulsos,
-            incluindo: exercícios de espera, comandos de controle, jogos
-            de autocontrole e treinamento com recompensas graduais.
-          </p>
+        <div style={{ 
+          flex: 1,
+          overflowY: 'auto',
+          paddingRight: '10px',
+          maxHeight: '420px',
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#4299E1 #F7FAFC',
+          pointerEvents: 'auto',
+          position: 'relative',
+          zIndex: 1
+        }}>
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
+            marginBottom: '15px',
+            fontWeight: '600'
+          }}>Métodos de Treinamento</h3>
+          <ol style={{ 
+            listStyle: 'none',
+            padding: '0',
+            marginBottom: '20px',
+            counterReset: 'item',
+            overflow: 'visible'
+          }}>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>1. Exercícios de Espera</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Ensine seu cão a esperar antes de receber comida, brinquedos ou atenção, reforçando a paciência e o autocontrole.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>2. Comandos de Controle</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Utilize comandos como "senta", "fica" e "espera" para ajudar seu cão a controlar seus impulsos em diferentes situações.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>3. Jogos de Autocontrole</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Pratique jogos que estimulam o autocontrole, como esconder petiscos e pedir para o cão esperar antes de procurá-los.
+              </p>
+            </li>
+          </ol>
         </div>
       )
     },
     {
       title: "Aplicação Prática",
       content: (
-        <div>
-          <p>
-            O controle de impulsos deve ser praticado em diferentes situações
-            do dia a dia, como durante as refeições, ao encontrar outros cães,
-            ao receber visitas e em situações de excitação.
-          </p>
+        <div style={{ 
+          flex: 1,
+          overflowY: 'auto',
+          paddingRight: '10px',
+          maxHeight: '420px',
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#4299E1 #F7FAFC',
+          pointerEvents: 'auto',
+          position: 'relative',
+          zIndex: 1
+        }}>
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
+            marginBottom: '15px',
+            fontWeight: '600'
+          }}>Situações do Dia a Dia</h3>
+          <ul style={{ 
+            listStyle: 'none',
+            padding: '0',
+            marginBottom: '20px',
+            overflow: 'visible'
+          }}>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Durante as Refeições</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Pratique o controle de impulsos durante as refeições, ensinando seu cão a esperar antes de comer e a não roubar comida.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Encontros com Outros Cães</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Treine seu cão a manter a calma ao encontrar outros cães, controlando a excitação e evitando comportamentos impulsivos.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Recebendo Visitantes</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Ensine seu cão a controlar a excitação ao receber visitas, mantendo-se calmo e esperando sua permissão para interagir.
+              </p>
+            </li>
+          </ul>
         </div>
       )
     }

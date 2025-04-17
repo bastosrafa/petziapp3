@@ -46,8 +46,6 @@ export default function Socialization1({ onNextLesson }) {
     },
     {
       title: "Por que a Socialização é Importante?",
-      image: "/images/socialization/importance.jpg",
-      imageAlt: "Cão confiante e bem socializado",
       content: (
         <div style={{ 
           flex: 1,
@@ -61,25 +59,107 @@ export default function Socialization1({ onNextLesson }) {
           position: 'relative',
           zIndex: 1
         }}>
-          <p style={{ 
-            fontSize: '1rem',
-            lineHeight: '1.6',
-            color: '#333',
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
             marginBottom: '15px',
-            wordWrap: 'break-word',
-            whiteSpace: 'pre-wrap'
+            fontWeight: '600'
+          }}>Benefícios da Socialização</h3>
+          <ul style={{ 
+            listStyle: 'none',
+            padding: '0',
+            marginBottom: '20px'
           }}>
-            Uma boa socialização ajuda a prevenir problemas de comportamento,
-            reduz a ansiedade e o medo, e contribui para um cão mais confiante
-            e equilibrado.
-          </p>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Prevenção de Problemas Comportamentais</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Cães bem socializados tendem a desenvolver menos problemas de agressividade, medo e ansiedade.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Melhor Qualidade de Vida</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                A socialização permite que o cão se sinta confortável em diferentes situações, melhorando sua qualidade de vida.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Facilidade no Adestramento</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Cães socializados tendem a aprender mais rápido e a responder melhor aos comandos.
+              </p>
+            </li>
+          </ul>
         </div>
       )
     },
     {
       title: "Período Crítico de Socialização",
-      image: "/images/socialization/critical-period.jpg",
-      imageAlt: "Filhote de cão em período de socialização",
       content: (
         <div style={{ 
           flex: 1,
@@ -93,18 +173,131 @@ export default function Socialization1({ onNextLesson }) {
           position: 'relative',
           zIndex: 1
         }}>
-          <p style={{ 
-            fontSize: '1rem',
-            lineHeight: '1.6',
-            color: '#333',
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
             marginBottom: '15px',
-            wordWrap: 'break-word',
-            whiteSpace: 'pre-wrap'
+            fontWeight: '600'
+          }}>Fases do Desenvolvimento</h3>
+          <ol style={{ 
+            listStyle: 'none',
+            padding: '0',
+            marginBottom: '20px',
+            counterReset: 'item'
           }}>
-            O período mais importante para a socialização é entre 3 e 16 semanas
-            de idade. Durante este período, o cão está mais receptivo a novas
-            experiências e forma suas primeiras impressões do mundo.
-          </p>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>1. Período Neonatal (0-2 semanas)</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                O filhote depende totalmente da mãe e começa a desenvolver seus sentidos básicos.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>2. Período de Transição (2-4 semanas)</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                O filhote começa a explorar o ambiente e interagir com seus irmãos.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>3. Período de Socialização (3-16 semanas)</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                É o período mais importante para a socialização, quando o filhote está mais receptivo a novas experiências.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>4. Período Juvenil (4-6 meses)</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                O cão continua a desenvolver suas habilidades sociais e comportamentais.
+              </p>
+            </li>
+          </ol>
         </div>
       )
     }

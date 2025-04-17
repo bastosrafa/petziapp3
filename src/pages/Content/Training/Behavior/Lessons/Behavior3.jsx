@@ -23,21 +23,30 @@ export default function Behavior3({ onNextLesson, onBack }) {
       title: "Latidos Excessivos",
       image: "/images/training/barking-intro.jpg",
       imageAlt: "Cão latindo",
-      imageHeight: "200px",
       content: (
-        <>
-          <p>
-            Nesta aula, você aprenderá a controlar os latidos excessivos do seu cão. 
-            Este é um comportamento natural, mas que pode ser gerenciado de forma adequada.
-          </p>
-        </>
+        <div>
+          <p>Os latidos são uma forma natural de comunicação dos cães, mas quando excessivos podem se tornar um problema.</p>
+          <p>Nesta aula, você aprenderá técnicas para controlar os latidos excessivos do seu cão de forma positiva e efetiva.</p>
+        </div>
       )
     },
     {
       title: "Como Ensinar",
       content: (
         <div>
-          <ol style={{ paddingLeft: '25px', marginTop: '15px', lineHeight: '1.8' }}>
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
+            marginBottom: '15px',
+            fontWeight: '600'
+          }}>Passo a Passo</h3>
+          <ol style={{ 
+            paddingLeft: '0',
+            marginTop: '15px',
+            lineHeight: '1.8',
+            listStyleType: 'none',
+            counterReset: 'item'
+          }}>
             <li style={{ 
               marginBottom: '20px',
               padding: '15px',
@@ -63,7 +72,7 @@ export default function Behavior3({ onNextLesson, onBack }) {
                 margin: '0',
                 lineHeight: '1.6'
               }}>
-                Observe quando e por que seu cão late.
+                Observe quando e por que seu cão late. Isso ajudará a determinar a melhor abordagem para o treinamento.
               </p>
             </li>
             <li style={{ 
@@ -91,7 +100,7 @@ export default function Behavior3({ onNextLesson, onBack }) {
                 margin: '0',
                 lineHeight: '1.6'
               }}>
-                Afaste o cão da fonte de estresse.
+                Afaste o cão da fonte de estresse ou distração que causa o latido excessivo.
               </p>
             </li>
             <li style={{ 
@@ -119,7 +128,7 @@ export default function Behavior3({ onNextLesson, onBack }) {
                 margin: '0',
                 lineHeight: '1.6'
               }}>
-                Recompense quando ele parar de latir.
+                Use um comando claro e recompense quando o cão parar de latir.
               </p>
             </li>
             <li style={{ 
@@ -147,7 +156,7 @@ export default function Behavior3({ onNextLesson, onBack }) {
                 margin: '0',
                 lineHeight: '1.6'
               }}>
-                Comece em ambientes controlados.
+                Comece em ambientes controlados e aumente gradualmente as distrações.
               </p>
             </li>
             <li style={{ 
@@ -175,7 +184,7 @@ export default function Behavior3({ onNextLesson, onBack }) {
                 margin: '0',
                 lineHeight: '1.6'
               }}>
-                Mantenha a mesma abordagem sempre.
+                Mantenha a mesma abordagem e comandos em todas as situações.
               </p>
             </li>
           </ol>
@@ -186,7 +195,18 @@ export default function Behavior3({ onNextLesson, onBack }) {
       title: "Dicas e Prevenção",
       content: (
         <div>
-          <ul style={{ paddingLeft: '25px', marginTop: '15px', lineHeight: '1.8' }}>
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
+            marginBottom: '15px',
+            fontWeight: '600'
+          }}>Dicas Importantes</h3>
+          <ul style={{ 
+            paddingLeft: '0',
+            marginTop: '15px',
+            lineHeight: '1.8',
+            listStyleType: 'none'
+          }}>
             <li style={{ 
               marginBottom: '20px',
               padding: '15px',
@@ -212,7 +232,7 @@ export default function Behavior3({ onNextLesson, onBack }) {
                 margin: '0',
                 lineHeight: '1.6'
               }}>
-                Cães cansados latem menos.
+                Cães cansados tendem a latir menos. Mantenha uma rotina de exercícios adequada.
               </p>
             </li>
             <li style={{ 
@@ -240,7 +260,7 @@ export default function Behavior3({ onNextLesson, onBack }) {
                 margin: '0',
                 lineHeight: '1.6'
               }}>
-                Brinquedos e atividades mentais ajudam.
+                Brinquedos interativos e atividades mentais ajudam a reduzir o tédio e a ansiedade.
               </p>
             </li>
             <li style={{ 
@@ -261,14 +281,14 @@ export default function Behavior3({ onNextLesson, onBack }) {
                 fontSize: '16px',
                 display: 'block',
                 marginBottom: '8px'
-              }}>• Evite reforçar o latido</span>
+              }}>• Mantenha a calma e não grite</span>
               <p style={{ 
                 fontSize: '14px', 
                 color: '#666', 
                 margin: '0',
                 lineHeight: '1.6'
               }}>
-                Não dê atenção quando ele latir sem motivo.
+                O cão pode interpretar gritos como latidos, piorando o comportamento.
               </p>
             </li>
             <li style={{ 
@@ -289,42 +309,14 @@ export default function Behavior3({ onNextLesson, onBack }) {
                 fontSize: '16px',
                 display: 'block',
                 marginBottom: '8px'
-              }}>• Considere treinamento profissional</span>
+              }}>• Consulte um profissional se necessário</span>
               <p style={{ 
                 fontSize: '14px', 
                 color: '#666', 
                 margin: '0',
                 lineHeight: '1.6'
               }}>
-                Se o problema persistir, busque ajuda.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '20px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>• Seja paciente e consistente</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Mudanças de comportamento levam tempo.
+                Alguns casos de latido excessivo podem precisar de ajuda especializada.
               </p>
             </li>
           </ul>
