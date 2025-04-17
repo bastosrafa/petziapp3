@@ -226,6 +226,44 @@ const WarningItem = styled.li`
   line-height: 1.6;
 `;
 
+const ContentSection = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 10px;
+  max-height: 420px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #4299E1 #F7FAFC;
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #F7FAFC;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #4299E1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #3182CE;
+  }
+`;
+
+const SectionTitle = styled.h3`
+  font-size: 1.8rem;
+  color: #2D3748;
+  margin-bottom: 2rem;
+  text-align: center;
+`;
+
 export default function StartHere1({ onNextLesson }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { user } = useAuthContext();
@@ -379,17 +417,53 @@ export default function StartHere1({ onNextLesson }) {
 
         {/* Slide 3: Resumo */}
         <Slide active={currentSlide === 3}>
-          <SlideTitle>Resumo Rápido</SlideTitle>
-          <SummaryList>
-            <SummaryItem>Use reforço positivo sempre - recompense os comportamentos desejados</SummaryItem>
-            <SummaryItem>Recompense rapidamente o comportamento correto para criar associações claras</SummaryItem>
-            <SummaryItem>Evite punições - cães aprendem melhor com estímulos positivos</SummaryItem>
-            <SummaryItem>Mantenha as sessões curtas e divertidas para ambos</SummaryItem>
-            <SummaryItem>Seja consistente - use sempre os mesmos comandos e recompensas</SummaryItem>
-          </SummaryList>
-          <ContentText>
-            Pronto para começar? Vamos praticar esses conceitos na próxima aula!
-          </ContentText>
+          <SlideContent>
+            <ContentSection>
+              <SlideTitle>Resumo Rápido</SlideTitle>
+              <ContentText>
+                <span style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <span style={{ marginRight: '0.5rem' }}>🌟</span>
+                  Use reforço positivo sempre que possível
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <span style={{ marginRight: '0.5rem' }}>🔄</span>
+                  Seja consistente nos comandos e recompensas
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <span style={{ marginRight: '0.5rem' }}>⏱️</span>
+                  Mantenha as sessões curtas e divertidas
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <span style={{ marginRight: '0.5rem' }}>🐾</span>
+                  Observe e respeite os limites do seu cão
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <span style={{ marginRight: '0.5rem' }}>🌍</span>
+                  Pratique regularmente em diferentes ambientes
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <span style={{ marginRight: '0.5rem' }}>🎉</span>
+                  Celebre cada pequeno progresso
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <span style={{ marginRight: '0.5rem' }}>😊</span>
+                  Mantenha a paciência e o bom humor
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <span style={{ marginRight: '0.5rem' }}>🎯</span>
+                  Adapte o treinamento à personalidade do seu cão
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <span style={{ marginRight: '0.5rem' }}>🍖</span>
+                  Use petiscos de alto valor para recompensas
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <span style={{ marginRight: '0.5rem' }}>📅</span>
+                  Estabeleça uma rotina de treinamento
+                </span>
+              </ContentText>
+            </ContentSection>
+          </SlideContent>
         </Slide>
       </CarouselContainer>
 
