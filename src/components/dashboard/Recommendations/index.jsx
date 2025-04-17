@@ -1,19 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDashboard } from '../../../pages/Dashboard/contexts/DashboardContext';
 import { useNavigate } from 'react-router-dom';
-import './styles.css';
+import { FaGraduationCap, FaWalking, FaUtensils, FaSyringe } from 'react-icons/fa';
+import { 
+  RecommendationsContainer, 
+  RecommendationsHeader, 
+  RecommendationsList,
+  RecommendationCard,
+  RecommendationContent,
+  ActionButton,
+  CarouselControls,
+  CarouselButton
+} from './styles.js';
 
 const Recommendations = () => {
   const { dashboardData } = useDashboard();
   const navigate = useNavigate();
+  const [currentSlide, setCurrentSlide] = useState(0);
 
-  const handleAction = (type, action) => {
-    switch (action) {
-      case 'Agendar vacinação':
-        navigate('/vacinas');
-        break;
-      case 'Iniciar treino':
-        // Verifica o nível atual e redireciona para o módulo apropriado
+  const handleAction = (type) => {
+    switch (type) {
+      case 'training':
         if (!dashboardData.training?.completedLessons || dashboardData.training.completedLessons < 5) {
           navigate('/content/training/starthere');
         } else if (dashboardData.training.completedLessons < 10) {
@@ -28,120 +35,88 @@ const Recommendations = () => {
           navigate('/content/training/mental');
         }
         break;
-      case 'Registrar passeio':
+      case 'walk':
+      case 'food':
         navigate('/diario');
         break;
-      case 'Registrar alimentação':
-        navigate('/diario');
+      case 'vaccine':
+        navigate('/vacinas');
         break;
       default:
         break;
     }
   };
 
-  const getRecommendations = () => {
-    if (!dashboardData) return [];
-    
-    const recommendations = [];
-    const now = new Date();
-
-    // Verificar vacinas
-    if (dashboardData.health?.vaccines?.status === 'pending') {
-      recommendations.push({
-        type: 'health',
-        priority: 1,
-        title: 'Vacinação Pendente',
-        message: 'É necessário atualizar as vacinas do seu pet.',
-        action: 'Agendar vacinação',
-        icon: '💉'
-      });
+  const recommendations = [
+    {
+      type: 'training',
+      title: 'Treinamento Básico',
+      description: '25 lições para ensinar comandos básicos ao seu pet',
+      icon: <FaGraduationCap />,
+      action: 'Iniciar Treino',
+      time: 'Recomendado diariamente'
+    },
+    {
+      type: 'walk',
+      title: 'Passeio',
+      description: 'Seu pet precisa de um passeio para gastar energia',
+      icon: <FaWalking />,
+      action: 'Registrar Passeio',
+      time: 'Último passeio: 2 horas atrás'
+    },
+    {
+      type: 'food',
+      title: 'Alimentação',
+      description: 'Hora de alimentar seu pet',
+      icon: <FaUtensils />,
+      action: 'Registrar Alimentação',
+      time: 'Última refeição: 4 horas atrás'
+    },
+    {
+      type: 'vaccine',
+      title: 'Vacinação',
+      description: 'Vacina contra raiva está próxima do vencimento',
+      icon: <FaSyringe />,
+      action: 'Ver Calendário',
+      time: 'Vencimento em 15 dias'
     }
+  ];
 
-    // Verificar passeios
-    if (dashboardData.activities?.walk?.lastEntry) {
-      const lastWalk = new Date(dashboardData.activities.walk.lastEntry.timestamp);
-      const daysSinceLastWalk = (now - lastWalk) / (1000 * 60 * 60 * 24);
-      if (daysSinceLastWalk >= 2) {
-        recommendations.push({
-          type: 'activity',
-          priority: 2,
-          title: 'Passeio Necessário',
-          message: `Último passeio foi há ${Math.floor(daysSinceLastWalk)} dias.`,
-          action: 'Registrar passeio',
-          icon: '🦮'
-        });
-      }
-    }
-
-    // Verificar alimentação
-    if (dashboardData.activities?.food?.lastEntry) {
-      const lastFood = new Date(dashboardData.activities.food.lastEntry.timestamp);
-      const hoursSinceLastFood = (now - lastFood) / (1000 * 60 * 60);
-      if (hoursSinceLastFood >= 24) {
-        recommendations.push({
-          type: 'activity',
-          priority: 2,
-          title: 'Alimentação Pendente',
-          message: 'Hora de alimentar seu pet.',
-          action: 'Registrar alimentação',
-          icon: '🍽️'
-        });
-      }
-    }
-
-    // Verificar treinos
-    if (dashboardData.training?.completedLessons < 30) {
-      recommendations.push({
-        type: 'training',
-        priority: 3,
-        title: 'Treino Pendente',
-        message: `${30 - dashboardData.training.completedLessons} lições restantes para completar o nível atual.`,
-        action: 'Iniciar treino',
-        icon: '🎓'
-      });
-    }
-
-    // Ordenar por prioridade (1 = mais alta)
-    return recommendations.sort((a, b) => a.priority - b.priority);
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % recommendations.length);
   };
 
-  const recommendations = getRecommendations();
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + recommendations.length) % recommendations.length);
+  };
 
-  if (recommendations.length === 0) {
-    return (
-      <div className="recommendations-container">
-        <h2>Recomendações</h2>
-        <div className="no-recommendations">
-          <p>🎉 Tudo em dia! Seu pet está bem cuidado.</p>
-        </div>
-      </div>
-    );
-  }
+  const currentRecommendation = recommendations[currentSlide];
 
   return (
-    <div className="recommendations-container">
-      <h2>Recomendações</h2>
-      <div className="recommendations-list">
-        {recommendations.map((rec, index) => (
-          <div 
-            key={index} 
-            className={`recommendation-card ${rec.type}`}
-          >
-            <div className="recommendation-icon">{rec.icon}</div>
-            <div className="recommendation-content">
-              <h3>{rec.title}</h3>
-              <p>{rec.message}</p>
-              <button 
-                className="action-button"
-                onClick={() => handleAction(rec.type, rec.action)}
-              >
-                {rec.action}
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+    <RecommendationsContainer>
+      <RecommendationsHeader>
+        <h2>Recomendações</h2>
+        <CarouselControls>
+          <CarouselButton onClick={prevSlide}>&lt;</CarouselButton>
+          <CarouselButton onClick={nextSlide}>&gt;</CarouselButton>
+        </CarouselControls>
+      </RecommendationsHeader>
+      
+      <RecommendationsList>
+        <RecommendationCard>
+          <RecommendationContent>
+            <h3>
+              {currentRecommendation.icon}
+              {currentRecommendation.title}
+            </h3>
+            <p>{currentRecommendation.description}</p>
+          </RecommendationContent>
+          <ActionButton onClick={() => handleAction(currentRecommendation.type)}>
+            {currentRecommendation.action}
+          </ActionButton>
+        </RecommendationCard>
+      </RecommendationsList>
+    </RecommendationsContainer>
   );
 };
 
