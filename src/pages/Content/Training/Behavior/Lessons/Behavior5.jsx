@@ -36,34 +36,156 @@ export default function Behavior5() {
       title: "Como Ensinar",
       content: (
         <div>
-          <ol style={{ paddingLeft: '25px', marginTop: '15px', lineHeight: '1.8' }}>
-            <li style={{ marginBottom: '15px' }}>
-              <span style={{ color: '#007bff', fontWeight: '500' }}>1. Comece com ausências curtas</span>
-              <p style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
+            marginBottom: '15px',
+            fontWeight: '600'
+          }}>Passo a Passo</h3>
+          <ol style={{ 
+            paddingLeft: '25px',
+            marginTop: '15px',
+            lineHeight: '1.8',
+            listStyleType: 'none',
+            counterReset: 'item'
+          }}>
+            <li style={{ 
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>1. Comece com ausências curtas</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
                 Saia por alguns minutos e volte, aumentando gradualmente o tempo.
               </p>
             </li>
-            <li style={{ marginBottom: '15px' }}>
-              <span style={{ color: '#007bff', fontWeight: '500' }}>2. Crie uma rotina de despedida</span>
-              <p style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>
+            <li style={{ 
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>2. Crie uma rotina de despedida</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
                 Mantenha um ritual consistente ao sair e voltar.
               </p>
             </li>
-            <li style={{ marginBottom: '15px' }}>
-              <span style={{ color: '#007bff', fontWeight: '500' }}>3. Proporcione distrações</span>
-              <p style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>
+            <li style={{ 
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>3. Proporcione distrações</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
                 Deixe brinquedos interativos e petiscos para o cão.
               </p>
             </li>
-            <li style={{ marginBottom: '15px' }}>
-              <span style={{ color: '#007bff', fontWeight: '500' }}>4. Ignore comportamentos ansiosos</span>
-              <p style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>
+            <li style={{ 
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>4. Ignore comportamentos ansiosos</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
                 Não recompense a ansiedade com atenção.
               </p>
             </li>
-            <li style={{ marginBottom: '15px' }}>
-              <span style={{ color: '#007bff', fontWeight: '500' }}>5. Considere o uso de feromônios</span>
-              <p style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>
+            <li style={{ 
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>5. Considere o uso de feromônios</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
                 Produtos como Adaptil podem ajudar a acalmar o cão.
               </p>
             </li>
@@ -75,28 +197,127 @@ export default function Behavior5() {
       title: "Prática e Dicas",
       content: (
         <div>
-          <ul style={{ paddingLeft: '25px', marginTop: '15px', lineHeight: '1.8' }}>
-            <li style={{ marginBottom: '15px' }}>
-              <span style={{ color: '#007bff', fontWeight: '500' }}>• Mantenha a calma</span>
-              <p style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
+            marginBottom: '15px',
+            fontWeight: '600'
+          }}>Dicas Importantes</h3>
+          <ul style={{ 
+            paddingLeft: '25px',
+            marginTop: '15px',
+            lineHeight: '1.8',
+            listStyleType: 'none'
+          }}>
+            <li style={{ 
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Mantenha a calma</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
                 Evite demonstrações excessivas de afeto ao sair e voltar.
               </p>
             </li>
-            <li style={{ marginBottom: '15px' }}>
-              <span style={{ color: '#007bff', fontWeight: '500' }}>• Exercite antes de sair</span>
-              <p style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>
+            <li style={{ 
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Exercite antes de sair</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
                 Um cão cansado tende a ficar mais relaxado.
               </p>
             </li>
-            <li style={{ marginBottom: '15px' }}>
-              <span style={{ color: '#007bff', fontWeight: '500' }}>• Grave o comportamento</span>
-              <p style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>
+            <li style={{ 
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Grave o comportamento</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
                 Use câmeras para monitorar o comportamento do cão.
               </p>
             </li>
-            <li style={{ marginBottom: '15px' }}>
-              <span style={{ color: '#007bff', fontWeight: '500' }}>• Consulte um profissional</span>
-              <p style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>
+            <li style={{ 
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Consulte um profissional</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
                 Em casos graves, busque ajuda de um especialista em comportamento.
               </p>
             </li>

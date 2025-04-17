@@ -37,7 +37,19 @@ export default function Behavior2({ onNextLesson, onBack }) {
       title: "Como Ensinar",
       content: (
         <div>
-          <ol style={{ paddingLeft: '25px', marginTop: '15px', lineHeight: '1.8' }}>
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
+            marginBottom: '15px',
+            fontWeight: '600'
+          }}>Passo a Passo</h3>
+          <ol style={{ 
+            paddingLeft: '25px',
+            marginTop: '15px',
+            lineHeight: '1.8',
+            listStyleType: 'none',
+            counterReset: 'item'
+          }}>
             <li style={{ 
               marginBottom: '20px',
               padding: '15px',
@@ -56,14 +68,14 @@ export default function Behavior2({ onNextLesson, onBack }) {
                 fontSize: '16px',
                 display: 'block',
                 marginBottom: '8px'
-              }}>1. Identifique o motivo do latido</span>
+              }}>1. Ignore o cão quando ele pular</span>
               <p style={{ 
                 fontSize: '14px', 
                 color: '#666', 
                 margin: '0',
                 lineHeight: '1.6'
               }}>
-                Observe quando e por que seu cão late.
+                Vire as costas e evite contato visual quando o cão pular.
               </p>
             </li>
             <li style={{ 
@@ -84,14 +96,14 @@ export default function Behavior2({ onNextLesson, onBack }) {
                 fontSize: '16px',
                 display: 'block',
                 marginBottom: '8px'
-              }}>2. Remova o estímulo quando possível</span>
+              }}>2. Recompense o comportamento calmo</span>
               <p style={{ 
                 fontSize: '14px', 
                 color: '#666', 
                 margin: '0',
                 lineHeight: '1.6'
               }}>
-                Afaste o cão da fonte de estresse.
+                Dê atenção e petiscos quando o cão estiver com as quatro patas no chão.
               </p>
             </li>
             <li style={{ 
@@ -112,14 +124,14 @@ export default function Behavior2({ onNextLesson, onBack }) {
                 fontSize: '16px',
                 display: 'block',
                 marginBottom: '8px'
-              }}>3. Ensine o comando "quieto"</span>
+              }}>3. Ensine um comando alternativo</span>
               <p style={{ 
                 fontSize: '14px', 
                 color: '#666', 
                 margin: '0',
                 lineHeight: '1.6'
               }}>
-                Recompense quando ele parar de latir.
+                Treine o cão a sentar quando encontrar pessoas.
               </p>
             </li>
             <li style={{ 
@@ -140,14 +152,14 @@ export default function Behavior2({ onNextLesson, onBack }) {
                 fontSize: '16px',
                 display: 'block',
                 marginBottom: '8px'
-              }}>4. Pratique em diferentes situações</span>
+              }}>4. Pratique com diferentes pessoas</span>
               <p style={{ 
                 fontSize: '14px', 
                 color: '#666', 
                 margin: '0',
                 lineHeight: '1.6'
               }}>
-                Comece em ambientes controlados.
+                Envolva amigos e familiares no treinamento.
               </p>
             </li>
             <li style={{ 
@@ -168,14 +180,14 @@ export default function Behavior2({ onNextLesson, onBack }) {
                 fontSize: '16px',
                 display: 'block',
                 marginBottom: '8px'
-              }}>5. Seja consistente no treinamento</span>
+              }}>5. Seja consistente</span>
               <p style={{ 
                 fontSize: '14px', 
                 color: '#666', 
                 margin: '0',
                 lineHeight: '1.6'
               }}>
-                Mantenha a mesma abordagem sempre.
+                Mantenha a mesma abordagem em todas as situações.
               </p>
             </li>
           </ol>
@@ -186,7 +198,18 @@ export default function Behavior2({ onNextLesson, onBack }) {
       title: "Dicas e Prevenção",
       content: (
         <div>
-          <ul style={{ paddingLeft: '25px', marginTop: '15px', lineHeight: '1.8' }}>
+          <h3 style={{ 
+            fontSize: '18px',
+            color: '#444',
+            marginBottom: '15px',
+            fontWeight: '600'
+          }}>Dicas Importantes</h3>
+          <ul style={{ 
+            paddingLeft: '25px',
+            marginTop: '15px',
+            lineHeight: '1.8',
+            listStyleType: 'none'
+          }}>
             <li style={{ 
               marginBottom: '20px',
               padding: '15px',
@@ -212,7 +235,7 @@ export default function Behavior2({ onNextLesson, onBack }) {
                 margin: '0',
                 lineHeight: '1.6'
               }}>
-                Cães cansados latem menos.
+                Cães cansados pulam menos.
               </p>
             </li>
             <li style={{ 
@@ -240,7 +263,7 @@ export default function Behavior2({ onNextLesson, onBack }) {
                 margin: '0',
                 lineHeight: '1.6'
               }}>
-                Brinquedos e atividades mentais ajudam.
+                Brinquedos e atividades mentais ajudam a reduzir a excitação.
               </p>
             </li>
             <li style={{ 
@@ -261,70 +284,14 @@ export default function Behavior2({ onNextLesson, onBack }) {
                 fontSize: '16px',
                 display: 'block',
                 marginBottom: '8px'
-              }}>• Evite reforçar o latido</span>
+              }}>• Mantenha a calma</span>
               <p style={{ 
                 fontSize: '14px', 
                 color: '#666', 
                 margin: '0',
                 lineHeight: '1.6'
               }}>
-                Não dê atenção quando ele latir sem motivo.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '20px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>• Considere treinamento profissional</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Se o problema persistir, busque ajuda.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '20px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>• Seja paciente e consistente</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Mudanças de comportamento levam tempo.
+                Cães refletem a energia de seus tutores.
               </p>
             </li>
           </ul>
