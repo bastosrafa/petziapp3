@@ -41,6 +41,8 @@ import Notifications from "./pages/Notifications";
 import About from "./pages/About";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import Report from "./pages/Report";
+import ReportSuccess from "./pages/Report/Success";
 
 function AppRoutes() {
   const { user, authIsReady } = useAuthContext();
@@ -180,6 +182,8 @@ function AppRoutes() {
                       <Route path="/terms" element={<Terms />} />
                       <Route path="/privacy" element={<Privacy />} />
                       <Route path="/recover" element={<PasswordRecovery />} />
+                      <Route path="/report" element={<Report />} />
+                      <Route path="/report/success" element={<ReportSuccess />} />
                       <Route path="*" element={<Navigate to="/" />} />
                     </Routes>
                   </div>
