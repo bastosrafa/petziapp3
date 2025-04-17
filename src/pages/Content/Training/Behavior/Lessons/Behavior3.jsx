@@ -34,299 +34,301 @@ export default function Behavior3({ onNextLesson, onBack }) {
       )
     },
     {
-      title: "Como Controlar",
+      title: "Como Ensinar",
       content: (
-        <>
-          <h3 style={{ 
-            fontSize: '18px',
-            color: '#444',
-            marginBottom: '15px',
-            fontWeight: '600'
-          }}>Passo a Passo</h3>
-          <ol style={{ 
-            paddingLeft: '25px',
-            marginTop: '15px',
-            lineHeight: '1.8',
-            listStyleType: 'none',
-            counterReset: 'item'
-          }}>
+        <div>
+          <ol style={{ paddingLeft: '25px', marginTop: '15px', lineHeight: '1.8' }}>
             <li style={{ 
-              marginBottom: '15px',
-              position: 'relative',
-              paddingLeft: '30px'
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
             }}>
-              <span style={{
-                position: 'absolute',
-                left: '0',
-                top: '0',
-                color: '#007bff',
-                fontWeight: 'bold',
-                fontSize: '1.1em'
-              }}>1.</span>
-              <span style={{
-                fontSize: '16px',
-                color: '#333',
-                fontWeight: '500'
-              }}>Identifique o motivo do latido</span>
-              <br />
               <span style={{ 
-                fontSize: '14px',
-                color: '#666',
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
                 display: 'block',
-                marginTop: '5px'
-              }}>Observe quando e por que seu cão late</span>
+                marginBottom: '8px'
+              }}>1. Identifique o motivo do latido</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Observe quando e por que seu cão late.
+              </p>
             </li>
             <li style={{ 
-              marginBottom: '15px',
-              position: 'relative',
-              paddingLeft: '30px'
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
             }}>
-              <span style={{
-                position: 'absolute',
-                left: '0',
-                top: '0',
-                color: '#007bff',
-                fontWeight: 'bold',
-                fontSize: '1.1em'
-              }}>2.</span>
-              <span style={{
-                fontSize: '16px',
-                color: '#333',
-                fontWeight: '500'
-              }}>Remova o estímulo quando possível</span>
-              <br />
               <span style={{ 
-                fontSize: '14px',
-                color: '#666',
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
                 display: 'block',
-                marginTop: '5px'
-              }}>Afaste o cão da fonte de estresse</span>
+                marginBottom: '8px'
+              }}>2. Remova o estímulo quando possível</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Afaste o cão da fonte de estresse.
+              </p>
             </li>
             <li style={{ 
-              marginBottom: '15px',
-              position: 'relative',
-              paddingLeft: '30px'
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
             }}>
-              <span style={{
-                position: 'absolute',
-                left: '0',
-                top: '0',
-                color: '#007bff',
-                fontWeight: 'bold',
-                fontSize: '1.1em'
-              }}>3.</span>
-              <span style={{
-                fontSize: '16px',
-                color: '#333',
-                fontWeight: '500'
-              }}>Ensine o comando "quieto"</span>
-              <br />
               <span style={{ 
-                fontSize: '14px',
-                color: '#666',
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
                 display: 'block',
-                marginTop: '5px'
-              }}>Recompense quando ele parar de latir</span>
+                marginBottom: '8px'
+              }}>3. Ensine o comando "quieto"</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Recompense quando ele parar de latir.
+              </p>
             </li>
             <li style={{ 
-              marginBottom: '15px',
-              position: 'relative',
-              paddingLeft: '30px'
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
             }}>
-              <span style={{
-                position: 'absolute',
-                left: '0',
-                top: '0',
-                color: '#007bff',
-                fontWeight: 'bold',
-                fontSize: '1.1em'
-              }}>4.</span>
-              <span style={{
-                fontSize: '16px',
-                color: '#333',
-                fontWeight: '500'
-              }}>Pratique em diferentes situações</span>
-              <br />
               <span style={{ 
-                fontSize: '14px',
-                color: '#666',
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
                 display: 'block',
-                marginTop: '5px'
-              }}>Comece em ambientes controlados</span>
+                marginBottom: '8px'
+              }}>4. Pratique em diferentes situações</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Comece em ambientes controlados.
+              </p>
             </li>
             <li style={{ 
-              marginBottom: '15px',
-              position: 'relative',
-              paddingLeft: '30px'
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
             }}>
-              <span style={{
-                position: 'absolute',
-                left: '0',
-                top: '0',
-                color: '#007bff',
-                fontWeight: 'bold',
-                fontSize: '1.1em'
-              }}>5.</span>
-              <span style={{
-                fontSize: '16px',
-                color: '#333',
-                fontWeight: '500'
-              }}>Seja consistente no treinamento</span>
-              <br />
               <span style={{ 
-                fontSize: '14px',
-                color: '#666',
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
                 display: 'block',
-                marginTop: '5px'
-              }}>Mantenha a mesma abordagem sempre</span>
+                marginBottom: '8px'
+              }}>5. Seja consistente no treinamento</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Mantenha a mesma abordagem sempre.
+              </p>
             </li>
           </ol>
-        </>
+        </div>
       )
     },
     {
       title: "Dicas e Prevenção",
       content: (
-        <>
-          <h3 style={{ 
-            fontSize: '18px',
-            color: '#444',
-            marginBottom: '15px',
-            fontWeight: '600'
-          }}>Dicas Importantes</h3>
-          <ul style={{ 
-            paddingLeft: '25px',
-            marginTop: '15px',
-            lineHeight: '1.8',
-            listStyleType: 'none'
-          }}>
+        <div>
+          <ul style={{ paddingLeft: '25px', marginTop: '15px', lineHeight: '1.8' }}>
             <li style={{ 
-              marginBottom: '15px',
-              position: 'relative',
-              paddingLeft: '30px'
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
             }}>
-              <span style={{
-                position: 'absolute',
-                left: '0',
-                top: '0',
-                color: '#007bff',
-                fontSize: '1.2em'
-              }}>•</span>
-              <span style={{
-                fontSize: '16px',
-                color: '#333',
-                fontWeight: '500'
-              }}>Exercite seu cão regularmente</span>
-              <br />
               <span style={{ 
-                fontSize: '14px',
-                color: '#666',
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
                 display: 'block',
-                marginTop: '5px'
-              }}>Cães cansados latem menos</span>
+                marginBottom: '8px'
+              }}>• Exercite seu cão regularmente</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Cães cansados latem menos.
+              </p>
             </li>
             <li style={{ 
-              marginBottom: '15px',
-              position: 'relative',
-              paddingLeft: '30px'
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
             }}>
-              <span style={{
-                position: 'absolute',
-                left: '0',
-                top: '0',
-                color: '#007bff',
-                fontSize: '1.2em'
-              }}>•</span>
-              <span style={{
-                fontSize: '16px',
-                color: '#333',
-                fontWeight: '500'
-              }}>Proporcione enriquecimento ambiental</span>
-              <br />
               <span style={{ 
-                fontSize: '14px',
-                color: '#666',
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
                 display: 'block',
-                marginTop: '5px'
-              }}>Brinquedos e atividades mentais ajudam</span>
+                marginBottom: '8px'
+              }}>• Proporcione enriquecimento ambiental</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Brinquedos e atividades mentais ajudam.
+              </p>
             </li>
             <li style={{ 
-              marginBottom: '15px',
-              position: 'relative',
-              paddingLeft: '30px'
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
             }}>
-              <span style={{
-                position: 'absolute',
-                left: '0',
-                top: '0',
-                color: '#007bff',
-                fontSize: '1.2em'
-              }}>•</span>
-              <span style={{
-                fontSize: '16px',
-                color: '#333',
-                fontWeight: '500'
-              }}>Evite reforçar o latido</span>
-              <br />
               <span style={{ 
-                fontSize: '14px',
-                color: '#666',
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
                 display: 'block',
-                marginTop: '5px'
-              }}>Não dê atenção quando ele latir sem motivo</span>
+                marginBottom: '8px'
+              }}>• Evite reforçar o latido</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Não dê atenção quando ele latir sem motivo.
+              </p>
             </li>
             <li style={{ 
-              marginBottom: '15px',
-              position: 'relative',
-              paddingLeft: '30px'
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
             }}>
-              <span style={{
-                position: 'absolute',
-                left: '0',
-                top: '0',
-                color: '#007bff',
-                fontSize: '1.2em'
-              }}>•</span>
-              <span style={{
-                fontSize: '16px',
-                color: '#333',
-                fontWeight: '500'
-              }}>Considere treinamento profissional</span>
-              <br />
               <span style={{ 
-                fontSize: '14px',
-                color: '#666',
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
                 display: 'block',
-                marginTop: '5px'
-              }}>Se o problema persistir, busque ajuda</span>
+                marginBottom: '8px'
+              }}>• Considere treinamento profissional</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Se o problema persistir, busque ajuda.
+              </p>
             </li>
             <li style={{ 
-              marginBottom: '15px',
-              position: 'relative',
-              paddingLeft: '30px'
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
             }}>
-              <span style={{
-                position: 'absolute',
-                left: '0',
-                top: '0',
-                color: '#007bff',
-                fontSize: '1.2em'
-              }}>•</span>
-              <span style={{
-                fontSize: '16px',
-                color: '#333',
-                fontWeight: '500'
-              }}>Seja paciente e consistente</span>
-              <br />
               <span style={{ 
-                fontSize: '14px',
-                color: '#666',
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
                 display: 'block',
-                marginTop: '5px'
-              }}>Mudanças de comportamento levam tempo</span>
+                marginBottom: '8px'
+              }}>• Seja paciente e consistente</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Mudanças de comportamento levam tempo.
+              </p>
             </li>
           </ul>
-        </>
+        </div>
       )
     }
   ];
@@ -406,7 +408,7 @@ export default function Behavior3({ onNextLesson, onBack }) {
 
   return (
     <LessonBase
-      title="Latidos Excessivos"
+      title="Não Puxar na Coleira"
       slides={slides}
       currentSlide={currentSlide}
       onNextSlide={nextSlide}

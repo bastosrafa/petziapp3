@@ -125,7 +125,7 @@ export default function Behavior5() {
 
   return (
     <LessonBase
-      title="Aula 5: Ansiedade de Separação"
+      title="Ansiedade de Separação"
       slides={slides}
       currentSlide={currentSlide}
       onNextSlide={nextSlide}

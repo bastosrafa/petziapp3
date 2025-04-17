@@ -1,179 +1,109 @@
 import React, { useState } from "react";
-import styled from "styled-components";
+import LessonBase from "@/components/LessonBase";
 import { useNavigate } from "react-router-dom";
-import ModuleCompletionPopup from "../../../../../components/ModuleCompletionPopup";
-import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useFirestore } from "@/hooks/useFirestore";
 import { Timestamp } from 'firebase/firestore';
+import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
+import styled from "styled-components";
+import ModuleCompletionPopup from "@/components/ModuleCompletionPopup";
 
-const LessonContainer = styled.div`
-  padding: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
+const SlideContent = styled.div`
+  padding: 1rem;
 `;
 
-const Title = styled.h1`
-  font-size: 2rem;
-  color: #2D3748;
-  margin-bottom: 2rem;
-  text-align: center;
-`;
-
-const CarouselContainer = styled.div`
-  position: relative;
-  width: 100%;
-  height: 400px;
-  overflow: hidden;
-`;
-
-const Slide = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  opacity: ${props => props.active ? 1 : 0};
-  transition: opacity 0.5s ease-in-out;
-  padding: 2rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  visibility: ${props => props.active ? 'visible' : 'hidden'};
-`;
-
-const SlideTitle = styled.h2`
-  font-size: 1.5rem;
-  color: #2D3748;
-  margin-bottom: 1.5rem;
-  text-align: center;
-`;
-
-const Text = styled.p`
-  color: #4A5568;
-  margin-bottom: 1rem;
-  line-height: 1.6;
-`;
-
-const StepList = styled.ol`
-  list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
-`;
-
-const StepItem = styled.li`
-  color: #4A5568;
-  margin-bottom: 0.75rem;
-  padding-left: 1.5rem;
-  position: relative;
-  line-height: 1.6;
-
-  &:before {
-    content: "1️⃣";
-    position: absolute;
-    left: 0;
-  }
-
-  &:nth-child(2):before {
-    content: "2️⃣";
-  }
-
-  &:nth-child(3):before {
-    content: "3️⃣";
-  }
-
-  &:nth-child(4):before {
-    content: "4️⃣";
-  }
-
-  &:nth-child(5):before {
-    content: "5️⃣";
-  }
-`;
-
-const SummaryList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
-`;
-
-const SummaryItem = styled.li`
-  color: #4A5568;
-  margin-bottom: 0.75rem;
-  padding-left: 1.5rem;
-  position: relative;
-  line-height: 1.6;
-
-  &:before {
-    content: "✔";
-    color: #48BB78;
-    position: absolute;
-    left: 0;
-  }
-`;
-
-const ImageContainer = styled.div`
-  width: 100%;
-  height: 200px;
-  background: #F7FAFC;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-`;
-
-const ImagePlaceholder = styled.div`
-  color: #A0AEC0;
+const SlideIntro = styled.p`
   font-size: 1.1rem;
-`;
-
-const IntroductionText = styled.p`
   color: #4A5568;
-  line-height: 1.6;
+  margin-bottom: 1.5rem;
   text-align: center;
-  font-size: 1.1rem;
 `;
 
-const NavigationButtons = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 2rem;
-`;
-
-const Button = styled.button`
-  padding: 0.5rem 1rem;
-  background: #4299E1;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.2s;
-
-  &:hover {
-    background: #3182CE;
-  }
-
-  &:disabled {
-    background: #CBD5E0;
-    cursor: not-allowed;
-  }
-`;
-
-const Dots = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
+const StepsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
   margin-top: 1rem;
 `;
 
-const Dot = styled.div`
-  width: 10px;
-  height: 10px;
+const StepItem = styled.div`
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const StepHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+`;
+
+const StepNumber = styled.div`
+  background: #4299E1;
+  color: white;
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
-  background: ${props => props.active ? '#4299E1' : '#CBD5E0'};
-  cursor: pointer;
-  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+`;
+
+const StepTitle = styled.h4`
+  margin: 0;
+  color: #2D3748;
+  font-size: 1.1rem;
+`;
+
+const StepDescription = styled.p`
+  color: #4A5568;
+  margin: 0;
+  line-height: 1.5;
+`;
+
+const TipsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+`;
+
+const TipItem = styled.div`
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const TipHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+`;
+
+const TipIcon = styled.span`
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+`;
+
+const TipTitle = styled.h4`
+  margin: 0;
+  color: #2D3748;
+  font-size: 1.1rem;
+`;
+
+const TipDescription = styled.p`
+  color: #4A5568;
+  margin: 0;
+  line-height: 1.5;
 `;
 
 export default function Hygiene4({ onNextLesson }) {
@@ -184,8 +114,168 @@ export default function Hygiene4({ onNextLesson }) {
   const { addDocument: addProgress } = useFirestore("progress");
   const { updateTraining, refreshData } = useDashboard();
 
+  const slides = [
+    {
+      title: "Limpeza de Ouvidos",
+      image: "/images/hygiene/ear-cleaning.jpg",
+      imageAlt: "Cão tendo os ouvidos limpos",
+      content: (
+        <div>
+          <p>
+            Nesta aula, vamos aprender sobre a importância da limpeza de ouvidos para a
+            saúde e bem-estar do seu cão.
+          </p>
+        </div>
+      )
+    },
+    {
+      title: "Por que Limpar os Ouvidos?",
+      content: (
+        <SlideContent>
+          <SlideIntro>
+            A limpeza regular dos ouvidos é essencial por vários motivos:
+          </SlideIntro>
+          <TipsGrid>
+            <TipItem>
+              <TipHeader>
+                <TipIcon>👂</TipIcon>
+                <TipTitle>Prevenção</TipTitle>
+              </TipHeader>
+              <TipDescription>
+                Evita infecções e acúmulo de cera nos ouvidos
+              </TipDescription>
+            </TipItem>
+            <TipItem>
+              <TipHeader>
+                <TipIcon>🦮</TipIcon>
+                <TipTitle>Conforto</TipTitle>
+              </TipHeader>
+              <TipDescription>
+                Reduz coceira e desconforto causados por sujeira
+              </TipDescription>
+            </TipItem>
+            <TipItem>
+              <TipHeader>
+                <TipIcon>👃</TipIcon>
+                <TipTitle>Saúde</TipTitle>
+              </TipHeader>
+              <TipDescription>
+                Previne problemas auditivos e otites
+              </TipDescription>
+            </TipItem>
+            <TipItem>
+              <TipHeader>
+                <TipIcon>🔍</TipIcon>
+                <TipTitle>Monitoramento</TipTitle>
+              </TipHeader>
+              <TipDescription>
+                Permite identificar problemas precocemente
+              </TipDescription>
+            </TipItem>
+          </TipsGrid>
+        </SlideContent>
+      )
+    },
+    {
+      title: "Como Limpar os Ouvidos",
+      content: (
+        <SlideContent>
+          <SlideIntro>
+            Siga estes passos para uma limpeza segura e eficiente:
+          </SlideIntro>
+          <StepsGrid>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>1</StepNumber>
+                <StepTitle>Inspeção</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Verifique se há vermelhidão, odor ou secreção
+              </StepDescription>
+            </StepItem>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>2</StepNumber>
+                <StepTitle>Limpeza Externa</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Use um pano úmido para limpar a parte externa do ouvido
+              </StepDescription>
+            </StepItem>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>3</StepNumber>
+                <StepTitle>Limpeza Interna</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Aplique o produto de limpeza e massageie suavemente
+              </StepDescription>
+            </StepItem>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>4</StepNumber>
+                <StepTitle>Finalização</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Deixe o cão sacudir a cabeça e limpe o excesso
+              </StepDescription>
+            </StepItem>
+          </StepsGrid>
+        </SlideContent>
+      )
+    },
+    {
+      title: "Dicas Importantes",
+      content: (
+        <SlideContent>
+          <SlideIntro>
+            Algumas dicas essenciais para a limpeza de ouvidos:
+          </SlideIntro>
+          <TipsGrid>
+            <TipItem>
+              <TipHeader>
+                <TipIcon>⏰</TipIcon>
+                <TipTitle>Frequência</TipTitle>
+              </TipHeader>
+              <TipDescription>
+                Limpe a cada 1-2 semanas, dependendo da raça
+              </TipDescription>
+            </TipItem>
+            <TipItem>
+              <TipHeader>
+                <TipIcon>⚠️</TipIcon>
+                <TipTitle>Cuidados</TipTitle>
+              </TipHeader>
+              <TipDescription>
+                Nunca use cotonetes ou objetos pontiagudos
+              </TipDescription>
+            </TipItem>
+            <TipItem>
+              <TipHeader>
+                <TipIcon>💧</TipIcon>
+                <TipTitle>Produtos</TipTitle>
+              </TipHeader>
+              <TipDescription>
+                Use apenas produtos específicos para cães
+              </TipDescription>
+            </TipItem>
+            <TipItem>
+              <TipHeader>
+                <TipIcon>👨‍⚕️</TipIcon>
+                <TipTitle>Profissional</TipTitle>
+              </TipHeader>
+              <TipDescription>
+                Consulte um veterinário se notar algo anormal
+              </TipDescription>
+            </TipItem>
+          </TipsGrid>
+        </SlideContent>
+      )
+    }
+  ];
+
   const nextSlide = async () => {
-    if (currentSlide === 3) {
+    if (currentSlide === slides.length - 1) {
       try {
         // Salvar no localStorage
         localStorage.setItem("hygiene4_completed", "true");
@@ -200,35 +290,39 @@ export default function Hygiene4({ onNextLesson }) {
             userId: user.uid,
             status: "completed",
             completedAt: Timestamp.fromDate(new Date()),
-            duration: 15
+            duration: 15 // Duração estimada em minutos
           };
           
+          // Adicionar o progresso
           await addProgress(progressData);
           
+          // Atualizar o dashboard
           await updateTraining({
-            completedLessons: 19,
+            completedLessons: 19, // Incrementar o número de lições completadas
             currentLevel: 'intermediate',
             lastSession: new Date(),
-            totalTime: 220
+            totalTime: 220 // Tempo total em minutos
           });
           
+          // Forçar atualização do dashboard
           await refreshData();
           
           console.log("Progresso da lição Hygiene4 salvo com sucesso");
         }
         
+        // Mostrar o popup de conclusão
         setShowPopup(true);
       } catch (error) {
         console.error("Erro ao salvar progresso da lição:", error);
         setShowPopup(true);
       }
     } else {
-      setCurrentSlide((prev) => (prev + 1) % 4);
+      setCurrentSlide((prev) => prev + 1);
     }
   };
 
   const prevSlide = () => {
-    setCurrentSlide(prev => (prev - 1 + 4) % 4);
+    setCurrentSlide((prev) => prev - 1);
   };
 
   const goToSlide = (index) => {
@@ -266,82 +360,24 @@ export default function Hygiene4({ onNextLesson }) {
   };
 
   return (
-    <LessonContainer>
-      <Title>Evitando Destruição de Móveis</Title>
-      
-      <CarouselContainer>
-        {/* Slide 0: Introdução com Imagem */}
-        <Slide active={currentSlide === 0}>
-          <SlideTitle>Bem-vindo à Aula!</SlideTitle>
-          <ImageContainer>
-            <ImagePlaceholder>Imagem ilustrativa de cão com brinquedos apropriados</ImagePlaceholder>
-          </ImageContainer>
-          <IntroductionText>
-            Nesta aula, vamos aprender como evitar que seu cão destrua móveis e objetos, oferecendo alternativas adequadas.
-          </IntroductionText>
-        </Slide>
-
-        {/* Slide 1: Por que ensinar */}
-        <Slide active={currentSlide === 1}>
-          <SlideTitle>Por que ensinar?</SlideTitle>
-          <Text>
-            Cães que roem móveis ou destroem objetos geralmente estão:
-          </Text>
-          <SummaryList>
-            <SummaryItem>Entediados por falta de atividade</SummaryItem>
-            <SummaryItem>Ansiosos por alguma situação</SummaryItem>
-            <SummaryItem>Sem alternativas adequadas para morder</SummaryItem>
-          </SummaryList>
-        </Slide>
-
-        {/* Slide 2: Passo a Passo */}
-        <Slide active={currentSlide === 2}>
-          <SlideTitle>Passo a Passo</SlideTitle>
-          <StepList>
-            <StepItem>Ofereça brinquedos próprios para morder: Como mordedores de borracha ou ossos naturais.</StepItem>
-            <StepItem>Use reforço positivo: Sempre que o cão morder o brinquedo correto, elogie e recompense.</StepItem>
-            <StepItem>Evite reforçar o comportamento errado: Se o cão pegar algo proibido, substitua imediatamente por um brinquedo adequado.</StepItem>
-            <StepItem>Sprays anti-mordida podem ajudar: Alguns cães respondem bem a substâncias de gosto amargo aplicadas nos móveis.</StepItem>
-            <StepItem>Aumente a atividade física e mental: Passeios diários e brinquedos interativos reduzem o tédio e a ansiedade.</StepItem>
-          </StepList>
-        </Slide>
-
-        {/* Slide 3: Resumo Rápido */}
-        <Slide active={currentSlide === 3}>
-          <SlideTitle>Resumo Rápido</SlideTitle>
-          <SummaryList>
-            <SummaryItem>Ofereça alternativas seguras para morder.</SummaryItem>
-            <SummaryItem>Recompense sempre que o cão escolher o brinquedo certo.</SummaryItem>
-            <SummaryItem>Aumente os estímulos físicos e mentais para evitar tédio.</SummaryItem>
-          </SummaryList>
-        </Slide>
-      </CarouselContainer>
-
-      <NavigationButtons>
-        <Button onClick={prevSlide} disabled={currentSlide === 0}>
-          Anterior
-        </Button>
-        <Button onClick={nextSlide}>
-          {currentSlide === 3 ? "Concluir Aula" : "Próximo"}
-        </Button>
-      </NavigationButtons>
-
-      <Dots>
-        {[0, 1, 2, 3].map((index) => (
-          <Dot
-            key={index}
-            active={currentSlide === index}
-            onClick={() => goToSlide(index)}
-          />
-        ))}
-      </Dots>
-
+    <>
+      <LessonBase
+        title="Limpeza de Ouvidos"
+        slides={slides}
+        currentSlide={currentSlide}
+        onNextSlide={nextSlide}
+        onPrevSlide={prevSlide}
+        onGoToSlide={goToSlide}
+        height="500px"
+        contentHeight="calc(100% - 80px)"
+        scrollable={true}
+      />
       {showPopup && (
         <ModuleCompletionPopup
           onClose={handleClosePopup}
           onNextModule={handleNextModule}
         />
       )}
-    </LessonContainer>
+    </>
   );
 } 

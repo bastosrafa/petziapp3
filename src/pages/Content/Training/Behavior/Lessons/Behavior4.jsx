@@ -406,7 +406,7 @@ export default function Behavior4({ onNextLesson, onBack }) {
 
   return (
     <LessonBase
-      title="Deitar e Rolar"
+      title="Não Destruir Objetos"
       slides={slides}
       currentSlide={currentSlide}
       onNextSlide={nextSlide}

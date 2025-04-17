@@ -10,9 +10,9 @@ import Socialization6 from "./Lessons/Socialization6";
 import { DashboardProvider } from "@/pages/Dashboard/contexts/DashboardContext";
 
 const Container = styled.div`
+  padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
 `;
 
 const Header = styled.div`
@@ -87,15 +87,6 @@ const Button = styled.button`
   }
 `;
 
-const BackButton = styled(Button)`
-  background: #666;
-  margin-bottom: 2rem;
-
-  &:hover {
-    background: #555;
-  }
-`;
-
 const SocializationModule = () => {
   const navigate = useNavigate();
   const [selectedLesson, setSelectedLesson] = useState(null);
@@ -162,19 +153,10 @@ const SocializationModule = () => {
     }
   };
 
-  const handleBack = () => {
-    if (selectedLesson) {
-      setSelectedLesson(null);
-    } else {
-      navigate("/content/training");
-    }
-  };
-
   if (selectedLesson) {
     const LessonComponent = selectedLesson.component;
     return (
       <Container>
-        <BackButton onClick={handleBack}>Voltar para a lista de aulas</BackButton>
         <DashboardProvider>
           <LessonComponent onNextLesson={handleNextLesson} />
         </DashboardProvider>

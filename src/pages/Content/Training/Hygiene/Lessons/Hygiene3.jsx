@@ -1,177 +1,108 @@
 import React, { useState } from "react";
-import styled from "styled-components";
-import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
+import LessonBase from "@/components/LessonBase";
+import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useFirestore } from "@/hooks/useFirestore";
 import { Timestamp } from 'firebase/firestore';
+import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
+import styled from "styled-components";
 
-const LessonContainer = styled.div`
-  padding: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
+const SlideContent = styled.div`
+  padding: 1rem;
 `;
 
-const Title = styled.h1`
-  font-size: 2rem;
-  color: #2D3748;
-  margin-bottom: 2rem;
-  text-align: center;
-`;
-
-const CarouselContainer = styled.div`
-  position: relative;
-  width: 100%;
-  height: 400px;
-  overflow: hidden;
-`;
-
-const Slide = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  opacity: ${props => props.active ? 1 : 0};
-  transition: opacity 0.5s ease-in-out;
-  padding: 2rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  visibility: ${props => props.active ? 'visible' : 'hidden'};
-`;
-
-const SlideTitle = styled.h2`
-  font-size: 1.5rem;
-  color: #2D3748;
-  margin-bottom: 1.5rem;
-  text-align: center;
-`;
-
-const Text = styled.p`
-  color: #4A5568;
-  margin-bottom: 1rem;
-  line-height: 1.6;
-`;
-
-const StepList = styled.ol`
-  list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
-`;
-
-const StepItem = styled.li`
-  color: #4A5568;
-  margin-bottom: 0.75rem;
-  padding-left: 1.5rem;
-  position: relative;
-  line-height: 1.6;
-
-  &:before {
-    content: "1️⃣";
-    position: absolute;
-    left: 0;
-  }
-
-  &:nth-child(2):before {
-    content: "2️⃣";
-  }
-
-  &:nth-child(3):before {
-    content: "3️⃣";
-  }
-
-  &:nth-child(4):before {
-    content: "4️⃣";
-  }
-
-  &:nth-child(5):before {
-    content: "5️⃣";
-  }
-`;
-
-const SummaryList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
-`;
-
-const SummaryItem = styled.li`
-  color: #4A5568;
-  margin-bottom: 0.75rem;
-  padding-left: 1.5rem;
-  position: relative;
-  line-height: 1.6;
-
-  &:before {
-    content: "✔";
-    color: #48BB78;
-    position: absolute;
-    left: 0;
-  }
-`;
-
-const ImageContainer = styled.div`
-  width: 100%;
-  height: 200px;
-  background: #F7FAFC;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-`;
-
-const ImagePlaceholder = styled.div`
-  color: #A0AEC0;
+const SlideIntro = styled.p`
   font-size: 1.1rem;
-`;
-
-const IntroductionText = styled.p`
   color: #4A5568;
-  line-height: 1.6;
+  margin-bottom: 1.5rem;
   text-align: center;
-  font-size: 1.1rem;
 `;
 
-const NavigationButtons = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 2rem;
-`;
-
-const Button = styled.button`
-  padding: 0.5rem 1rem;
-  background: #4299E1;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.2s;
-
-  &:hover {
-    background: #3182CE;
-  }
-
-  &:disabled {
-    background: #CBD5E0;
-    cursor: not-allowed;
-  }
-`;
-
-const Dots = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
+const StepsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
   margin-top: 1rem;
 `;
 
-const Dot = styled.div`
-  width: 10px;
-  height: 10px;
+const StepItem = styled.div`
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const StepHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+`;
+
+const StepNumber = styled.div`
+  background: #4299E1;
+  color: white;
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
-  background: ${props => props.active ? '#4299E1' : '#CBD5E0'};
-  cursor: pointer;
-  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+`;
+
+const StepTitle = styled.h4`
+  margin: 0;
+  color: #2D3748;
+  font-size: 1.1rem;
+`;
+
+const StepDescription = styled.p`
+  color: #4A5568;
+  margin: 0;
+  line-height: 1.5;
+`;
+
+const TipsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+`;
+
+const TipItem = styled.div`
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const TipHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+`;
+
+const TipIcon = styled.span`
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+`;
+
+const TipTitle = styled.h4`
+  margin: 0;
+  color: #2D3748;
+  font-size: 1.1rem;
+`;
+
+const TipDescription = styled.p`
+  color: #4A5568;
+  margin: 0;
+  line-height: 1.5;
 `;
 
 export default function Hygiene3({ onNextLesson }) {
@@ -180,8 +111,168 @@ export default function Hygiene3({ onNextLesson }) {
   const { addDocument: addProgress } = useFirestore("progress");
   const { updateTraining, refreshData } = useDashboard();
 
+  const slides = [
+    {
+      title: "Corte de Unhas",
+      image: "/images/hygiene/nail-trimming.jpg",
+      imageAlt: "Cão tendo as unhas cortadas",
+      content: (
+        <div>
+          <p>
+            Nesta aula, vamos aprender sobre a importância do corte de unhas para a
+            saúde e bem-estar do seu cão.
+          </p>
+        </div>
+      )
+    },
+    {
+      title: "Por que Cortar as Unhas?",
+      content: (
+        <SlideContent>
+          <SlideIntro>
+            Manter as unhas do seu cão aparadas é essencial por vários motivos:
+          </SlideIntro>
+          <TipsGrid>
+            <TipItem>
+              <TipHeader>
+                <TipIcon>🦶</TipIcon>
+                <TipTitle>Conforto</TipTitle>
+              </TipHeader>
+              <TipDescription>
+                Unhas longas causam desconforto ao caminhar e podem deformar as patas
+              </TipDescription>
+            </TipItem>
+            <TipItem>
+              <TipHeader>
+                <TipIcon>💪</TipIcon>
+                <TipTitle>Saúde</TipTitle>
+              </TipHeader>
+              <TipDescription>
+                Previne problemas articulares e lesões nas patas
+              </TipDescription>
+            </TipItem>
+            <TipItem>
+              <TipHeader>
+                <TipIcon>🏠</TipIcon>
+                <TipTitle>Proteção</TipTitle>
+              </TipHeader>
+              <TipDescription>
+                Evita arranhões em móveis e pessoas
+              </TipDescription>
+            </TipItem>
+            <TipItem>
+              <TipHeader>
+                <TipIcon>🩹</TipIcon>
+                <TipTitle>Prevenção</TipTitle>
+              </TipHeader>
+              <TipDescription>
+                Reduz o risco de unhas quebradas e infecções
+              </TipDescription>
+            </TipItem>
+          </TipsGrid>
+        </SlideContent>
+      )
+    },
+    {
+      title: "Como Cortar as Unhas",
+      content: (
+        <SlideContent>
+          <SlideIntro>
+            Siga estes passos para um corte de unhas seguro e eficiente:
+          </SlideIntro>
+          <StepsGrid>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>1</StepNumber>
+                <StepTitle>Preparação</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Acostume seu cão ao toque nas patas e ao cortador de unhas
+              </StepDescription>
+            </StepItem>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>2</StepNumber>
+                <StepTitle>Identificação</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Localize a parte viva da unha (quick) para evitar cortes dolorosos
+              </StepDescription>
+            </StepItem>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>3</StepNumber>
+                <StepTitle>Corte</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Corte em pequenos incrementos, mantendo-se longe da parte viva
+              </StepDescription>
+            </StepItem>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>4</StepNumber>
+                <StepTitle>Finalização</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Lixe as bordas para evitar farpas e recompense seu cão
+              </StepDescription>
+            </StepItem>
+          </StepsGrid>
+        </SlideContent>
+      )
+    },
+    {
+      title: "Dicas Importantes",
+      content: (
+        <SlideContent>
+          <SlideIntro>
+            Algumas dicas essenciais para o corte de unhas:
+          </SlideIntro>
+          <TipsGrid>
+            <TipItem>
+              <TipHeader>
+                <TipIcon>⏰</TipIcon>
+                <TipTitle>Frequência</TipTitle>
+              </TipHeader>
+              <TipDescription>
+                Corte a cada 2-4 semanas, dependendo do crescimento
+              </TipDescription>
+            </TipItem>
+            <TipItem>
+              <TipHeader>
+                <TipIcon>🔍</TipIcon>
+                <TipTitle>Observação</TipTitle>
+              </TipHeader>
+              <TipDescription>
+                Monitore o comportamento do cão durante o processo
+              </TipDescription>
+            </TipItem>
+            <TipItem>
+              <TipHeader>
+                <TipIcon>🩹</TipIcon>
+                <TipTitle>Emergência</TipTitle>
+              </TipHeader>
+              <TipDescription>
+                Tenha pó hemostático à mão para acidentes
+              </TipDescription>
+            </TipItem>
+            <TipItem>
+              <TipHeader>
+                <TipIcon>👨‍⚕️</TipIcon>
+                <TipTitle>Profissional</TipTitle>
+              </TipHeader>
+              <TipDescription>
+                Considere um veterinário para cães muito ansiosos
+              </TipDescription>
+            </TipItem>
+          </TipsGrid>
+        </SlideContent>
+      )
+    }
+  ];
+
   const nextSlide = async () => {
-    if (currentSlide === 2) {
+    if (currentSlide === slides.length - 1) {
       try {
         // Salvar no localStorage
         localStorage.setItem("hygiene3_completed", "true");
@@ -196,35 +287,39 @@ export default function Hygiene3({ onNextLesson }) {
             userId: user.uid,
             status: "completed",
             completedAt: Timestamp.fromDate(new Date()),
-            duration: 15
+            duration: 15 // Duração estimada em minutos
           };
           
+          // Adicionar o progresso
           await addProgress(progressData);
           
+          // Atualizar o dashboard
           await updateTraining({
-            completedLessons: 18,
+            completedLessons: 18, // Incrementar o número de lições completadas
             currentLevel: 'intermediate',
             lastSession: new Date(),
-            totalTime: 205
+            totalTime: 205 // Tempo total em minutos
           });
           
+          // Forçar atualização do dashboard
           await refreshData();
           
           console.log("Progresso da lição Hygiene3 salvo com sucesso");
         }
         
+        // Avançar para a próxima lição
         onNextLesson();
       } catch (error) {
         console.error("Erro ao salvar progresso da lição:", error);
         onNextLesson();
       }
     } else {
-      setCurrentSlide((prev) => (prev + 1) % 3);
+      setCurrentSlide((prev) => prev + 1);
     }
   };
 
   const prevSlide = () => {
-    setCurrentSlide(prev => (prev - 1 + 4) % 4);
+    setCurrentSlide((prev) => prev - 1);
   };
 
   const goToSlide = (index) => {
@@ -232,75 +327,16 @@ export default function Hygiene3({ onNextLesson }) {
   };
 
   return (
-    <LessonContainer>
-      <Title>Acostumando à Caixa de Transporte</Title>
-      
-      <CarouselContainer>
-        {/* Slide 0: Introdução com Imagem */}
-        <Slide active={currentSlide === 0}>
-          <SlideTitle>Bem-vindo à Aula!</SlideTitle>
-          <ImageContainer>
-            <ImagePlaceholder>Imagem ilustrativa de caixa de transporte</ImagePlaceholder>
-          </ImageContainer>
-          <IntroductionText>
-            Nesta aula, vamos aprender como acostumar seu cão à caixa de transporte ou cercado de forma positiva.
-          </IntroductionText>
-        </Slide>
-
-        {/* Slide 1: Por que ensinar */}
-        <Slide active={currentSlide === 1}>
-          <SlideTitle>Por que ensinar?</SlideTitle>
-          <Text>
-            Muitos cães ficam ansiosos ou com medo ao entrar na caixa de transporte, o que pode ser um problema em:
-          </Text>
-          <SummaryList>
-            <SummaryItem>Viagens longas ou curtas</SummaryItem>
-            <SummaryItem>Visitas ao veterinário</SummaryItem>
-            <SummaryItem>Situações que exigem contenção segura</SummaryItem>
-          </SummaryList>
-        </Slide>
-
-        {/* Slide 2: Passo a Passo */}
-        <Slide active={currentSlide === 2}>
-          <SlideTitle>Passo a Passo</SlideTitle>
-          <StepList>
-            <StepItem>Deixe a caixa sempre acessível: O cão deve ver a caixa como um local seguro e não um castigo.</StepItem>
-            <StepItem>Use reforço positivo: Coloque brinquedos ou petiscos dentro da caixa para incentivar a entrada.</StepItem>
-            <StepItem>Comece com períodos curtos: Peça para o cão entrar, feche por poucos minutos e recompense ao sair.</StepItem>
-            <StepItem>Aumente gradualmente o tempo dentro da caixa: Para que o cão se acostume a ficar confortavelmente dentro dela.</StepItem>
-            <StepItem>Leve o cão para passeios curtos na caixa: Para associar a experiências positivas.</StepItem>
-          </StepList>
-        </Slide>
-
-        {/* Slide 3: Resumo Rápido */}
-        <Slide active={currentSlide === 3}>
-          <SlideTitle>Resumo Rápido</SlideTitle>
-          <SummaryList>
-            <SummaryItem>A caixa deve ser um lugar seguro, não um castigo.</SummaryItem>
-            <SummaryItem>Use petiscos e brinquedos para incentivar a entrada.</SummaryItem>
-            <SummaryItem>Acostume o cão aos poucos antes de uma viagem.</SummaryItem>
-          </SummaryList>
-        </Slide>
-      </CarouselContainer>
-
-      <NavigationButtons>
-        <Button onClick={prevSlide} disabled={currentSlide === 0}>
-          Anterior
-        </Button>
-        <Button onClick={nextSlide}>
-          {currentSlide === 3 ? "Próxima Aula" : "Próximo"}
-        </Button>
-      </NavigationButtons>
-
-      <Dots>
-        {[0, 1, 2, 3].map((index) => (
-          <Dot
-            key={index}
-            active={currentSlide === index}
-            onClick={() => goToSlide(index)}
-          />
-        ))}
-      </Dots>
-    </LessonContainer>
+    <LessonBase
+      title="Corte de Unhas"
+      slides={slides}
+      currentSlide={currentSlide}
+      onNextSlide={nextSlide}
+      onPrevSlide={prevSlide}
+      onGoToSlide={goToSlide}
+      height="500px"
+      contentHeight="calc(100% - 80px)"
+      scrollable={true}
+    />
   );
 } 

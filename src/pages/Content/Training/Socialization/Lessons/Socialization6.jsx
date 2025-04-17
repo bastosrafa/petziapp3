@@ -1,122 +1,111 @@
 import React, { useState } from "react";
-import styled from "styled-components";
+import LessonBase from "@/components/LessonBase";
 import { useNavigate } from "react-router-dom";
-import ModuleCompletionPopup from "../../../../../components/ModuleCompletionPopup";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { useFirestore } from "@/hooks/useFirestore";
+import { Timestamp } from 'firebase/firestore';
+import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
+import ModuleCompletionPopup from "@/components/ModuleCompletionPopup";
 
-const LessonContainer = styled.div`
-  padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
-`;
-
-const Title = styled.h1`
-  font-size: 24px;
-  margin-bottom: 20px;
-  color: #333;
-`;
-
-const CarouselContainer = styled.div`
-  position: relative;
-  width: 100%;
-  height: 400px;
-  overflow: hidden;
-`;
-
-const Slide = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  opacity: ${props => props.active ? 1 : 0};
-  transition: opacity 0.5s ease-in-out;
-  padding: 2rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-const SlideTitle = styled.h2`
-  font-size: 20px;
-  margin-bottom: 15px;
-  color: #444;
-`;
-
-const ContentSection = styled.div`
-  margin-bottom: 20px;
-`;
-
-const SectionTitle = styled.h3`
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: #555;
-`;
-
-const ContentText = styled.p`
-  font-size: 16px;
-  line-height: 1.6;
-  color: #666;
-  margin-bottom: 15px;
-`;
-
-const NavigationButtons = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-`;
-
-const Button = styled.button`
-  padding: 10px 20px;
-  background: #4299E1;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.2s;
-
-  &:hover {
-    background: #3182CE;
-  }
-
-  &:disabled {
-    background: #CBD5E0;
-    cursor: not-allowed;
-  }
-`;
-
-const Dots = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
-`;
-
-const Dot = styled.div`
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: ${props => props.active ? '#4299E1' : '#CBD5E0'};
-  cursor: pointer;
-  transition: background 0.2s;
-`;
-
-const Socialization6 = ({ onNextLesson }) => {
+export default function Socialization6({ onNextLesson }) {
   const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { user } = useAuthContext();
+  const { addDocument: addProgress } = useFirestore("progress");
+  const { updateTraining, refreshData } = useDashboard();
   const [showPopup, setShowPopup] = useState(false);
 
-  const nextSlide = () => {
-    if (currentSlide === 2) {
-      localStorage.setItem("socialization6_completed", "true");
-      // Força a atualização do estado
-      window.dispatchEvent(new Event('storage'));
-      setShowPopup(true);
-      onNextLesson();
+  const slides = [
+    {
+      title: "Introdução à Consolidação e Prática",
+      image: "/images/socialization/consolidation.jpg",
+      imageAlt: "Cão bem treinado e socializado",
+      content: (
+        <div>
+          <p>
+            Nesta aula final do módulo de socialização, vamos consolidar todos
+            os conhecimentos adquiridos e praticar as técnicas aprendidas em
+            situações reais e desafiadoras.
+          </p>
+        </div>
+      )
+    },
+    {
+      title: "Revisão dos Conceitos",
+      content: (
+        <div>
+          <p>
+            Vamos revisar os principais conceitos aprendidos: socialização com
+            pessoas, socialização com outros cães, controle de impulsos e
+            adaptação a ambientes desafiadores.
+          </p>
+        </div>
+      )
+    },
+    {
+      title: "Prática Final",
+      content: (
+        <div>
+          <p>
+            É hora de colocar em prática tudo o que foi aprendido. Vamos
+            realizar exercícios que combinam diferentes situações e desafios,
+            sempre mantendo o foco no bem-estar e na segurança do seu cão.
+          </p>
+        </div>
+      )
+    }
+  ];
+
+  const nextSlide = async () => {
+    if (currentSlide === slides.length - 1) {
+      try {
+        // Salvar no localStorage
+        localStorage.setItem("socialization6_completed", "true");
+        window.dispatchEvent(new Event('storage'));
+        
+        // Atualizar o progresso no Firestore
+        if (user) {
+          const progressData = {
+            lessonId: "socialization6",
+            moduleId: "socialization",
+            courseId: "9DwWIAtShVCPXyRPSbqF",
+            userId: user.uid,
+            status: "completed",
+            completedAt: Timestamp.fromDate(new Date()),
+            duration: 15 // Duração estimada em minutos
+          };
+          
+          // Adicionar o progresso
+          await addProgress(progressData);
+          
+          // Atualizar o dashboard
+          await updateTraining({
+            completedLessons: 16, // Incrementar o número de lições completadas
+            currentLevel: 'intermediate',
+            lastSession: new Date(),
+            totalTime: 175 // Tempo total em minutos
+          });
+          
+          // Forçar atualização do dashboard
+          await refreshData();
+          
+          console.log("Progresso da lição Socialization6 salvo com sucesso");
+        }
+        
+        // Mostrar o popup de conclusão
+        setShowPopup(true);
+      } catch (error) {
+        console.error("Erro ao salvar progresso da lição:", error);
+        // Mesmo com erro, mostrar o popup
+        setShowPopup(true);
+      }
     } else {
-      setCurrentSlide((prev) => (prev + 1) % 3);
+      setCurrentSlide((prev) => prev + 1);
     }
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + 3) % 3);
+    setCurrentSlide((prev) => prev - 1);
   };
 
   const goToSlide = (index) => {
@@ -139,62 +128,18 @@ const Socialization6 = ({ onNextLesson }) => {
   };
 
   return (
-    <LessonContainer>
-      <Title>Ambientes e Situações</Title>
-      <CarouselContainer>
-        <Slide active={currentSlide === 0}>
-          <SlideTitle>Exposição a Diferentes Ambientes</SlideTitle>
-          <ContentSection>
-            <ContentText>
-              É importante expor seu cão a diferentes ambientes e situações
-              para desenvolver sua confiança e adaptabilidade. Isso inclui:
-              parques, ruas movimentadas, shopping centers, e outros locais
-              públicos.
-            </ContentText>
-          </ContentSection>
-        </Slide>
-
-        <Slide active={currentSlide === 1}>
-          <SlideTitle>Adaptação a Novas Situações</SlideTitle>
-          <ContentSection>
-            <ContentText>
-              A adaptação a novas situações deve ser feita gradualmente,
-              começando com ambientes mais calmos e aumentando gradualmente
-              o nível de estímulos e complexidade.
-            </ContentText>
-          </ContentSection>
-        </Slide>
-
-        <Slide active={currentSlide === 2}>
-          <SlideTitle>Dicas para Exposição Segura</SlideTitle>
-          <ContentSection>
-            <ContentText>
-              Para uma exposição segura e positiva: use equipamentos adequados,
-              observe os sinais de estresse do seu cão, mantenha as sessões
-              curtas e positivas, e sempre recompense comportamentos calmos.
-            </ContentText>
-          </ContentSection>
-        </Slide>
-      </CarouselContainer>
-
-      <NavigationButtons>
-        <Button onClick={prevSlide} disabled={currentSlide === 0}>
-          Anterior
-        </Button>
-        <Button onClick={nextSlide}>
-          {currentSlide === 2 ? "Concluir Aula" : "Próximo"}
-        </Button>
-      </NavigationButtons>
-
-      <Dots>
-        {[0, 1, 2].map((index) => (
-          <Dot
-            key={index}
-            active={currentSlide === index}
-            onClick={() => goToSlide(index)}
-          />
-        ))}
-      </Dots>
+    <>
+      <LessonBase
+        title="Consolidação e Prática"
+        slides={slides}
+        currentSlide={currentSlide}
+        onNextSlide={nextSlide}
+        onPrevSlide={prevSlide}
+        onGoToSlide={goToSlide}
+        height="500px"
+        contentHeight="calc(100% - 80px)"
+        scrollable={true}
+      />
 
       {showPopup && (
         <ModuleCompletionPopup
@@ -202,8 +147,6 @@ const Socialization6 = ({ onNextLesson }) => {
           onNextModule={handleNextModule}
         />
       )}
-    </LessonContainer>
+    </>
   );
-};
-
-export default Socialization6; 
+} 

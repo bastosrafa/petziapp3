@@ -1,177 +1,108 @@
 import React, { useState } from "react";
-import styled from "styled-components";
-import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
+import LessonBase from "@/components/LessonBase";
+import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useFirestore } from "@/hooks/useFirestore";
 import { Timestamp } from 'firebase/firestore';
+import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
+import styled from "styled-components";
 
-const LessonContainer = styled.div`
-  padding: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
+const SlideContent = styled.div`
+  padding: 1rem;
 `;
 
-const Title = styled.h1`
-  font-size: 2rem;
-  color: #2D3748;
-  margin-bottom: 2rem;
-  text-align: center;
-`;
-
-const CarouselContainer = styled.div`
-  position: relative;
-  width: 100%;
-  height: 400px;
-  overflow: hidden;
-`;
-
-const Slide = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  opacity: ${props => props.active ? 1 : 0};
-  transition: opacity 0.5s ease-in-out;
-  padding: 2rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  visibility: ${props => props.active ? 'visible' : 'hidden'};
-`;
-
-const SlideTitle = styled.h2`
-  font-size: 1.5rem;
-  color: #2D3748;
-  margin-bottom: 1.5rem;
-  text-align: center;
-`;
-
-const Text = styled.p`
-  color: #4A5568;
-  margin-bottom: 1rem;
-  line-height: 1.6;
-`;
-
-const StepList = styled.ol`
-  list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
-`;
-
-const StepItem = styled.li`
-  color: #4A5568;
-  margin-bottom: 0.75rem;
-  padding-left: 1.5rem;
-  position: relative;
-  line-height: 1.6;
-
-  &:before {
-    content: "1️⃣";
-    position: absolute;
-    left: 0;
-  }
-
-  &:nth-child(2):before {
-    content: "2️⃣";
-  }
-
-  &:nth-child(3):before {
-    content: "3️⃣";
-  }
-
-  &:nth-child(4):before {
-    content: "4️⃣";
-  }
-
-  &:nth-child(5):before {
-    content: "5️⃣";
-  }
-`;
-
-const SummaryList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
-`;
-
-const SummaryItem = styled.li`
-  color: #4A5568;
-  margin-bottom: 0.75rem;
-  padding-left: 1.5rem;
-  position: relative;
-  line-height: 1.6;
-
-  &:before {
-    content: "✔";
-    color: #48BB78;
-    position: absolute;
-    left: 0;
-  }
-`;
-
-const ImageContainer = styled.div`
-  width: 100%;
-  height: 200px;
-  background: #F7FAFC;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-`;
-
-const ImagePlaceholder = styled.div`
-  color: #A0AEC0;
+const SlideIntro = styled.p`
   font-size: 1.1rem;
-`;
-
-const IntroductionText = styled.p`
   color: #4A5568;
-  line-height: 1.6;
+  margin-bottom: 1.5rem;
   text-align: center;
-  font-size: 1.1rem;
 `;
 
-const NavigationButtons = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 2rem;
-`;
-
-const Button = styled.button`
-  padding: 0.5rem 1rem;
-  background: #4299E1;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.2s;
-
-  &:hover {
-    background: #3182CE;
-  }
-
-  &:disabled {
-    background: #CBD5E0;
-    cursor: not-allowed;
-  }
-`;
-
-const Dots = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
+const BenefitsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
   margin-top: 1rem;
 `;
 
-const Dot = styled.div`
-  width: 10px;
-  height: 10px;
+const BenefitItem = styled.div`
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const BenefitHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+`;
+
+const BenefitIcon = styled.span`
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+`;
+
+const BenefitTitle = styled.h4`
+  margin: 0;
+  color: #2D3748;
+  font-size: 1.1rem;
+`;
+
+const BenefitDescription = styled.p`
+  color: #4A5568;
+  margin: 0;
+  line-height: 1.5;
+`;
+
+const RoutineGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+`;
+
+const RoutineItem = styled.div`
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const RoutineHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+`;
+
+const RoutineNumber = styled.div`
+  background: #4299E1;
+  color: white;
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
-  background: ${props => props.active ? '#4299E1' : '#CBD5E0'};
-  cursor: pointer;
-  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+`;
+
+const RoutineTitle = styled.h4`
+  margin: 0;
+  color: #2D3748;
+  font-size: 1.1rem;
+`;
+
+const RoutineDescription = styled.p`
+  color: #4A5568;
+  margin: 0;
+  line-height: 1.5;
 `;
 
 export default function Hygiene1({ onNextLesson }) {
@@ -180,8 +111,120 @@ export default function Hygiene1({ onNextLesson }) {
   const { addDocument: addProgress } = useFirestore("progress");
   const { updateTraining, refreshData } = useDashboard();
 
+  const slides = [
+    {
+      title: "Introdução à Higiene",
+      image: "/images/hygiene/introduction.jpg",
+      imageAlt: "Cão sendo escovado",
+      content: (
+        <div>
+          <p>
+            Nesta aula, vamos aprender sobre a importância da higiene regular para
+            a saúde e bem-estar do seu cão.
+          </p>
+        </div>
+      )
+    },
+    {
+      title: "Por que a Higiene é Importante?",
+      content: (
+        <SlideContent>
+          <SlideIntro>
+            Manter seu cão limpo e bem cuidado traz diversos benefícios:
+          </SlideIntro>
+          <BenefitsGrid>
+            <BenefitItem>
+              <BenefitHeader>
+                <BenefitIcon>🛁</BenefitIcon>
+                <BenefitTitle>Saúde e Prevenção</BenefitTitle>
+              </BenefitHeader>
+              <BenefitDescription>
+                Reduz o risco de infecções e mantém a pele e pelagem saudáveis
+              </BenefitDescription>
+            </BenefitItem>
+            <BenefitItem>
+              <BenefitHeader>
+                <BenefitIcon>👃</BenefitIcon>
+                <BenefitTitle>Conforto e Bem-estar</BenefitTitle>
+              </BenefitHeader>
+              <BenefitDescription>
+                Mantém o cão e o ambiente mais agradáveis, livre de odores
+              </BenefitDescription>
+            </BenefitItem>
+            <BenefitItem>
+              <BenefitHeader>
+                <BenefitIcon>💪</BenefitIcon>
+                <BenefitTitle>Vínculo e Confiança</BenefitTitle>
+              </BenefitHeader>
+              <BenefitDescription>
+                Fortalece a relação entre você e seu pet durante os momentos de cuidado
+              </BenefitDescription>
+            </BenefitItem>
+            <BenefitItem>
+              <BenefitHeader>
+                <BenefitIcon>🔍</BenefitIcon>
+                <BenefitTitle>Monitoramento da Saúde</BenefitTitle>
+              </BenefitHeader>
+              <BenefitDescription>
+                Permite identificar alterações na pele, pelagem ou comportamento precocemente
+              </BenefitDescription>
+            </BenefitItem>
+          </BenefitsGrid>
+        </SlideContent>
+      )
+    },
+    {
+      title: "Rotina Básica de Higiene",
+      content: (
+        <SlideContent>
+          <SlideIntro>
+            Estabeleça uma rotina regular de cuidados:
+          </SlideIntro>
+          <RoutineGrid>
+            <RoutineItem>
+              <RoutineHeader>
+                <RoutineNumber>1</RoutineNumber>
+                <RoutineTitle>Escovação Diária</RoutineTitle>
+              </RoutineHeader>
+              <RoutineDescription>
+                Remove pelos mortos e previne a formação de nós na pelagem
+              </RoutineDescription>
+            </RoutineItem>
+            <RoutineItem>
+              <RoutineHeader>
+                <RoutineNumber>2</RoutineNumber>
+                <RoutineTitle>Banho Mensal</RoutineTitle>
+              </RoutineHeader>
+              <RoutineDescription>
+                Use produtos específicos para cães e mantenha a pele hidratada
+              </RoutineDescription>
+            </RoutineItem>
+            <RoutineItem>
+              <RoutineHeader>
+                <RoutineNumber>3</RoutineNumber>
+                <RoutineTitle>Corte de Unhas</RoutineTitle>
+              </RoutineHeader>
+              <RoutineDescription>
+                Mantenha as unhas curtas e saudáveis para evitar desconforto
+              </RoutineDescription>
+            </RoutineItem>
+            <RoutineItem>
+              <RoutineHeader>
+                <RoutineNumber>4</RoutineNumber>
+                <RoutineTitle>Limpeza de Ouvidos</RoutineTitle>
+              </RoutineHeader>
+              <RoutineDescription>
+                Previne infecções e acúmulo de cera nos ouvidos
+              </RoutineDescription>
+            </RoutineItem>
+          </RoutineGrid>
+        </SlideContent>
+      )
+    }
+  ];
+
   const nextSlide = async () => {
-    if (currentSlide === 2) {
+    if (currentSlide === slides.length - 1) {
       try {
         // Salvar no localStorage
         localStorage.setItem("hygiene1_completed", "true");
@@ -196,35 +239,39 @@ export default function Hygiene1({ onNextLesson }) {
             userId: user.uid,
             status: "completed",
             completedAt: Timestamp.fromDate(new Date()),
-            duration: 15
+            duration: 15 // Duração estimada em minutos
           };
           
+          // Adicionar o progresso
           await addProgress(progressData);
           
+          // Atualizar o dashboard
           await updateTraining({
-            completedLessons: 16,
+            completedLessons: 16, // Incrementar o número de lições completadas
             currentLevel: 'intermediate',
             lastSession: new Date(),
-            totalTime: 175
+            totalTime: 175 // Tempo total em minutos
           });
           
+          // Forçar atualização do dashboard
           await refreshData();
           
           console.log("Progresso da lição Hygiene1 salvo com sucesso");
         }
         
+        // Avançar para a próxima lição
         onNextLesson();
       } catch (error) {
         console.error("Erro ao salvar progresso da lição:", error);
         onNextLesson();
       }
     } else {
-      setCurrentSlide((prev) => (prev + 1) % 3);
+      setCurrentSlide((prev) => prev + 1);
     }
   };
 
   const prevSlide = () => {
-    setCurrentSlide(prev => (prev - 1 + 4) % 4);
+    setCurrentSlide((prev) => prev - 1);
   };
 
   const goToSlide = (index) => {
@@ -232,75 +279,16 @@ export default function Hygiene1({ onNextLesson }) {
   };
 
   return (
-    <LessonContainer>
-      <Title>Necessidades no Local Certo</Title>
-      
-      <CarouselContainer>
-        {/* Slide 0: Introdução com Imagem */}
-        <Slide active={currentSlide === 0}>
-          <SlideTitle>Bem-vindo à Aula!</SlideTitle>
-          <ImageContainer>
-            <ImagePlaceholder>Imagem ilustrativa de treinamento higiênico</ImagePlaceholder>
-          </ImageContainer>
-          <IntroductionText>
-            Nesta aula, vamos aprender como ensinar seu cão a fazer as necessidades no local correto, seja no tapete higiênico ou na rua.
-          </IntroductionText>
-        </Slide>
-
-        {/* Slide 1: Por que ensinar */}
-        <Slide active={currentSlide === 1}>
-          <SlideTitle>Por que ensinar?</SlideTitle>
-          <Text>
-            Ensinar seu cão a fazer as necessidades no local correto é fundamental para:
-          </Text>
-          <SummaryList>
-            <SummaryItem>Manter um ambiente limpo e higiênico em casa</SummaryItem>
-            <SummaryItem>Evitar sujeira e odores desagradáveis</SummaryItem>
-            <SummaryItem>Proporcionar mais conforto para o pet e para o tutor</SummaryItem>
-          </SummaryList>
-        </Slide>
-
-        {/* Slide 2: Passo a Passo */}
-        <Slide active={currentSlide === 2}>
-          <SlideTitle>Passo a Passo</SlideTitle>
-          <StepList>
-            <StepItem>Escolha um local fixo: Defina um lugar onde o cão sempre fará as necessidades (tapete higiênico, grama ou rua).</StepItem>
-            <StepItem>Leve o cão ao local após momentos estratégicos: Logo após comer, beber água, acordar ou brincar.</StepItem>
-            <StepItem>Recompense imediatamente: Quando o cão fizer certo, ofereça petiscos e elogios.</StepItem>
-            <StepItem>Evite broncas: Se fizer no lugar errado, limpe sem chamar atenção, para não reforçar o comportamento errado.</StepItem>
-            <StepItem>Reduza gradualmente o número de tapetes (se for usar em casa): Até que o cão entenda exatamente onde deve ir.</StepItem>
-          </StepList>
-        </Slide>
-
-        {/* Slide 3: Resumo Rápido */}
-        <Slide active={currentSlide === 3}>
-          <SlideTitle>Resumo Rápido</SlideTitle>
-          <SummaryList>
-            <SummaryItem>Leve o cão ao local certo nos momentos estratégicos.</SummaryItem>
-            <SummaryItem>Recompense imediatamente após ele acertar.</SummaryItem>
-            <SummaryItem>Nunca brigue após o erro – isso pode gerar medo e ansiedade.</SummaryItem>
-          </SummaryList>
-        </Slide>
-      </CarouselContainer>
-
-      <NavigationButtons>
-        <Button onClick={prevSlide} disabled={currentSlide === 0}>
-          Anterior
-        </Button>
-        <Button onClick={nextSlide}>
-          {currentSlide === 3 ? "Próxima Aula" : "Próximo"}
-        </Button>
-      </NavigationButtons>
-
-      <Dots>
-        {[0, 1, 2, 3].map((index) => (
-          <Dot
-            key={index}
-            active={currentSlide === index}
-            onClick={() => goToSlide(index)}
-          />
-        ))}
-      </Dots>
-    </LessonContainer>
+    <LessonBase
+      title="Introdução à Higiene"
+      slides={slides}
+      currentSlide={currentSlide}
+      onNextSlide={nextSlide}
+      onPrevSlide={prevSlide}
+      onGoToSlide={goToSlide}
+      height="500px"
+      contentHeight="calc(100% - 80px)"
+      scrollable={true}
+    />
   );
 } 

@@ -20,63 +20,312 @@ export default function Behavior1({ onNextLesson, onBack }) {
 
   const slides = [
     {
-      title: "Bem-vindo à Aula: Senta e Deita",
-      image: "/images/training/sit-down-intro.jpg",
-      imageAlt: "Cão sentado",
-      imageHeight: "200px",
+      title: "Introdução",
+      image: "/images/behavior/behavior1-1.jpg",
+      imageAlt: "Cão pulando em pessoa",
       content: (
-        <>
-          <p>
-            Nesta aula, você aprenderá a ensinar dois dos comandos mais importantes para o seu cão: "Senta" e "Deita". 
-            Estes são os primeiros comandos que você deve ensinar ao seu cão, 
-            pois são a base para outros comportamentos e ajudam a estabelecer uma boa comunicação entre vocês.
-          </p>
-          <ul>
-            <li>Importância dos comandos básicos</li>
-            <li>Como estabelecer uma comunicação clara</li>
-            <li>Preparação para o treinamento</li>
+        <div>
+          <p>O comportamento de pular em pessoas é comum em cães, especialmente quando estão animados ou querendo chamar atenção.</p>
+          <p>Nesta aula, vamos aprender técnicas para ensinar seu cão a não pular nas pessoas.</p>
+        </div>
+      )
+    },
+    {
+      title: "Como Ensinar",
+      content: (
+        <div>
+          <ol style={{ paddingLeft: '25px', marginTop: '15px', lineHeight: '1.8' }}>
+            <li style={{ 
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>1. Ignore o cão quando ele pular</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Vire as costas e evite contato visual quando o cão pular.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>2. Recompense quando as patas estiverem no chão</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Dê atenção e carinho apenas quando o cão estiver com as quatro patas no chão.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>3. Ensine um comando alternativo</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Treine o cão a sentar quando cumprimentar pessoas.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>4. Pratique com diferentes pessoas</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Peça ajuda de amigos e familiares para treinar em diferentes situações.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>5. Seja consistente</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Todos em casa devem seguir o mesmo método de treinamento.
+              </p>
+            </li>
+          </ol>
+        </div>
+      )
+    },
+    {
+      title: "Prática e Dicas",
+      content: (
+        <div>
+          <ul style={{ paddingLeft: '25px', marginTop: '15px', lineHeight: '1.8' }}>
+            <li style={{ 
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Mantenha a calma</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Não grite ou se irrite com o cão quando ele pular.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Ensine um comportamento alternativo</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Treine o cão a sentar ou dar a pata ao invés de pular.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Recompense comportamentos calmos</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Dê atenção e petiscos quando o cão estiver calmo.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Pratique com visitas</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                Treine especialmente quando houver visitas em casa.
+              </p>
+            </li>
+            <li style={{ 
+              marginBottom: '20px',
+              padding: '15px',
+              borderRadius: '8px',
+              backgroundColor: '#f8f9fa',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                backgroundColor: '#e9ecef',
+                transform: 'translateX(5px)'
+              }
+            }}>
+              <span style={{ 
+                color: '#007bff', 
+                fontWeight: '600',
+                fontSize: '16px',
+                display: 'block',
+                marginBottom: '8px'
+              }}>• Seja paciente</span>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666', 
+                margin: '0',
+                lineHeight: '1.6'
+              }}>
+                O treinamento pode levar tempo, mas vale a pena.
+              </p>
+            </li>
           </ul>
-        </>
-      )
-    },
-    {
-      title: "Passo a Passo: Comando Senta",
-      image: "/images/training/sit-step1.jpg",
-      imageAlt: "Ensinando cão a sentar",
-      imageHeight: "200px",
-      content: (
-        <>
-          <p>
-            Vamos começar com o comando "Senta". Siga estes passos:
-          </p>
-          <ol>
-            <li>Segure um petisco próximo ao nariz do cão</li>
-            <li>Mova a mão para cima e para trás</li>
-            <li>Quando o cão sentar, diga "Senta"</li>
-            <li>Recompense imediatamente</li>
-            <li>Repita várias vezes</li>
-          </ol>
-        </>
-      )
-    },
-    {
-      title: "Passo a Passo: Comando Deita",
-      image: "/images/training/down-step1.jpg",
-      imageAlt: "Ensinando cão a deitar",
-      imageHeight: "200px",
-      content: (
-        <>
-          <p>
-            Agora vamos aprender o comando "Deita":
-          </p>
-          <ol>
-            <li>Comece com o cão sentado</li>
-            <li>Segure o petisco próximo ao nariz</li>
-            <li>Mova a mão para baixo e para frente</li>
-            <li>Quando o cão deitar, diga "Deita"</li>
-            <li>Recompense imediatamente</li>
-          </ol>
-        </>
+        </div>
       )
     }
   ];
@@ -154,16 +403,12 @@ export default function Behavior1({ onNextLesson, onBack }) {
 
   return (
     <LessonBase
-      title="Módulo 2: Comportamento"
-      subtitle="Senta e Deita"
+      title="Não Pular em Pessoas"
       slides={slides}
       currentSlide={currentSlide}
       onNextSlide={nextSlide}
       onPrevSlide={prevSlide}
       onGoToSlide={goToSlide}
-      height="600px"
-      contentHeight="calc(100% - 100px)"
-      scrollable={true}
     />
   );
 } 

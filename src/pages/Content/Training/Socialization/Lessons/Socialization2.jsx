@@ -1,110 +1,60 @@
 import React, { useState } from "react";
-import styled from "styled-components";
+import LessonBase from "@/components/LessonBase";
 import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useFirestore } from "@/hooks/useFirestore";
 import { Timestamp } from 'firebase/firestore';
 
-const LessonContainer = styled.div`
-  padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
-`;
-
-const Title = styled.h1`
-  font-size: 24px;
-  margin-bottom: 20px;
-  color: #333;
-`;
-
-const CarouselContainer = styled.div`
-  position: relative;
-  width: 100%;
-  height: 400px;
-  overflow: hidden;
-`;
-
-const Slide = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  opacity: ${props => (props.active ? 1 : 0)};
-  transition: opacity 0.5s ease-in-out;
-  visibility: ${props => (props.active ? 'visible' : 'hidden')};
-`;
-
-const SlideTitle = styled.h2`
-  font-size: 20px;
-  margin-bottom: 15px;
-  color: #444;
-`;
-
-const ContentSection = styled.div`
-  margin-bottom: 20px;
-`;
-
-const SectionTitle = styled.h3`
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: #555;
-`;
-
-const ContentText = styled.p`
-  font-size: 16px;
-  line-height: 1.6;
-  color: #666;
-  margin-bottom: 15px;
-`;
-
-const NavigationButtons = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-`;
-
-const Button = styled.button`
-  padding: 10px 20px;
-  background: #4299E1;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.2s;
-
-  &:hover {
-    background: #3182CE;
-  }
-
-  &:disabled {
-    background: #CBD5E0;
-    cursor: not-allowed;
-  }
-`;
-
-const Dots = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
-`;
-
-const Dot = styled.div`
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: ${props => props.active === "true" ? '#4299E1' : '#CBD5E0'};
-  cursor: pointer;
-  transition: background 0.2s;
-`;
-
-const Socialization2 = ({ onNextLesson }) => {
+export default function Socialization2({ onNextLesson }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { user } = useAuthContext();
-  const { addDocument: addProgress, updateDocument: updateProgress } = useFirestore("progress");
+  const { addDocument: addProgress } = useFirestore("progress");
   const { updateTraining, refreshData } = useDashboard();
 
+  const slides = [
+    {
+      title: "Introdução à Socialização com Pessoas",
+      image: "/images/socialization/people-socialization.jpg",
+      imageAlt: "Cão interagindo com diferentes pessoas",
+      content: (
+        <div>
+          <p>
+            A socialização com pessoas é uma parte crucial do desenvolvimento do seu cão.
+            Envolve expor seu cão a diferentes tipos de pessoas, incluindo crianças,
+            idosos, pessoas com diferentes aparências e pessoas usando diferentes
+            acessórios (chapéus, óculos, etc.).
+          </p>
+        </div>
+      )
+    },
+    {
+      title: "Métodos de Socialização",
+      content: (
+        <div>
+          <p>
+            Existem várias maneiras de socializar seu cão com pessoas, incluindo:
+            encontros controlados, passeios em locais movimentados, visitas a
+            parques e praças, e interações com convidados em casa.
+          </p>
+        </div>
+      )
+    },
+    {
+      title: "Dicas para Socialização Segura",
+      content: (
+        <div>
+          <p>
+            Para garantir uma socialização segura e positiva, é importante:
+            começar gradualmente, usar reforço positivo, observar os sinais de
+            estresse do seu cão e nunca forçar interações.
+          </p>
+        </div>
+      )
+    }
+  ];
+
   const nextSlide = async () => {
-    if (currentSlide === 2) {
+    if (currentSlide === slides.length - 1) {
       try {
         // Salvar no localStorage
         localStorage.setItem("socialization2_completed", "true");
@@ -112,7 +62,6 @@ const Socialization2 = ({ onNextLesson }) => {
         
         // Atualizar o progresso no Firestore
         if (user) {
-          // Verificar se já existe um progresso para esta lição
           const progressData = {
             lessonId: "socialization2",
             moduleId: "socialization",
@@ -148,12 +97,12 @@ const Socialization2 = ({ onNextLesson }) => {
         onNextLesson();
       }
     } else {
-      setCurrentSlide((prev) => (prev + 1) % 3);
+      setCurrentSlide((prev) => prev + 1);
     }
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + 3) % 3);
+    setCurrentSlide((prev) => prev - 1);
   };
 
   const goToSlide = (index) => {
@@ -161,64 +110,16 @@ const Socialization2 = ({ onNextLesson }) => {
   };
 
   return (
-    <LessonContainer>
-      <Title>Socialização com Pessoas</Title>
-      <CarouselContainer>
-        <Slide active={currentSlide === 0}>
-          <SlideTitle>Introdução à Socialização com Pessoas</SlideTitle>
-          <ContentSection>
-            <ContentText>
-              A socialização com pessoas é uma parte crucial do desenvolvimento do seu cão.
-              Envolve expor seu cão a diferentes tipos de pessoas, incluindo crianças,
-              idosos, pessoas com diferentes aparências e pessoas usando diferentes
-              acessórios (chapéus, óculos, etc.).
-            </ContentText>
-          </ContentSection>
-        </Slide>
-
-        <Slide active={currentSlide === 1}>
-          <SlideTitle>Métodos de Socialização</SlideTitle>
-          <ContentSection>
-            <ContentText>
-              Existem várias maneiras de socializar seu cão com pessoas, incluindo:
-              encontros controlados, passeios em locais movimentados, visitas a
-              parques e praças, e interações com convidados em casa.
-            </ContentText>
-          </ContentSection>
-        </Slide>
-
-        <Slide active={currentSlide === 2}>
-          <SlideTitle>Dicas para Socialização Segura</SlideTitle>
-          <ContentSection>
-            <ContentText>
-              Para garantir uma socialização segura e positiva, é importante:
-              começar gradualmente, usar reforço positivo, observar os sinais de
-              estresse do seu cão e nunca forçar interações.
-            </ContentText>
-          </ContentSection>
-        </Slide>
-      </CarouselContainer>
-
-      <NavigationButtons>
-        <Button onClick={prevSlide} disabled={currentSlide === 0}>
-          Anterior
-        </Button>
-        <Button onClick={nextSlide}>
-          {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
-        </Button>
-      </NavigationButtons>
-
-      <Dots>
-        {[0, 1, 2].map((index) => (
-          <Dot
-            key={index}
-            active={currentSlide === index ? "true" : "false"}
-            onClick={() => goToSlide(index)}
-          />
-        ))}
-      </Dots>
-    </LessonContainer>
+    <LessonBase
+      title="Socialização com Pessoas"
+      slides={slides}
+      currentSlide={currentSlide}
+      onNextSlide={nextSlide}
+      onPrevSlide={prevSlide}
+      onGoToSlide={goToSlide}
+      height="500px"
+      contentHeight="calc(100% - 80px)"
+      scrollable={true}
+    />
   );
-};
-
-export default Socialization2; 
+} 

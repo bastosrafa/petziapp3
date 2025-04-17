@@ -6,6 +6,7 @@ import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useFirestore } from "@/hooks/useFirestore";
 import { Timestamp } from 'firebase/firestore';
+import LessonBase from "@/components/LessonBase";
 
 const LessonContainer = styled.div`
   padding: 20px;
@@ -107,8 +108,51 @@ const Socialization5 = ({ onNextLesson }) => {
   const { addDocument: addProgress } = useFirestore("progress");
   const { updateTraining, refreshData } = useDashboard();
 
+  const slides = [
+    {
+      title: "Introdução aos Ambientes Desafiadores",
+      image: "/images/socialization/challenging-environments.jpg",
+      imageAlt: "Cão em ambiente desafiador",
+      content: (
+        <div>
+          <p>
+            A socialização em ambientes desafiadores é crucial para desenvolver
+            a confiança e adaptabilidade do seu cão. Envolve expor seu pet a
+            diferentes situações e locais que podem ser estressantes ou
+            desconhecidos.
+          </p>
+        </div>
+      )
+    },
+    {
+      title: "Tipos de Ambientes",
+      content: (
+        <div>
+          <p>
+            Existem vários tipos de ambientes desafiadores que seu cão pode
+            encontrar, incluindo: locais movimentados, transportes públicos,
+            parques com muitas distrações, e ambientes com diferentes
+            superfícies e texturas.
+          </p>
+        </div>
+      )
+    },
+    {
+      title: "Estratégias de Adaptação",
+      content: (
+        <div>
+          <p>
+            Para ajudar seu cão a se adaptar a ambientes desafiadores, é
+            importante: começar gradualmente, usar reforço positivo, manter
+            a calma e ser paciente, e sempre respeitar os limites do seu pet.
+          </p>
+        </div>
+      )
+    }
+  ];
+
   const nextSlide = async () => {
-    if (currentSlide === 2) {
+    if (currentSlide === slides.length - 1) {
       try {
         // Salvar no localStorage
         localStorage.setItem("socialization5_completed", "true");
@@ -123,35 +167,40 @@ const Socialization5 = ({ onNextLesson }) => {
             userId: user.uid,
             status: "completed",
             completedAt: Timestamp.fromDate(new Date()),
-            duration: 15
+            duration: 15 // Duração estimada em minutos
           };
           
+          // Adicionar o progresso
           await addProgress(progressData);
           
+          // Atualizar o dashboard
           await updateTraining({
-            completedLessons: 15,
+            completedLessons: 15, // Incrementar o número de lições completadas
             currentLevel: 'intermediate',
             lastSession: new Date(),
-            totalTime: 160
+            totalTime: 160 // Tempo total em minutos
           });
           
+          // Forçar atualização do dashboard
           await refreshData();
           
           console.log("Progresso da lição Socialization5 salvo com sucesso");
         }
         
-        setShowPopup(true);
+        // Avançar para a próxima lição
+        onNextLesson();
       } catch (error) {
         console.error("Erro ao salvar progresso da lição:", error);
-        setShowPopup(true);
+        // Mesmo com erro, avançar para a próxima lição
+        onNextLesson();
       }
     } else {
-      setCurrentSlide((prev) => (prev + 1) % 3);
+      setCurrentSlide((prev) => prev + 1);
     }
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + 3) % 3);
+    setCurrentSlide((prev) => prev - 1);
   };
 
   const goToSlide = (index) => {
@@ -189,70 +238,17 @@ const Socialization5 = ({ onNextLesson }) => {
   };
 
   return (
-    <LessonContainer>
-      <Title>Ambientes e Situações</Title>
-      <CarouselContainer>
-        <Slide active={currentSlide === 0}>
-          <SlideTitle>Exposição a Diferentes Ambientes</SlideTitle>
-          <ContentSection>
-            <ContentText>
-              É importante expor seu cão a diferentes ambientes e situações
-              para desenvolver sua confiança e adaptabilidade. Isso inclui:
-              parques, ruas movimentadas, shopping centers, e outros locais
-              públicos.
-            </ContentText>
-          </ContentSection>
-        </Slide>
-
-        <Slide active={currentSlide === 1}>
-          <SlideTitle>Adaptação a Novas Situações</SlideTitle>
-          <ContentSection>
-            <ContentText>
-              A adaptação a novas situações deve ser feita gradualmente,
-              começando com ambientes mais calmos e aumentando gradualmente
-              o nível de estímulos e complexidade.
-            </ContentText>
-          </ContentSection>
-        </Slide>
-
-        <Slide active={currentSlide === 2}>
-          <SlideTitle>Dicas para Exposição Segura</SlideTitle>
-          <ContentSection>
-            <ContentText>
-              Para uma exposição segura e positiva: use equipamentos adequados,
-              observe os sinais de estresse do seu cão, mantenha as sessões
-              curtas e positivas, e sempre recompense comportamentos calmos.
-            </ContentText>
-          </ContentSection>
-        </Slide>
-      </CarouselContainer>
-
-      <NavigationButtons>
-        <Button onClick={prevSlide} disabled={currentSlide === 0}>
-          Anterior
-        </Button>
-        <Button onClick={nextSlide}>
-          {currentSlide === 2 ? "Concluir Aula" : "Próximo"}
-        </Button>
-      </NavigationButtons>
-
-      <Dots>
-        {[0, 1, 2].map((index) => (
-          <Dot
-            key={index}
-            active={currentSlide === index ? "true" : "false"}
-            onClick={() => goToSlide(index)}
-          />
-        ))}
-      </Dots>
-
-      {showPopup && (
-        <ModuleCompletionPopup
-          onClose={handleClosePopup}
-          onNextModule={handleNextModule}
-        />
-      )}
-    </LessonContainer>
+    <LessonBase
+      title="Ambientes Desafiadores"
+      slides={slides}
+      currentSlide={currentSlide}
+      onNextSlide={nextSlide}
+      onPrevSlide={prevSlide}
+      onGoToSlide={goToSlide}
+      height="500px"
+      contentHeight="calc(100% - 80px)"
+      scrollable={true}
+    />
   );
 };
 
