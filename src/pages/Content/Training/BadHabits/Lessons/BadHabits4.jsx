@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import ModuleCompletionPopup from "../../../../../components/ModuleCompletionPopup";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { useFirestore } from "@/hooks/useFirestore";
+import { Timestamp } from 'firebase/firestore';
+import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
+import ModuleCompletionPopup from "@/components/ModuleCompletionPopup";
 
 const LessonContainer = styled.div`
   padding: 2rem;
@@ -19,7 +23,7 @@ const Title = styled.h1`
 const CarouselContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 400px;
+  height: 500px;
   overflow: hidden;
 `;
 
@@ -34,6 +38,27 @@ const Slide = styled.div`
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   visibility: ${props => props.active ? 'visible' : 'hidden'};
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #4299E1 #F7FAFC;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #F7FAFC;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #4299E1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #3182CE;
+  }
 `;
 
 const SlideTitle = styled.h2`
@@ -49,92 +74,66 @@ const Text = styled.p`
   line-height: 1.6;
 `;
 
-const StepList = styled.ol`
-  list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
+const StepsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+  padding-bottom: 2rem;
 `;
 
-const StepItem = styled.li`
-  color: #4A5568;
-  margin-bottom: 0.75rem;
-  padding-left: 1.5rem;
-  position: relative;
-  line-height: 1.6;
-
-  &:before {
-    content: "1️⃣";
-    position: absolute;
-    left: 0;
-  }
-
-  &:nth-child(2):before {
-    content: "2️⃣";
-  }
-
-  &:nth-child(3):before {
-    content: "3️⃣";
-  }
-
-  &:nth-child(4):before {
-    content: "4️⃣";
-  }
-
-  &:nth-child(5):before {
-    content: "5️⃣";
-  }
-`;
-
-const SummaryList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
-`;
-
-const SummaryItem = styled.li`
-  color: #4A5568;
-  margin-bottom: 0.75rem;
-  padding-left: 1.5rem;
-  position: relative;
-  line-height: 1.6;
-
-  &:before {
-    content: "✔";
-    color: #48BB78;
-    position: absolute;
-    left: 0;
-  }
-`;
-
-const ImageContainer = styled.div`
-  width: 100%;
-  height: 200px;
-  background: #F7FAFC;
+const StepItem = styled.div`
+  background: white;
+  padding: 1.5rem;
   border-radius: 8px;
-  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const StepHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+`;
+
+const StepNumber = styled.div`
+  background: #4299E1;
+  color: white;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-`;
-
-const ImagePlaceholder = styled.div`
-  color: #A0AEC0;
+  font-weight: bold;
   font-size: 1.1rem;
 `;
 
-const IntroductionText = styled.p`
+const StepTitle = styled.h4`
+  margin: 0;
+  color: #2D3748;
+  font-size: 1.1rem;
+  font-weight: 600;
+`;
+
+const StepDescription = styled.p`
   color: #4A5568;
-  line-height: 1.6;
-  text-align: center;
-  font-size: 1.1rem;
+  margin: 0;
+  line-height: 1.5;
+  font-size: 0.95rem;
 `;
 
 const NavigationButtons = styled.div`
   display: flex;
   justify-content: center;
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
 `;
 
 const Button = styled.button`
@@ -172,15 +171,41 @@ const Dot = styled.div`
   transition: background 0.2s;
 `;
 
+const ImageContainer = styled.div`
+  width: 100%;
+  height: 200px;
+  background: #F7FAFC;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+`;
+
+const ImagePlaceholder = styled.div`
+  color: #A0AEC0;
+  font-size: 1.1rem;
+`;
+
+const IntroductionText = styled.p`
+  color: #4A5568;
+  line-height: 1.6;
+  text-align: center;
+  font-size: 1.1rem;
+`;
+
 export default function BadHabits4({ onNextLesson }) {
   const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showPopup, setShowPopup] = useState(false);
+  const { user } = useAuthContext();
+  const { addDocument: addProgress } = useFirestore("progress");
+  const { updateTraining } = useDashboard();
 
-  const nextSlide = () => {
+  const nextSlide = async () => {
     if (currentSlide === 2) {
       localStorage.setItem("badhabits4_completed", "true");
-      // Força a atualização do estado
       window.dispatchEvent(new Event('storage'));
       setShowPopup(true);
       onNextLesson();
@@ -190,7 +215,7 @@ export default function BadHabits4({ onNextLesson }) {
   };
 
   const prevSlide = () => {
-    setCurrentSlide(prev => (prev - 1 + 3) % 3);
+    setCurrentSlide((prev) => (prev - 1 + 3) % 3);
   };
 
   const goToSlide = (index) => {
@@ -203,22 +228,35 @@ export default function BadHabits4({ onNextLesson }) {
     setShowPopup(false);
   };
 
-  const handleNextModule = () => {
-    // Desbloqueia a primeira aula do módulo de exercícios mentais
+  const handleNextModule = async () => {
     localStorage.setItem("mental1_unlocked", "true");
-    
-    // Desbloqueia o módulo na página de adestramento
     localStorage.setItem("mental_unlocked", "true");
-    
-    // Desbloqueia o módulo na página de adestramento geral
     localStorage.setItem("startHere", "true");
-    localStorage.setItem("mental_unlocked", "true");
     localStorage.setItem("isContentLocked", "false");
     
-    // Força a atualização do estado isContentLocked no Content.jsx
-    window.dispatchEvent(new Event('storage'));
+    if (user) {
+      try {
+        await addProgress({
+          userId: user.uid,
+          moduleId: 'badhabits',
+          lessonId: 'badhabits4',
+          completedAt: Timestamp.now(),
+          progress: 100
+        });
+
+        updateTraining({
+          completedLessons: 24,
+          currentLevel: 'intermediate',
+          lastSession: new Date(),
+          totalTime: 300,
+          unlockedModules: ['startHere', 'badhabits', 'mental']
+        });
+      } catch (error) {
+        console.error('Error updating progress:', error);
+      }
+    }
     
-    // Navega para a primeira aula do módulo de exercícios mentais
+    window.dispatchEvent(new Event('storage'));
     navigate("/content/training/mental");
   };
 
@@ -242,20 +280,98 @@ export default function BadHabits4({ onNextLesson }) {
         <Slide active={currentSlide === 1}>
           <SlideTitle>Por que ensinar?</SlideTitle>
           <Text>
-            Cães que puxam na coleira podem causar desconforto e até mesmo lesões no tutor. Além disso, passeios mais calmos são mais seguros e agradáveis para todos.
+            Ensinar seu cão a não puxar na coleira é fundamental para passeios seguros e agradáveis. Este comportamento pode causar desconforto e até mesmo lesões, tanto para o cão quanto para o tutor.
           </Text>
+          <StepsGrid>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>1</StepNumber>
+                <StepTitle>Segurança</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Previne acidentes e lesões, tanto para o cão quanto para o tutor.
+              </StepDescription>
+            </StepItem>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>2</StepNumber>
+                <StepTitle>Controle</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Permite passeios mais tranquilos e controlados em qualquer ambiente.
+              </StepDescription>
+            </StepItem>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>3</StepNumber>
+                <StepTitle>Bem-estar</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Reduz o estresse e a ansiedade durante os passeios.
+              </StepDescription>
+            </StepItem>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>4</StepNumber>
+                <StepTitle>Socialização</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Facilita a interação com outros cães e pessoas durante os passeios.
+              </StepDescription>
+            </StepItem>
+          </StepsGrid>
         </Slide>
 
         {/* Slide 2: Passo a Passo */}
         <Slide active={currentSlide === 2}>
           <SlideTitle>Passo a Passo</SlideTitle>
-          <StepList>
-            <StepItem>Pare quando o cão puxar: Pare imediatamente quando sentir a tensão na coleira e só continue quando o cão relaxar.</StepItem>
-            <StepItem>Recompense o comportamento correto: Dê petiscos e elogios quando o cão andar ao seu lado sem puxar.</StepItem>
-            <StepItem>Use equipamentos adequados: Coleiras peitorais ou peitorais anti-puxão podem ajudar no treinamento.</StepItem>
-            <StepItem>Mantenha a consistência: Treine regularmente e siga sempre o mesmo método.</StepItem>
-            <StepItem>Seja paciente: O treinamento pode levar tempo, mas os resultados valem a pena.</StepItem>
-          </StepList>
+          <StepsGrid>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>1</StepNumber>
+                <StepTitle>Pare quando o cão puxar</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Pare imediatamente quando sentir a tensão na coleira e só continue quando o cão relaxar.
+              </StepDescription>
+            </StepItem>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>2</StepNumber>
+                <StepTitle>Recompense o comportamento correto</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Dê petiscos e elogios quando o cão andar ao seu lado sem puxar.
+              </StepDescription>
+            </StepItem>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>3</StepNumber>
+                <StepTitle>Use equipamentos adequados</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Coleiras peitorais ou peitorais anti-puxão podem ajudar no treinamento.
+              </StepDescription>
+            </StepItem>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>4</StepNumber>
+                <StepTitle>Mantenha a consistência</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Treine regularmente e siga sempre o mesmo método.
+              </StepDescription>
+            </StepItem>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>5</StepNumber>
+                <StepTitle>Seja paciente</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                O treinamento pode levar tempo, mas os resultados valem a pena.
+              </StepDescription>
+            </StepItem>
+          </StepsGrid>
         </Slide>
       </CarouselContainer>
 
@@ -263,25 +379,24 @@ export default function BadHabits4({ onNextLesson }) {
         <Button onClick={prevSlide} disabled={currentSlide === 0}>
           Anterior
         </Button>
+        <Dots>
+          {[0, 1, 2].map((index) => (
+            <Dot
+              key={index}
+              active={currentSlide === index}
+              onClick={() => goToSlide(index)}
+            />
+          ))}
+        </Dots>
         <Button onClick={nextSlide}>
           {currentSlide === 2 ? "Próxima Aula" : "Próximo"}
         </Button>
       </NavigationButtons>
 
-      <Dots>
-        {[0, 1, 2].map((index) => (
-          <Dot
-            key={index}
-            active={currentSlide === index}
-            onClick={() => goToSlide(index)}
-          />
-        ))}
-      </Dots>
-
       {showPopup && (
         <ModuleCompletionPopup
           onClose={handleClosePopup}
-          onNext={handleNextModule}
+          onNextModule={handleNextModule}
         />
       )}
     </LessonContainer>

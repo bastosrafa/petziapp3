@@ -17,7 +17,7 @@ const Title = styled.h1`
 const CarouselContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 400px;
+  height: 500px;
   overflow: hidden;
 `;
 
@@ -32,6 +32,27 @@ const Slide = styled.div`
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   visibility: ${props => props.active ? 'visible' : 'hidden'};
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #4299E1 #F7FAFC;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #F7FAFC;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #4299E1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #3182CE;
+  }
 `;
 
 const SlideTitle = styled.h2`
@@ -47,92 +68,66 @@ const Text = styled.p`
   line-height: 1.6;
 `;
 
-const StepList = styled.ol`
-  list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
+const StepsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+  padding-bottom: 2rem;
 `;
 
-const StepItem = styled.li`
-  color: #4A5568;
-  margin-bottom: 0.75rem;
-  padding-left: 1.5rem;
-  position: relative;
-  line-height: 1.6;
-
-  &:before {
-    content: "1️⃣";
-    position: absolute;
-    left: 0;
-  }
-
-  &:nth-child(2):before {
-    content: "2️⃣";
-  }
-
-  &:nth-child(3):before {
-    content: "3️⃣";
-  }
-
-  &:nth-child(4):before {
-    content: "4️⃣";
-  }
-
-  &:nth-child(5):before {
-    content: "5️⃣";
-  }
-`;
-
-const SummaryList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
-`;
-
-const SummaryItem = styled.li`
-  color: #4A5568;
-  margin-bottom: 0.75rem;
-  padding-left: 1.5rem;
-  position: relative;
-  line-height: 1.6;
-
-  &:before {
-    content: "✔";
-    color: #48BB78;
-    position: absolute;
-    left: 0;
-  }
-`;
-
-const ImageContainer = styled.div`
-  width: 100%;
-  height: 200px;
-  background: #F7FAFC;
+const StepItem = styled.div`
+  background: white;
+  padding: 1.5rem;
   border-radius: 8px;
-  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const StepHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+`;
+
+const StepNumber = styled.div`
+  background: #4299E1;
+  color: white;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-`;
-
-const ImagePlaceholder = styled.div`
-  color: #A0AEC0;
+  font-weight: bold;
   font-size: 1.1rem;
 `;
 
-const IntroductionText = styled.p`
+const StepTitle = styled.h4`
+  margin: 0;
+  color: #2D3748;
+  font-size: 1.1rem;
+  font-weight: 600;
+`;
+
+const StepDescription = styled.p`
   color: #4A5568;
-  line-height: 1.6;
-  text-align: center;
-  font-size: 1.1rem;
+  margin: 0;
+  line-height: 1.5;
+  font-size: 0.95rem;
 `;
 
 const NavigationButtons = styled.div`
   display: flex;
   justify-content: center;
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
 `;
 
 const Button = styled.button`
@@ -185,7 +180,7 @@ export default function BadHabits3({ onNextLesson }) {
   };
 
   const prevSlide = () => {
-    setCurrentSlide(prev => (prev - 1 + 3) % 3);
+    setCurrentSlide((prev) => (prev - 1 + 3) % 3);
   };
 
   const goToSlide = (index) => {
@@ -202,32 +197,107 @@ export default function BadHabits3({ onNextLesson }) {
         {/* Slide 0: Introdução com Imagem */}
         <Slide active={currentSlide === 0}>
           <SlideTitle>Bem-vindo à Aula!</SlideTitle>
-          <ImageContainer>
-            <ImagePlaceholder>Imagem ilustrativa de cão sentado calmamente</ImagePlaceholder>
-          </ImageContainer>
-          <IntroductionText>
+          <Text>
             Nesta aula, vamos aprender como ensinar seu cão a não pular nas pessoas e a manter um comportamento mais calmo durante os cumprimentos.
-          </IntroductionText>
+          </Text>
         </Slide>
 
         {/* Slide 1: Por que ensinar */}
         <Slide active={currentSlide === 1}>
           <SlideTitle>Por que ensinar?</SlideTitle>
           <Text>
-            Cães que pulam nas pessoas podem causar acidentes, especialmente com crianças e idosos. Ensinar um comportamento mais adequado torna as interações mais seguras e agradáveis.
+            Ensinar seu cão a não pular nas pessoas é essencial para criar interações seguras e agradáveis. Este comportamento pode causar acidentes e desconforto, especialmente com crianças e idosos.
           </Text>
+          <StepsGrid>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>1</StepNumber>
+                <StepTitle>Segurança</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Previne acidentes e lesões, especialmente com pessoas mais vulneráveis.
+              </StepDescription>
+            </StepItem>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>2</StepNumber>
+                <StepTitle>Bom Comportamento</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Ensina o cão a interagir de forma mais educada e controlada.
+              </StepDescription>
+            </StepItem>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>3</StepNumber>
+                <StepTitle>Socialização</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Facilita a aceitação do cão em diferentes ambientes e situações.
+              </StepDescription>
+            </StepItem>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>4</StepNumber>
+                <StepTitle>Bem-estar</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Reduz o estresse tanto para o cão quanto para as pessoas ao redor.
+              </StepDescription>
+            </StepItem>
+          </StepsGrid>
         </Slide>
 
         {/* Slide 2: Passo a Passo */}
         <Slide active={currentSlide === 2}>
           <SlideTitle>Passo a Passo</SlideTitle>
-          <StepList>
-            <StepItem>Ignore o comportamento indesejado: Vire as costas quando o cão pular e só dê atenção quando ele estiver com as quatro patas no chão.</StepItem>
-            <StepItem>Ensine o comando "Senta": Recompense quando o cão se sentar ao invés de pular.</StepItem>
-            <StepItem>Pratique em diferentes situações: Treine com diferentes pessoas e em diferentes ambientes.</StepItem>
-            <StepItem>Use reforço positivo: Elogie e recompense quando o cão se comportar adequadamente.</StepItem>
-            <StepItem>Mantenha a consistência: Todos na casa devem seguir as mesmas regras.</StepItem>
-          </StepList>
+          <StepsGrid>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>1</StepNumber>
+                <StepTitle>Ignore o comportamento indesejado</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Vire as costas quando o cão pular e só dê atenção quando ele estiver com as quatro patas no chão.
+              </StepDescription>
+            </StepItem>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>2</StepNumber>
+                <StepTitle>Ensine o comando "Senta"</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Recompense quando o cão se sentar ao invés de pular.
+              </StepDescription>
+            </StepItem>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>3</StepNumber>
+                <StepTitle>Pratique em diferentes situações</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Treine com diferentes pessoas e em diferentes ambientes.
+              </StepDescription>
+            </StepItem>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>4</StepNumber>
+                <StepTitle>Use reforço positivo</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Elogie e recompense quando o cão se comportar adequadamente.
+              </StepDescription>
+            </StepItem>
+            <StepItem>
+              <StepHeader>
+                <StepNumber>5</StepNumber>
+                <StepTitle>Mantenha a consistência</StepTitle>
+              </StepHeader>
+              <StepDescription>
+                Todos na casa devem seguir as mesmas regras.
+              </StepDescription>
+            </StepItem>
+          </StepsGrid>
         </Slide>
       </CarouselContainer>
 
