@@ -32,6 +32,35 @@ const Slide = styled.div`
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   visibility: ${props => props.active ? 'visible' : 'hidden'};
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+`;
+
+const SlideContent = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 1rem;
+  margin-right: -1rem;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #F7FAFC;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #CBD5E0;
+    border-radius: 4px;
+    transition: background 0.2s;
+
+    &:hover {
+      background: #A0AEC0;
+    }
+  }
 `;
 
 const SlideTitle = styled.h2`
@@ -170,6 +199,163 @@ const Dot = styled.div`
   transition: background 0.2s;
 `;
 
+const Card = styled.div`
+  background: #F7FAFC;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+`;
+
+const CardTitle = styled.h3`
+  color: #2D3748;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+`;
+
+const BenefitsList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const BenefitItem = styled.li`
+  color: #4A5568;
+  padding: 1rem;
+  position: relative;
+  line-height: 1.6;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  &:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: #F7FAFC;
+  }
+
+  &:before {
+    content: "";
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, #48BB78, #38A169);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(72, 187, 120, 0.2);
+  }
+
+  &:nth-child(1):before {
+    content: "1";
+  }
+
+  &:nth-child(2):before {
+    content: "2";
+  }
+
+  &:nth-child(3):before {
+    content: "3";
+  }
+
+  &:nth-child(4):before {
+    content: "4";
+  }
+
+  &:nth-child(5):before {
+    content: "5";
+  }
+`;
+
+const BenefitText = styled.span`
+  flex: 1;
+  font-size: 1rem;
+  color: #2D3748;
+`;
+
+const StepsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  perspective: 1000px;
+`;
+
+const StepCard = styled.div`
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  transform-style: preserve-3d;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-5px) rotateX(5deg);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #4299E1, #48BB78);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+`;
+
+const StepNumber = styled.div`
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #4299E1, #3182CE);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  font-weight: bold;
+  font-size: 1.25rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+
+  ${StepCard}:hover & {
+    transform: scale(1.1);
+  }
+`;
+
+const StepText = styled.p`
+  color: #4A5568;
+  line-height: 1.6;
+  margin: 0;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+
+  ${StepCard}:hover & {
+    color: #2D3748;
+  }
+`;
+
 export default function MentalFun2({ onNextLesson }) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -211,21 +397,57 @@ export default function MentalFun2({ onNextLesson }) {
         {/* Slide 1: Por que ensinar */}
         <Slide active={currentSlide === 1}>
           <SlideTitle>Por que ensinar?</SlideTitle>
-          <Text>
-            Em dias chuvosos ou quando o tutor não pode sair para passeios longos, jogos dentro de casa ajudam a manter o cão estimulado.
-          </Text>
+          <SlideContent>
+            <Card>
+              <CardTitle>Benefícios dos Jogos em Casa</CardTitle>
+              <BenefitsList>
+                <BenefitItem>
+                  <BenefitText>Mantém o cão ativo mesmo em dias chuvosos</BenefitText>
+                </BenefitItem>
+                <BenefitItem>
+                  <BenefitText>Estimula o faro e a obediência</BenefitText>
+                </BenefitItem>
+                <BenefitItem>
+                  <BenefitText>Fortalecimento do vínculo entre tutor e cão</BenefitText>
+                </BenefitItem>
+                <BenefitItem>
+                  <BenefitText>Desenvolvimento de habilidades cognitivas</BenefitText>
+                </BenefitItem>
+                <BenefitItem>
+                  <BenefitText>Reduz comportamentos destrutivos por tédio</BenefitText>
+                </BenefitItem>
+              </BenefitsList>
+            </Card>
+          </SlideContent>
         </Slide>
 
         {/* Slide 2: Passo a Passo */}
         <Slide active={currentSlide === 2}>
           <SlideTitle>Passo a Passo</SlideTitle>
-          <StepList>
-            <StepItem>Cabo de guerra: Use uma corda resistente para brincar, incentivando o cão a puxar (sempre controlando a intensidade).</StepItem>
-            <StepItem>Esconde-esconde: Peça para o cão esperar, esconda-se e chame-o para te encontrar. Isso estimula o faro e a obediência.</StepItem>
-            <StepItem>Corrida de obstáculos caseira: Use almofadas, cadeiras e caixas para criar um pequeno percurso dentro de casa.</StepItem>
-            <StepItem>Busca de petiscos: Espalhe petiscos pela casa e incentive o cão a farejá-los.</StepItem>
-            <StepItem>Comandos intercalados: Peça ao cão para sentar, deitar, dar a pata e recompense com petiscos.</StepItem>
-          </StepList>
+          <SlideContent>
+            <StepsGrid>
+              <StepCard>
+                <StepNumber>1</StepNumber>
+                <StepText>Cabo de guerra: Use uma corda resistente para brincar, incentivando o cão a puxar (sempre controlando a intensidade).</StepText>
+              </StepCard>
+              <StepCard>
+                <StepNumber>2</StepNumber>
+                <StepText>Esconde-esconde: Peça para o cão esperar, esconda-se e chame-o para te encontrar. Isso estimula o faro e a obediência.</StepText>
+              </StepCard>
+              <StepCard>
+                <StepNumber>3</StepNumber>
+                <StepText>Corrida de obstáculos caseira: Use almofadas, cadeiras e caixas para criar um pequeno percurso dentro de casa.</StepText>
+              </StepCard>
+              <StepCard>
+                <StepNumber>4</StepNumber>
+                <StepText>Busca de petiscos: Espalhe petiscos pela casa e incentive o cão a farejá-los.</StepText>
+              </StepCard>
+              <StepCard>
+                <StepNumber>5</StepNumber>
+                <StepText>Comandos intercalados: Peça ao cão para sentar, deitar, dar a pata e recompense com petiscos.</StepText>
+              </StepCard>
+            </StepsGrid>
+          </SlideContent>
         </Slide>
 
         {/* Slide 3: Resumo Rápido */}
