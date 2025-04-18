@@ -16,10 +16,29 @@ const PetStatus = () => {
   useEffect(() => {
     if (dashboardData) {
       const now = new Date();
-      const lastFood = dashboardData.activities?.food?.lastEntry?.timestamp ? new Date(dashboardData.activities.food.lastEntry.timestamp) : null;
-      const lastWalk = dashboardData.activities?.walk?.lastEntry?.timestamp ? new Date(dashboardData.activities.walk.lastEntry.timestamp) : null;
-      const lastTraining = dashboardData.activities?.training?.lastEntry?.timestamp ? new Date(dashboardData.activities.training.lastEntry.timestamp) : null;
-      const lastVaccine = dashboardData.health?.lastVaccine?.date ? new Date(dashboardData.health.lastVaccine.date) : null;
+      
+      const getTimestamp = (timestamp) => {
+        if (!timestamp) return null;
+        
+        // Se for um timestamp do Firestore
+        if (timestamp.toDate) {
+          return timestamp.toDate();
+        }
+        // Se for uma string ISO ou objeto Date
+        else if (typeof timestamp === 'string' || timestamp instanceof Date) {
+          return new Date(timestamp);
+        }
+        // Se for um objeto com propriedade seconds (Firestore Timestamp)
+        else if (timestamp.seconds) {
+          return new Date(timestamp.seconds * 1000);
+        }
+        return null;
+      };
+
+      const lastFood = getTimestamp(dashboardData.activities?.food?.lastEntry?.timestamp);
+      const lastWalk = getTimestamp(dashboardData.activities?.walk?.lastEntry?.timestamp);
+      const lastTraining = getTimestamp(dashboardData.activities?.training?.lastEntry?.timestamp);
+      const lastVaccine = getTimestamp(dashboardData.health?.lastVaccine?.date);
 
       let score = 0;
       let needs = [];

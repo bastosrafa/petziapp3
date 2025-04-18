@@ -133,7 +133,6 @@ export const dashboardService = {
         ...data,
         userId,
         type: activityType,
-        timestamp: serverTimestamp(),
         createdAt: serverTimestamp()
       };
       
