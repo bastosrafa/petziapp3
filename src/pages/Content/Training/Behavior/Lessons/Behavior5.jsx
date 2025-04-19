@@ -1,34 +1,279 @@
 import React, { useState } from "react";
-import LessonBase from "@/components/LessonBase";
+import styled from "styled-components";
 import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useFirestore } from "@/hooks/useFirestore";
-import { useCollection } from "@/hooks/useCollection";
 import { Timestamp } from 'firebase/firestore';
 import { useNavigate } from "react-router-dom";
+import ModuleCompletionPopup from "@/components/ModuleCompletionPopup";
+import behavior5Image from '@/assets/images/training/behavior5.png';
 
-export default function Behavior5() {
-  const navigate = useNavigate();
+const LessonContainer = styled.div`
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+`;
+
+const Title = styled.h1`
+  font-size: 2rem;
+  color: #2D3748;
+  margin-bottom: 2rem;
+  text-align: center;
+`;
+
+const CarouselContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 600px;
+  overflow: hidden;
+`;
+
+const Slide = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: ${props => (props.active ? 1 : 0)};
+  transition: opacity 0.3s ease-in-out;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  pointer-events: ${props => props.active ? 'auto' : 'none'};
+  z-index: ${props => props.active ? 1 : 0};
+`;
+
+const SlideContent = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding: 2.5rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #4299E1 #F7FAFC;
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #F7FAFC;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #4299E1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #3182CE;
+  }
+`;
+
+const SlideTitle = styled.h2`
+  font-size: 1.8rem;
+  color: #2D3748;
+  margin-bottom: 2rem;
+  text-align: center;
+`;
+
+const ContentText = styled.p`
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 15px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+`;
+
+const ExerciseSteps = styled.ol`
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const ExerciseStep = styled.li`
+  color: #2D3748;
+  padding: 1rem;
+  padding-left: 2.5rem;
+  position: relative;
+  background: #F0FFF4;
+  border-radius: 8px;
+  border-left: 4px solid #48BB78;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #E6FFED;
+    transform: translateX(4px);
+  }
+
+  &:before {
+    content: attr(data-step);
+    color: #48BB78;
+    font-weight: bold;
+    font-size: 1.2rem;
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+`;
+
+const NavigationButtons = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+`;
+
+const Button = styled.button`
+  padding: 0.5rem 1rem;
+  background: #4299E1;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #3182CE;
+  }
+
+  &:disabled {
+    background: #CBD5E0;
+    cursor: not-allowed;
+  }
+`;
+
+const Dots = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+`;
+
+const Dot = styled.div`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: ${props => props.active ? '#4299E1' : '#CBD5E0'};
+  cursor: pointer;
+  transition: background 0.2s;
+`;
+
+const ImageContainer = styled.div`
+  width: 100%;
+  height: 200px;
+  background: #F7FAFC;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+`;
+
+const ImagePlaceholder = styled.div`
+  color: #A0AEC0;
+  font-size: 1.1rem;
+`;
+
+const IntroductionText = styled.p`
+  color: #4A5568;
+  line-height: 1.6;
+  text-align: center;
+  font-size: 1.1rem;
+`;
+
+const BulletList = styled.ul`
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const BulletItem = styled.li`
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #2D3748;
+  padding: 1rem;
+  padding-left: 2.5rem;
+  position: relative;
+  background: #F0FFF4;
+  border-radius: 8px;
+  border-left: 4px solid #48BB78;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #E6FFED;
+    transform: translateX(4px);
+  }
+
+  &:before {
+    content: "•";
+    color: #48BB78;
+    font-weight: bold;
+    font-size: 1.2rem;
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+`;
+
+const Image = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
+export default function Behavior5({ onNextLesson }) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [showPopup, setShowPopup] = useState(false);
   const { user } = useAuthContext();
   const { addDocument: addProgress } = useFirestore("progress");
   const { updateTraining, refreshData } = useDashboard();
-  const { documents: progressDocs } = useCollection(
-    "progress",
-    ["userId", "==", user.uid],
-    null,
-    ["courseId", "==", "9DwWIAtShVCPXyRPSbqF"]
-  );
+  const navigate = useNavigate();
 
   const slides = [
     {
-      title: "Introdução",
-      image: "/images/behavior/behavior5-1.jpg",
-      imageAlt: "Cão ansioso",
+      title: "Desenvolvendo habilidades de busca",
       content: (
         <div>
-          <p>A ansiedade de separação é um problema comum em cães que pode causar comportamentos destrutivos e vocalizações excessivas quando o tutor se ausenta.</p>
-          <p>Nesta aula, vamos aprender técnicas para ajudar seu cão a lidar melhor com a separação.</p>
+          <Image src={behavior5Image} alt="Comandos Busca e Entrega" />
+          <ContentText>
+            Os comandos "Busca" e "Entrega" são excelentes para exercícios físicos e mentais, além de fortalecer o vínculo entre você e seu cão.
+          </ContentText>
+          <BulletList>
+            <BulletItem>
+              <strong>Exercício físico e mental</strong>
+              <ContentText>Estimula o corpo e a mente do cão de forma divertida.</ContentText>
+            </BulletItem>
+            <BulletItem>
+              <strong>Fortalecimento do vínculo</strong>
+              <ContentText>Promove interação positiva e cooperação.</ContentText>
+            </BulletItem>
+            <BulletItem>
+              <strong>Habilidades práticas</strong>
+              <ContentText>Desenvolve capacidades úteis para o dia a dia.</ContentText>
+            </BulletItem>
+          </BulletList>
         </div>
       )
     },
@@ -36,303 +281,140 @@ export default function Behavior5() {
       title: "Como Ensinar",
       content: (
         <div>
-          <h3 style={{ 
-            fontSize: '18px',
-            color: '#444',
-            marginBottom: '15px',
-            fontWeight: '600'
-          }}>Passo a Passo</h3>
-          <ol style={{ 
-            paddingLeft: '25px',
-            marginTop: '15px',
-            lineHeight: '1.8',
-            listStyleType: 'none',
-            counterReset: 'item'
-          }}>
-            <li style={{ 
-              marginBottom: '20px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>1. Comece com ausências curtas</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Saia por alguns minutos e volte, aumentando gradualmente o tempo.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '20px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>2. Crie uma rotina de despedida</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Mantenha um ritual consistente ao sair e voltar.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '20px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>3. Proporcione distrações</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Deixe brinquedos interativos e petiscos para o cão.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '20px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>4. Ignore comportamentos ansiosos</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Não recompense a ansiedade com atenção.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '20px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>5. Considere o uso de feromônios</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Produtos como Adaptil podem ajudar a acalmar o cão.
-              </p>
-            </li>
-          </ol>
+          <ExerciseSteps>
+            <ExerciseStep data-step="1">
+              <strong>Ensine o comando "Busca"</strong>
+              <ContentText>Use um objeto que o cão goste e incentive-o a pegar.</ContentText>
+            </ExerciseStep>
+            <ExerciseStep data-step="2">
+              <strong>Introduza o comando "Entrega"</strong>
+              <ContentText>Ensine o cão a soltar o objeto em suas mãos.</ContentText>
+            </ExerciseStep>
+            <ExerciseStep data-step="3">
+              <strong>Combine os comandos</strong>
+              <ContentText>Pratique a sequência completa de busca e entrega.</ContentText>
+            </ExerciseStep>
+            <ExerciseStep data-step="4">
+              <strong>Aumente a distância</strong>
+              <ContentText>Gradualmente, aumente a distância da busca.</ContentText>
+            </ExerciseStep>
+          </ExerciseSteps>
+          <BulletList>
+            <BulletItem>
+              <strong>Dica importante</strong>
+              <ContentText>Use objetos adequados e recompensas de alto valor.</ContentText>
+            </BulletItem>
+            <BulletItem>
+              <strong>Evite erros comuns</strong>
+              <ContentText>Não force o cão a buscar objetos que ele não gosta.</ContentText>
+            </BulletItem>
+          </BulletList>
         </div>
       )
     },
     {
-      title: "Prática e Dicas",
+      title: "Dicas Importantes",
       content: (
         <div>
-          <h3 style={{ 
-            fontSize: '18px',
-            color: '#444',
-            marginBottom: '15px',
-            fontWeight: '600'
-          }}>Dicas Importantes</h3>
-          <ul style={{ 
-            paddingLeft: '25px',
-            marginTop: '15px',
-            lineHeight: '1.8',
-            listStyleType: 'none'
-          }}>
-            <li style={{ 
-              marginBottom: '20px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>• Mantenha a calma</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Evite demonstrações excessivas de afeto ao sair e voltar.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '20px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>• Exercite antes de sair</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Um cão cansado tende a ficar mais relaxado.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '20px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>• Grave o comportamento</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Use câmeras para monitorar o comportamento do cão.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '20px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>• Consulte um profissional</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Em casos graves, busque ajuda de um especialista em comportamento.
-              </p>
-            </li>
-          </ul>
+          <BulletList>
+            <BulletItem>
+              <strong>Use recompensas de alto valor</strong>
+              <ContentText>Escolha petiscos que o cão realmente goste.</ContentText>
+            </BulletItem>
+            <BulletItem>
+              <strong>Mantenha o treino divertido</strong>
+              <ContentText>O cão deve associar o treino a momentos prazerosos.</ContentText>
+            </BulletItem>
+            <BulletItem>
+              <strong>Pratique em diferentes locais</strong>
+              <ContentText>Varie os ambientes para generalizar o aprendizado.</ContentText>
+            </BulletItem>
+          </BulletList>
+          <BulletList>
+            <BulletItem>
+              <strong>Não force o cão</strong>
+              <ContentText>Respeite o ritmo de aprendizado do seu pet.</ContentText>
+            </BulletItem>
+            <BulletItem>
+              <strong>Mantenha as sessões curtas</strong>
+              <ContentText>Treinos de 5-10 minutos são mais eficazes.</ContentText>
+            </BulletItem>
+          </BulletList>
+        </div>
+      )
+    },
+    {
+      title: "Exemplo Prático",
+      content: (
+        <div>
+          <ContentText>Pratique os comandos em diferentes situações:</ContentText>
+          <BulletList>
+            <BulletItem>
+              <strong>Durante as brincadeiras</strong>
+              <ContentText>Use brinquedos favoritos para treinar os comandos.</ContentText>
+            </BulletItem>
+            <BulletItem>
+              <strong>Em diferentes ambientes</strong>
+              <ContentText>Pratique em casa, no parque e em outros locais.</ContentText>
+            </BulletItem>
+            <BulletItem>
+              <strong>Com diferentes objetos</strong>
+              <ContentText>Varie os objetos para manter o interesse do cão.</ContentText>
+            </BulletItem>
+          </BulletList>
+          <BulletList>
+            <BulletItem>
+              <strong>Frequência de treino</strong>
+              <ContentText>Pratique 3-5 vezes por dia, em sessões curtas.</ContentText>
+            </BulletItem>
+            <BulletItem>
+              <strong>Progressão</strong>
+              <ContentText>Aumente gradualmente a dificuldade e as distrações.</ContentText>
+            </BulletItem>
+          </BulletList>
         </div>
       )
     }
   ];
 
-  const nextSlide = () => {
+  const nextSlide = async () => {
     if (currentSlide < slides.length - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
-      // Lógica para próxima aula
-      navigate("/content/training/socialization");
+      try {
+        // Save to localStorage first
+        localStorage.setItem("behavior5_completed", "true");
+        window.dispatchEvent(new Event('storage'));
+        
+        // Save progress to Firestore
+        await addProgress({
+          userId: user.uid,
+          lessonId: "behavior5",
+          moduleId: "behavior",
+          completedAt: Timestamp.now(),
+          progress: 100
+        });
+
+        // Update training progress
+        await updateTraining({
+          completedLessons: 1,
+          currentLevel: 'beginner',
+          lastSession: new Date(),
+          totalTime: 5
+        });
+
+        // Refresh data
+        await refreshData();
+        
+        console.log("Progresso da lição Behavior5 salvo com sucesso");
+        
+        // Show completion popup
+        setShowPopup(true);
+      } catch (error) {
+        console.error("Erro ao salvar progresso:", error);
+        // Show popup even if there's an error
+        setShowPopup(true);
+      }
     }
   };
 
@@ -344,16 +426,58 @@ export default function Behavior5() {
     setCurrentSlide(index);
   };
 
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+  const handleNextModule = () => {
+    // Desbloqueia a primeira aula do módulo de socialização
+    localStorage.setItem("socialization1_unlocked", "true");
+    
+    // Desbloqueia o módulo na página de adestramento
+    localStorage.setItem("socialization_unlocked", "true");
+    
+    // Navega para a primeira aula do módulo de socialização
+    navigate("/content/training/socialization");
+  };
+
   return (
-    <LessonBase
-      title="Ansiedade de Separação"
-      slides={slides}
-      currentSlide={currentSlide}
-      onNextSlide={nextSlide}
-      onPrevSlide={prevSlide}
-      onGoToSlide={goToSlide}
-      isLastLesson={true}
-      nextModulePath="/content/training/socialization"
-    />
+    <LessonContainer>
+      <Title>Comandos Busca e Entrega</Title>
+      <CarouselContainer>
+        {slides.map((slide, index) => (
+          <Slide key={index} active={currentSlide === index}>
+            <SlideContent>
+              {slide.title && <SlideTitle>{slide.title}</SlideTitle>}
+              {slide.content}
+            </SlideContent>
+          </Slide>
+        ))}
+        <NavigationButtons>
+          <Button onClick={prevSlide} disabled={currentSlide === 0}>
+            Anterior
+          </Button>
+          <Dots>
+            {slides.map((_, index) => (
+              <Dot
+                key={index}
+                active={currentSlide === index}
+                onClick={() => goToSlide(index)}
+              />
+            ))}
+          </Dots>
+          <Button onClick={nextSlide}>
+            {currentSlide === slides.length - 1 ? "Concluir" : "Próximo"}
+          </Button>
+        </NavigationButtons>
+      </CarouselContainer>
+
+      {showPopup && (
+        <ModuleCompletionPopup
+          onClose={handleClosePopup}
+          onNextModule={handleNextModule}
+        />
+      )}
+    </LessonContainer>
   );
 } 
