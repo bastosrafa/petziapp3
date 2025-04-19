@@ -24,12 +24,12 @@ const BottomBar = () => {
           <span className="nav-label">Adestramento</span>
         </Link>
 
-        <Link to="/diario" className={`nav-item ${isActive('/diario') ? 'active' : ''}`}>
+        <Link to="/content/diary" className={`nav-item ${isActive('/content/diary') ? 'active' : ''}`}>
           <span className="nav-icon">📝</span>
           <span className="nav-label">Diário</span>
         </Link>
 
-        <Link to="/vacinas" className={`nav-item ${isActive('/vacinas') ? 'active' : ''}`}>
+        <Link to="/content/vaccines" className={`nav-item ${isActive('/content/vaccines') ? 'active' : ''}`}>
           <span className="nav-icon">💉</span>
           <span className="nav-label">Vacinas</span>
         </Link>

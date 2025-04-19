@@ -34,6 +34,14 @@ const StatsSummary = () => {
       else if (timestamp.seconds) {
         date = new Date(timestamp.seconds * 1000);
       }
+      // Se for um objeto com propriedade date
+      else if (timestamp.date) {
+        date = new Date(timestamp.date);
+      }
+      // Se for um objeto Date válido
+      else if (timestamp instanceof Date) {
+        date = timestamp;
+      }
       
       // Verificar se a data é válida
       if (!date || isNaN(date.getTime())) {
@@ -49,7 +57,7 @@ const StatsSummary = () => {
         minute: '2-digit'
       });
     } catch (error) {
-      console.error('Error formatting date:', error);
+      console.error('Error formatting date:', error, 'Timestamp:', timestamp);
       return 'Data inválida';
     }
   };

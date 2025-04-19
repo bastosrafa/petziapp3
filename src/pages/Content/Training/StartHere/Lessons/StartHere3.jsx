@@ -4,6 +4,7 @@ import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useFirestore } from "@/hooks/useFirestore";
 import { Timestamp } from 'firebase/firestore';
+import startHere3Image from '@/assets/images/training/starthere3.png';
 
 const LessonContainer = styled.div`
   padding: 2rem;
@@ -81,20 +82,35 @@ const BulletList = styled.ul`
   list-style: none;
   padding: 0;
   margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 const BulletItem = styled.li`
-  color: #4A5568;
-  margin-bottom: 0.75rem;
-  padding-left: 1.5rem;
+  color: #2D3748;
+  padding: 1rem;
+  padding-left: 2.5rem;
   position: relative;
-  line-height: 1.6;
+  background: #F0FFF4;
+  border-radius: 8px;
+  border-left: 4px solid #48BB78;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #E6FFED;
+    transform: translateX(4px);
+  }
 
   &:before {
-    content: "✔";
+    content: attr(data-step);
     color: #48BB78;
+    font-weight: bold;
+    font-size: 1.2rem;
     position: absolute;
-    left: 0;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
   }
 `;
 
@@ -102,19 +118,32 @@ const WarningList = styled.ul`
   list-style: none;
   padding: 0;
   margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 const WarningItem = styled.li`
-  color: #4A5568;
-  margin-bottom: 0.75rem;
-  padding-left: 1.5rem;
+  color: #2D3748;
+  padding: 1rem;
+  padding-left: 2.5rem;
   position: relative;
-  line-height: 1.6;
+  background: #FFF5F5;
+  border-radius: 8px;
+  border-left: 4px solid #F56565;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #FFEBEB;
+    transform: translateX(4px);
+  }
 
   &:before {
-    content: "🚫";
+    content: "⚠️";
     position: absolute;
-    left: 0;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
   }
 `;
 
@@ -122,19 +151,32 @@ const ExampleList = styled.ul`
   list-style: none;
   padding: 0;
   margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 const ExampleItem = styled.li`
-  color: #4A5568;
-  margin-bottom: 0.75rem;
-  padding-left: 1.5rem;
+  color: #2D3748;
+  padding: 1rem;
+  padding-left: 2.5rem;
   position: relative;
-  line-height: 1.6;
+  background: #EBF8FF;
+  border-radius: 8px;
+  border-left: 4px solid #4299E1;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #BEE3F8;
+    transform: translateX(4px);
+  }
 
   &:before {
-    content: "🔹";
+    content: "💡";
     position: absolute;
-    left: 0;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
   }
 `;
 
@@ -142,31 +184,35 @@ const ExerciseList = styled.ol`
   list-style: none;
   padding: 0;
   margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 const ExerciseItem = styled.li`
-  color: #4A5568;
-  margin-bottom: 0.75rem;
-  padding-left: 1.5rem;
+  color: #2D3748;
+  padding: 1rem;
+  padding-left: 2.5rem;
   position: relative;
-  line-height: 1.6;
+  background: #FAF5FF;
+  border-radius: 8px;
+  border-left: 4px solid #9F7AEA;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #F3E8FF;
+    transform: translateX(4px);
+  }
 
   &:before {
-    content: "1️⃣";
+    content: attr(data-step);
+    color: #9F7AEA;
+    font-weight: bold;
+    font-size: 1.2rem;
     position: absolute;
-    left: 0;
-  }
-
-  &:nth-child(2):before {
-    content: "2️⃣";
-  }
-
-  &:nth-child(3):before {
-    content: "3️⃣";
-  }
-
-  &:nth-child(4):before {
-    content: "4️⃣";
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
   }
 `;
 
@@ -254,6 +300,23 @@ const Dot = styled.div`
   transition: background 0.2s;
 `;
 
+const SlideImage = styled.img`
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const ContentText = styled.p`
+  color: #4A5568;
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+  font-size: 1.1rem;
+  word-wrap: break-word;
+`;
+
 export default function StartHere3({ onNextLesson }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { user } = useAuthContext();
@@ -318,71 +381,87 @@ export default function StartHere3({ onNextLesson }) {
     setCurrentSlide(index);
   };
 
+  const slides = [
+    {
+      title: "O Poder das Recompensas",
+      content: (
+        <>
+          <SlideImage src={startHere3Image} alt="Recompensas e Reforço Positivo" />
+          <ContentText>
+            O reforço positivo é a base do treinamento moderno. Nesta aula, você aprenderá como usar recompensas para ensinar seu cão de forma eficaz e divertida.
+          </ContentText>
+          <ContentText>
+            Quando usamos recompensas corretamente, o cão aprende mais rápido e mantém o comportamento desejado por mais tempo, criando uma experiência positiva para ambos.
+          </ContentText>
+        </>
+      ),
+    },
+    {
+      title: "Tipos de Recompensas",
+      content: (
+        <>
+          <Text>
+            Cada cão tem suas preferências. Conheça os principais tipos de recompensas:
+          </Text>
+          <BulletList>
+            <BulletItem data-step="1">Petiscos → Ideais para treinos curtos e comandos novos.</BulletItem>
+            <BulletItem data-step="2">Brinquedos → Perfeitos para treinos mais longos e interativos.</BulletItem>
+            <BulletItem data-step="3">Carinho → Excelente para cães que valorizam contato físico.</BulletItem>
+            <BulletItem data-step="4">Elogios → Importante para manter o vínculo e a motivação.</BulletItem>
+          </BulletList>
+        </>
+      ),
+    },
+    {
+      title: "Como Usar Recompensas",
+      content: (
+        <>
+          <Text>
+            Para um treinamento eficaz, siga estas etapas:
+          </Text>
+          <ExerciseList>
+            <ExerciseItem data-step="1">Identifique o que seu cão mais gosta como recompensa.</ExerciseItem>
+            <ExerciseItem data-step="2">Use recompensas de alto valor para comportamentos difíceis.</ExerciseItem>
+            <ExerciseItem data-step="3">Dê a recompensa imediatamente após o comportamento desejado.</ExerciseItem>
+            <ExerciseItem data-step="4">Reduza gradualmente as recompensas conforme o cão aprende.</ExerciseItem>
+          </ExerciseList>
+        </>
+      ),
+    },
+    {
+      title: "Exemplo Prático",
+      content: (
+        <>
+          <Text>
+            Veja como aplicar o reforço positivo em situações do dia a dia:
+          </Text>
+          <ExampleList>
+            <ExampleItem>Quando o cão senta, dê um petisco e elogie com entusiasmo.</ExampleItem>
+            <ExampleItem>Se o cão fica quieto quando pedido, ofereça um brinquedo favorito.</ExampleItem>
+            <ExampleItem>Quando o cão vem quando chamado, faça carinho e dê um petisco especial.</ExampleItem>
+          </ExampleList>
+          <WarningList>
+            <WarningItem>Nunca use recompensas para parar comportamentos indesejados.</WarningItem>
+            <WarningItem>Mantenha as recompensas pequenas para não sobrecarregar o cão.</WarningItem>
+          </WarningList>
+        </>
+      ),
+    },
+  ];
+
   return (
     <LessonContainer>
-      <Title>Como Usar a Linguagem Corporal?</Title>
+      <Title>Recompensas e Reforço Positivo</Title>
       
       <CarouselContainer>
-        {/* Slide 0: Introdução com Imagem */}
-        <Slide active={(currentSlide === 0).toString()}>
-          <SlideContent>
-            <SlideTitle>Bem-vindo à Aula!</SlideTitle>
-            <ImageContainer>
-              <ImagePlaceholder>Imagem ilustrativa da linguagem corporal com cães</ImagePlaceholder>
-            </ImageContainer>
-            <IntroductionText>
-              Nesta aula, vamos aprender como usar a linguagem corporal para nos comunicar efetivamente com nosso cão.
-            </IntroductionText>
-          </SlideContent>
-        </Slide>
-
-        {/* Slide 1: O que fazer */}
-        <Slide active={(currentSlide === 1).toString()}>
-          <SlideContent>
-            <SlideTitle>O que fazer:</SlideTitle>
-            <BulletList>
-              <BulletItem>Postura relaxada → O cão se sente seguro e confortável.</BulletItem>
-              <BulletItem>Movimentos calmos e suaves → Evita excitação excessiva ou medo.</BulletItem>
-              <BulletItem>Contato visual moderado → Ajuda a manter a atenção do cão.</BulletItem>
-              <BulletItem>Usar gestos claros junto com os comandos → Exemplo: apontar para o chão ao dizer "Deita".</BulletItem>
-            </BulletList>
-          </SlideContent>
-        </Slide>
-
-        {/* Slide 2: O que NÃO fazer */}
-        <Slide active={(currentSlide === 2).toString()}>
-          <SlideContent>
-            <SlideTitle>O que NÃO fazer:</SlideTitle>
-            <WarningList>
-              <WarningItem>Inclinar-se para frente ou fazer movimentos bruscos → Pode soar ameaçador.</WarningItem>
-              <WarningItem>Apontar o dedo na cara do cão → Pode gerar estresse.</WarningItem>
-              <WarningItem>Olhar fixamente nos olhos por muito tempo → Alguns cães interpretam isso como desafio.</WarningItem>
-            </WarningList>
-          </SlideContent>
-        </Slide>
-
-        {/* Slide 3: Exemplo Prático */}
-        <Slide active={(currentSlide === 3).toString()}>
-          <SlideContent>
-            <SlideTitle>Exemplo Prático</SlideTitle>
-            <ExampleList>
-              <ExampleItem>Quando pedir "Senta", levante a mão com a palma para cima.</ExampleItem>
-              <ExampleItem>Quando pedir "Fica", estenda a mão aberta como um sinal de "Pare".</ExampleItem>
-              <ExampleItem>Sempre use o mesmo gesto para o mesmo comando para reforçar o aprendizado.</ExampleItem>
-            </ExampleList>
-          </SlideContent>
-        </Slide>
-
-        {/* Slide 4: Exercício Prático */}
-        <Slide active={(currentSlide === 4).toString()}>
-          <SlideTitle>Exercício Prático para Aprimorar a Comunicação</SlideTitle>
-          <ExerciseList>
-            <ExerciseItem>Grave um comando e ouça sua voz → Seu tom está firme, neutro e claro?</ExerciseItem>
-            <ExerciseItem>Treine com gestos claros e consistentes → Associe um gesto a cada comando.</ExerciseItem>
-            <ExerciseItem>Observe seu pet → Ele está confuso ou responde melhor a certos tons e posturas?</ExerciseItem>
-            <ExerciseItem>Repita os exercícios diariamente → A comunicação eficaz melhora com a repetição.</ExerciseItem>
-          </ExerciseList>
-        </Slide>
+        {slides.map((slide, index) => (
+          <Slide key={index} active={(currentSlide === index).toString()}>
+            <SlideContent>
+              <SlideTitle>{slide.title}</SlideTitle>
+              {slide.content}
+            </SlideContent>
+          </Slide>
+        ))}
 
         <Dots>
           {[0, 1, 2, 3].map((index) => (

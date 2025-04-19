@@ -63,6 +63,14 @@ service cloud.firestore {
       allow delete: if isSignedIn() && request.auth.uid == resource.data.userId;
     }
 
+    // Regras para a coleção diary
+    match /diary/{entryId} {
+      allow read: if isSignedIn() && request.auth.uid == resource.data.userId;
+      allow create: if isSignedIn() && request.auth.uid == request.resource.data.userId;
+      allow update: if isSignedIn() && request.auth.uid == resource.data.userId;
+      allow delete: if isSignedIn() && request.auth.uid == resource.data.userId;
+    }
+
     // Regras para a coleção referrals2
     match /referrals2/{referralId} {
       allow read: if isSignedIn() && request.auth.uid == resource.data.userId;

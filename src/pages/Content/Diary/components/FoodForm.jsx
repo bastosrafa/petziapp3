@@ -4,6 +4,7 @@ import { useAuthContext } from "@/hooks/useAuthContext";
 import { Timestamp } from 'firebase/firestore';
 import styled from "styled-components";
 import { X } from "lucide-react";
+import { useToast } from "@/shadcn/components/ui/use-toast";
 
 const FormContainer = styled.div`
   padding: 20px;
@@ -128,19 +129,39 @@ export default function FoodForm({ onClose }) {
 
   const { addDocument } = useFirestore('diary');
   const { user } = useAuthContext();
+  const { toast } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await addDocument({
+      const result = await addDocument({
         ...formData,
         date: Timestamp.fromDate(new Date(formData.date)),
         userId: user.uid,
         createdAt: Timestamp.now()
       });
-      onClose();
+
+      if (result.type === 'SUCCESS') {
+        toast({
+          title: "Sucesso!",
+          description: "Registro de alimentação adicionado com sucesso.",
+          variant: "default",
+        });
+        onClose();
+      } else {
+        toast({
+          title: "Erro",
+          description: "Não foi possível adicionar o registro. Tente novamente.",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       console.error('Error adding record:', error);
+      toast({
+        title: "Erro",
+        description: "Ocorreu um erro ao adicionar o registro. Tente novamente.",
+        variant: "destructive",
+      });
     }
   };
 

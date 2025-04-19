@@ -6,7 +6,7 @@ export const trainingModules = [
     title: "Comece Aqui 🎯",
     description: "Fundamentos essenciais para começar a treinar seu cão",
     duration: "1 hora",
-    route: "/content/training/starthere",
+    route: "/content/training/start-here",
     icon: DogIcon,
     lessons: [
       {

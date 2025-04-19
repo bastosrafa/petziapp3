@@ -4,6 +4,7 @@ import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useFirestore } from "@/hooks/useFirestore";
 import { Timestamp } from 'firebase/firestore';
+import startHere1Image from '@/assets/images/training/starthere1.png';
 
 const LessonContainer = styled.div`
   padding: 2rem;
@@ -20,17 +21,17 @@ const Title = styled.h1`
 
 const CarouselContainer = styled.div`
   position: relative;
-  height: 500px;
+  width: 100%;
+  height: 600px;
   overflow: hidden;
 `;
 
 const Slide = styled.div`
   position: absolute;
   width: 100%;
-  height: calc(100% - 80px);
+  height: 100%;
   opacity: ${props => (props.active ? 1 : 0)};
   transition: opacity 0.3s ease-in-out;
-  padding: 20px;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -43,8 +44,7 @@ const Slide = styled.div`
 const SlideContent = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding-right: 10px;
-  max-height: 420px;
+  padding: 2.5rem;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   scrollbar-color: #4299E1 #F7FAFC;
@@ -147,7 +147,16 @@ const NavigationButtons = styled.div`
   display: flex;
   justify-content: center;
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
 `;
 
 const Button = styled.button`
@@ -334,6 +343,15 @@ const SectionTitle = styled.h3`
   text-align: center;
 `;
 
+const SlideImage = styled.img`
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
 export default function StartHere1({ onNextLesson }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { user } = useAuthContext();
@@ -398,6 +416,107 @@ export default function StartHere1({ onNextLesson }) {
     setCurrentSlide(index);
   };
 
+  const slides = [
+    {
+      title: "Introdução ao Adestramento",
+      content: (
+        <>
+          <SlideImage src={startHere1Image} alt="Introdução ao Adestramento" />
+          <ContentText>
+            Bem-vindo ao mundo do adestramento positivo! Neste módulo, você aprenderá os fundamentos essenciais para começar a treinar seu cão de forma eficaz e respeitosa.
+          </ContentText>
+          <ContentText>
+            O adestramento positivo é uma abordagem baseada em recompensas que fortalece o vínculo entre você e seu cão, tornando o processo de aprendizado mais agradável e eficiente para ambos.
+          </ContentText>
+        </>
+      ),
+    },
+    {
+      title: "Como os Cães Aprendem?",
+      content: (
+        <>
+          <ContentText>
+            Os cães aprendem através de associação e repetição. Quando um comportamento é seguido por algo agradável (como um petisco ou carinho), eles tendem a repetir esse comportamento.</ContentText>
+          <ContentText>
+            O reforço positivo é a forma mais eficaz de treinamento, pois:
+          </ContentText>
+          <BulletList>
+            <BulletItem>Cria uma associação positiva com o aprendizado, tornando o treinamento mais prazeroso</BulletItem>
+            <BulletItem>Fortaleca o vínculo entre tutor e pet, aumentando a confiança mútua</BulletItem>
+            <BulletItem>Reduz o estresse e a ansiedade, criando um ambiente seguro para o aprendizado</BulletItem>
+            <BulletItem>Estimula o cão a pensar e tomar decisões, desenvolvendo sua inteligência</BulletItem>
+            <BulletItem>Torna o treinamento mais divertido para ambos, fortalecendo o relacionamento</BulletItem>
+          </BulletList>
+          <ContentText>
+            O reforço negativo e punições não são recomendados, pois podem:
+          </ContentText>
+          <WarningList>
+            <WarningItem>Gerar medo e ansiedade, prejudicando o bem-estar do cão</WarningItem>
+            <WarningItem>Danificar a confiança do cão, afetando o relacionamento com o tutor</WarningItem>
+            <WarningItem>Criar associações negativas com o treinamento, dificultando o aprendizado</WarningItem>
+            <WarningItem>Inibir o comportamento natural do cão, afetando sua personalidade</WarningItem>
+            <WarningItem>Prejudicar o relacionamento entre tutor e pet, criando tensão</WarningItem>
+          </WarningList>
+        </>
+      ),
+    },
+    {
+      title: "Exercício Prático: Reforço Positivo",
+      content: (
+        <>
+          <ContentText>
+            Vamos praticar o reforço positivo com um exercício simples:
+          </ContentText>
+          <ExerciseSteps>
+            <ExerciseStep data-step="1">Pegue um petisco e segure na mão, mantendo uma postura relaxada e amigável</ExerciseStep>
+            <ExerciseStep data-step="2">Quando o cão olhar para você ou sentar espontaneamente, recompense imediatamente com o petisco e um elogio animado</ExerciseStep>
+            <ExerciseStep data-step="3">Repita 5 a 10 vezes para ensinar que prestar atenção no tutor traz benefícios positivos</ExerciseStep>
+          </ExerciseSteps>
+          <ContentText>
+            Dicas importantes para o sucesso:
+          </ContentText>
+          <BulletList>
+            <BulletItem>Escolha um petisco que seu cão goste muito, aumentando a motivação</BulletItem>
+            <BulletItem>Recompense imediatamente após o comportamento desejado, criando uma associação clara</BulletItem>
+            <BulletItem>Mantenha as sessões curtas (5-10 minutos) para evitar cansaço ou desinteresse</BulletItem>
+            <BulletItem>Escolha um ambiente calmo e sem distrações, facilitando o foco do cão</BulletItem>
+            <BulletItem>Use um tom de voz animado e entusiasmado ao dar a recompensa, reforçando a positividade</BulletItem>
+            <BulletItem>Se o cão não responder, tente com um petisco mais atraente ou reduza as distrações do ambiente</BulletItem>
+          </BulletList>
+          <ContentText>
+            Lembre-se sempre:
+          </ContentText>
+          <BulletList>
+            <BulletItem>Seja paciente - cada cão tem seu próprio ritmo de aprendizado e desenvolvimento</BulletItem>
+            <BulletItem>Celebre pequenos progressos, mesmo que pareçam insignificantes, mantendo a motivação</BulletItem>
+            <BulletItem>Termine sempre com uma nota positiva, mesmo que o cão não tenha respondido como esperado</BulletItem>
+            <BulletItem>Consistência é fundamental - use sempre os mesmos comandos e gestos para evitar confusão</BulletItem>
+            <BulletItem>O treinamento deve ser uma experiência positiva para ambos, fortalecendo o vínculo</BulletItem>
+          </BulletList>
+        </>
+      ),
+    },
+    {
+      title: "Resumo Rápido",
+      content: (
+        <>
+          <BulletList>
+            <BulletItem>Use reforço positivo sempre que possível, criando uma experiência agradável para o cão</BulletItem>
+            <BulletItem>Seja consistente nos comandos e recompensas, evitando confusão no aprendizado</BulletItem>
+            <BulletItem>Mantenha as sessões curtas e divertidas, respeitando o tempo de atenção do cão</BulletItem>
+            <BulletItem>Observe e respeite os limites do seu cão, adaptando o treinamento ao seu ritmo</BulletItem>
+            <BulletItem>Pratique regularmente em diferentes ambientes, aumentando a generalização do aprendizado</BulletItem>
+            <BulletItem>Celebre cada pequeno progresso, mantendo a motivação do cão e do tutor</BulletItem>
+            <BulletItem>Mantenha a paciência e o bom humor, tornando o treinamento uma experiência positiva</BulletItem>
+            <BulletItem>Adapte o treinamento à personalidade do seu cão, respeitando suas características individuais</BulletItem>
+            <BulletItem>Use petiscos de alto valor para recompensas, aumentando a motivação do cão</BulletItem>
+            <BulletItem>Estabeleça uma rotina de treinamento, criando hábitos consistentes</BulletItem>
+          </BulletList>
+        </>
+      ),
+    },
+  ];
+
   return (
     <LessonContainer>
       <Title>
@@ -408,120 +527,32 @@ export default function StartHere1({ onNextLesson }) {
       </Title>
       
       <CarouselContainer>
-        {/* Slide 0: Introdução com Imagem */}
-        <Slide active={currentSlide === 0}>
-          <SlideTitle>Bem-vindo à Aula!</SlideTitle>
-          <ImageContainer>
-            <ImagePlaceholder>Imagem ilustrativa do tema</ImagePlaceholder>
-          </ImageContainer>
-          <IntroductionText>
-            Nesta aula, vamos explorar os fundamentos do aprendizado canino e como usar o reforço positivo para treinar seu cão de forma eficaz e amorosa.
-          </IntroductionText>
-        </Slide>
-
-        {/* Slide 1: Conceitos Básicos */}
-        <Slide active={currentSlide === 1}>
-          <SlideContent>
-            <SlideTitle>Como os Cães Aprendem?</SlideTitle>
-            <ContentText>
-              Os cães aprendem através de associação e repetição. Quando um comportamento é seguido por algo agradável (como um petisco ou carinho), eles tendem a repetir esse comportamento.
-            </ContentText>
-            <ContentText>
-              O reforço positivo é a forma mais eficaz de treinamento, pois:
-            </ContentText>
-            <BulletList>
-              <BulletItem>Cria uma associação positiva com o aprendizado, tornando o treinamento mais prazeroso</BulletItem>
-              <BulletItem>Fortaleca o vínculo entre tutor e pet, aumentando a confiança mútua</BulletItem>
-              <BulletItem>Reduz o estresse e a ansiedade, criando um ambiente seguro para o aprendizado</BulletItem>
-              <BulletItem>Estimula o cão a pensar e tomar decisões, desenvolvendo sua inteligência</BulletItem>
-              <BulletItem>Torna o treinamento mais divertido para ambos, fortalecendo o relacionamento</BulletItem>
-            </BulletList>
-            <ContentText>
-              O reforço negativo e punições não são recomendados, pois podem:
-            </ContentText>
-            <WarningList>
-              <WarningItem>Gerar medo e ansiedade, prejudicando o bem-estar do cão</WarningItem>
-              <WarningItem>Danificar a confiança do cão, afetando o relacionamento com o tutor</WarningItem>
-              <WarningItem>Criar associações negativas com o treinamento, dificultando o aprendizado</WarningItem>
-              <WarningItem>Inibir o comportamento natural do cão, afetando sua personalidade</WarningItem>
-              <WarningItem>Prejudicar o relacionamento entre tutor e pet, criando tensão</WarningItem>
-            </WarningList>
-          </SlideContent>
-        </Slide>
-
-        {/* Slide 2: Exercício Prático */}
-        <Slide active={currentSlide === 2}>
-          <SlideContent>
-            <SlideTitle>Exercício Prático: Reforço Positivo</SlideTitle>
-            <ContentText>
-              Vamos praticar o reforço positivo com um exercício simples:
-            </ContentText>
-            <ExerciseSteps>
-              <ExerciseStep data-step="1">Pegue um petisco e segure na mão, mantendo uma postura relaxada e amigável</ExerciseStep>
-              <ExerciseStep data-step="2">Quando o cão olhar para você ou sentar espontaneamente, recompense imediatamente com o petisco e um elogio animado</ExerciseStep>
-              <ExerciseStep data-step="3">Repita 5 a 10 vezes para ensinar que prestar atenção no tutor traz benefícios positivos</ExerciseStep>
-            </ExerciseSteps>
-            <ContentText>
-              Dicas importantes para o sucesso:
-            </ContentText>
-            <BulletList>
-              <BulletItem>Escolha um petisco que seu cão goste muito, aumentando a motivação</BulletItem>
-              <BulletItem>Recompense imediatamente após o comportamento desejado, criando uma associação clara</BulletItem>
-              <BulletItem>Mantenha as sessões curtas (5-10 minutos) para evitar cansaço ou desinteresse</BulletItem>
-              <BulletItem>Escolha um ambiente calmo e sem distrações, facilitando o foco do cão</BulletItem>
-              <BulletItem>Use um tom de voz animado e entusiasmado ao dar a recompensa, reforçando a positividade</BulletItem>
-              <BulletItem>Se o cão não responder, tente com um petisco mais atraente ou reduza as distrações do ambiente</BulletItem>
-            </BulletList>
-            <ContentText>
-              Lembre-se sempre:
-            </ContentText>
-            <BulletList>
-              <BulletItem>Seja paciente - cada cão tem seu próprio ritmo de aprendizado e desenvolvimento</BulletItem>
-              <BulletItem>Celebre pequenos progressos, mesmo que pareçam insignificantes, mantendo a motivação</BulletItem>
-              <BulletItem>Termine sempre com uma nota positiva, mesmo que o cão não tenha respondido como esperado</BulletItem>
-              <BulletItem>Consistência é fundamental - use sempre os mesmos comandos e gestos para evitar confusão</BulletItem>
-              <BulletItem>O treinamento deve ser uma experiência positiva para ambos, fortalecendo o vínculo</BulletItem>
-            </BulletList>
-          </SlideContent>
-        </Slide>
-
-        {/* Slide 3: Resumo */}
-        <Slide active={currentSlide === 3}>
-          <SlideContent>
-            <SlideTitle>Resumo Rápido</SlideTitle>
-            <BulletList>
-              <BulletItem>Use reforço positivo sempre que possível, criando uma experiência agradável para o cão</BulletItem>
-              <BulletItem>Seja consistente nos comandos e recompensas, evitando confusão no aprendizado</BulletItem>
-              <BulletItem>Mantenha as sessões curtas e divertidas, respeitando o tempo de atenção do cão</BulletItem>
-              <BulletItem>Observe e respeite os limites do seu cão, adaptando o treinamento ao seu ritmo</BulletItem>
-              <BulletItem>Pratique regularmente em diferentes ambientes, aumentando a generalização do aprendizado</BulletItem>
-              <BulletItem>Celebre cada pequeno progresso, mantendo a motivação do cão e do tutor</BulletItem>
-              <BulletItem>Mantenha a paciência e o bom humor, tornando o treinamento uma experiência positiva</BulletItem>
-              <BulletItem>Adapte o treinamento à personalidade do seu cão, respeitando suas características individuais</BulletItem>
-              <BulletItem>Use petiscos de alto valor para recompensas, aumentando a motivação do cão</BulletItem>
-              <BulletItem>Estabeleça uma rotina de treinamento, criando hábitos consistentes</BulletItem>
-            </BulletList>
-          </SlideContent>
-        </Slide>
+        {slides.map((slide, index) => (
+          <Slide key={index} active={currentSlide === index}>
+            <SlideContent>
+              <SlideTitle>{slide.title}</SlideTitle>
+              {slide.content}
+            </SlideContent>
+          </Slide>
+        ))}
+        <NavigationButtons>
+          <Button onClick={prevSlide} disabled={currentSlide === 0}>
+            Anterior
+          </Button>
+          <Dots>
+            {slides.map((_, index) => (
+              <Dot
+                key={index}
+                active={currentSlide === index}
+                onClick={() => goToSlide(index)}
+              />
+            ))}
+          </Dots>
+          <Button onClick={nextSlide}>
+            {currentSlide === 3 ? "Próxima Aula" : "Próximo"}
+          </Button>
+        </NavigationButtons>
       </CarouselContainer>
-
-      <NavigationButtons>
-        <Button onClick={prevSlide} disabled={currentSlide === 0}>
-          Anterior
-        </Button>
-        <Dots>
-          {[0, 1, 2, 3].map((index) => (
-            <Dot
-              key={index}
-              active={currentSlide === index}
-              onClick={() => goToSlide(index)}
-            />
-          ))}
-        </Dots>
-        <Button onClick={nextSlide}>
-          {currentSlide === 3 ? "Próxima Aula" : "Próximo"}
-        </Button>
-      </NavigationButtons>
     </LessonContainer>
   );
 }

@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { dashboardService } from '../../../firebase/services/dashboardService';
 import { AuthContext } from '../../../contexts/AuthContext';
+import { onSnapshot, doc } from 'firebase/firestore';
+import { db } from '../../../firebase/config';
 
 const DashboardContext = createContext();
 
@@ -35,6 +37,25 @@ export const DashboardProvider = ({ children }) => {
     }
   };
 
+  // Configurar listener em tempo real
+  useEffect(() => {
+    if (!user) return;
+
+    const dashboardRef = doc(db, 'dashboards', user.uid);
+    const unsubscribe = onSnapshot(dashboardRef, async (doc) => {
+      if (doc.exists()) {
+        console.log('Dashboard data updated in real-time:', doc.data());
+        // Carregar dados completos do dashboard para garantir que temos todas as informações atualizadas
+        const data = await dashboardService.getDashboardData(user.uid);
+        setDashboardData(data);
+      }
+    }, (error) => {
+      console.error('Error listening to dashboard updates:', error);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
   // Carregar dados iniciais
   useEffect(() => {
     loadDashboardData();
@@ -44,7 +65,8 @@ export const DashboardProvider = ({ children }) => {
   const updateActivity = async (activityType, data) => {
     try {
       await dashboardService.updateActivity(user.uid, activityType, data);
-      await loadDashboardData(); // Recarregar dados após atualização
+      // Forçar atualização dos dados após uma mudança
+      await loadDashboardData();
     } catch (err) {
       console.error(`Error updating ${activityType} activity:`, err);
       throw err;
@@ -54,7 +76,7 @@ export const DashboardProvider = ({ children }) => {
   const updateHealth = async (healthData) => {
     try {
       await dashboardService.updateHealth(user.uid, healthData);
-      await loadDashboardData(); // Recarregar dados após atualização
+      // Não precisamos mais chamar loadDashboardData pois o listener em tempo real cuidará disso
     } catch (err) {
       console.error('Error updating health data:', err);
       throw err;
@@ -64,7 +86,7 @@ export const DashboardProvider = ({ children }) => {
   const updateTraining = async (trainingData) => {
     try {
       await dashboardService.updateTraining(user.uid, trainingData);
-      await loadDashboardData(); // Recarregar dados após atualização
+      // Não precisamos mais chamar loadDashboardData pois o listener em tempo real cuidará disso
     } catch (err) {
       console.error('Error updating training data:', err);
       throw err;
@@ -93,7 +115,7 @@ export const DashboardProvider = ({ children }) => {
 export const useDashboard = () => {
   const context = useContext(DashboardContext);
   if (!context) {
-    throw new Error('useDashboard must be used within a DashboardProvider');
+    throw Error('useDashboard must be inside a DashboardProvider');
   }
   return context;
 }; 

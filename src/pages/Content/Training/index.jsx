@@ -128,7 +128,7 @@ export default function Training() {
           <ModuleCard
             key={module.id}
             onClick={() => handleModuleClick(module.id)}
-            locked={!unlockedModules[module.id]}
+            locked={!unlockedModules[module.id].toString()}
           >
             <ModuleHeader>
               <ModuleIcon>
