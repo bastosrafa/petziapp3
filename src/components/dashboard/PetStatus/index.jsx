@@ -8,9 +8,9 @@ const PetStatus = () => {
   const [messages, setMessages] = useState([]);
 
   const moodDescriptions = {
-    happy: 'Estou super feliz! Tudo está perfeito! 🐶',
-    neutral: 'Estou tranquilo, mas sempre pronto para brincar! 🐕',
-    sad: 'Preciso de um pouco mais de atenção... 🥺'
+    happy: 'Estou super feliz! Meus tutores cuidam muito bem de mim! 🐶',
+    neutral: 'Estou tranquilo e pronto para brincar! 🐕',
+    sad: 'Preciso de mais atenção e carinho... 🥺'
   };
 
   useEffect(() => {
@@ -48,22 +48,22 @@ const PetStatus = () => {
         const hoursSinceFood = (now - lastFood) / (1000 * 60 * 60);
         if (hoursSinceFood > 8) {
           score -= 1;
-          needs.push("alimentação");
+          needs.push("comida");
         } else if (hoursSinceFood <= 4) {
           score += 1;
         }
       } else {
         score -= 1;
-        needs.push("alimentação");
+        needs.push("comida");
       }
 
       // Walk check
       if (lastWalk) {
         const hoursSinceWalk = (now - lastWalk) / (1000 * 60 * 60);
-        if (hoursSinceWalk > 12) {
+        if (hoursSinceWalk > 24) {
           score -= 1;
           needs.push("passeio");
-        } else if (hoursSinceWalk <= 6) {
+        } else if (hoursSinceWalk <= 12) {
           score += 1;
         }
       } else {
@@ -76,13 +76,10 @@ const PetStatus = () => {
         const hoursSinceTraining = (now - lastTraining) / (1000 * 60 * 60);
         if (hoursSinceTraining > 24) {
           score -= 1;
-          needs.push("treinamento");
+          needs.push("treino");
         } else if (hoursSinceTraining <= 12) {
           score += 1;
         }
-      } else {
-        score -= 1;
-        needs.push("treinamento");
       }
 
       // Vaccine check
@@ -90,32 +87,35 @@ const PetStatus = () => {
         const monthsSinceVaccine = (now - lastVaccine) / (1000 * 60 * 60 * 24 * 30);
         if (monthsSinceVaccine > 12) {
           score -= 1;
-          needs.push("vacinação");
-        } else if (monthsSinceVaccine <= 6) {
-          score += 1;
+          needs.push("vacina");
         }
-      } else {
-        score -= 1;
-        needs.push("vacinação");
       }
 
-      // Determine mood and message based on score and needs
-      if (score >= 2) {
+      // Determine mood based on score
+      if (score >= 1) {
         setMood('happy');
-        setMessages(["Estou super feliz! Tudo está perfeito! 🐶"]);
-      } else if (score >= -1) {
+      } else if (score <= -1) {
+        setMood('sad');
+      } else {
         setMood('neutral');
-        if (needs.length > 0) {
-          const needsText = needs.join(", ");
-          setMessages([`Será que podemos cuidar do meu ${needsText}? 🐾`]);
+      }
+
+      // Set messages based on needs
+      const messages = [];
+      if (needs.length > 0) {
+        if (needs.length === 1) {
+          messages.push(`Estou precisando de ${needs[0]}.`);
+        } else if (needs.length === 2) {
+          messages.push(`Estou precisando de ${needs[0]} e ${needs[1]}.`);
         } else {
-          setMessages(["Estou tranquilo e pronto para brincar! 🐕"]);
+          const lastNeed = needs.pop();
+          messages.push(`Estou precisando de ${needs.join(', ')} e ${lastNeed}.`);
         }
       } else {
-        setMood('sad');
-        const needsText = needs.join(", ");
-        setMessages([`Será que podemos cuidar do meu ${needsText}? 🥺`]);
+        messages.push(moodDescriptions[mood]);
       }
+
+      setMessages(messages);
     }
   }, [dashboardData]);
 
