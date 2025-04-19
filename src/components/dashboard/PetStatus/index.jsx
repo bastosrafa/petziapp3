@@ -8,9 +8,15 @@ const PetStatus = () => {
   const [messages, setMessages] = useState([]);
 
   const moodDescriptions = {
+<<<<<<< HEAD
     happy: 'Tudo em dia! 🐶',
     neutral: 'Tudo bem, mas podemos melhorar! 🐕',
     sad: 'Precisamos cuidar de algumas coisas... 🥺'
+=======
+    happy: 'Estou super feliz! Meus tutores cuidam muito bem de mim! 🐶',
+    neutral: 'Estou tranquilo e pronto para brincar! 🐕',
+    sad: 'Preciso de mais atenção e carinho... 🥺'
+>>>>>>> d17186c97ac644fc020f9a08caba433bc69f0b8c
   };
 
   useEffect(() => {
@@ -63,26 +69,41 @@ const PetStatus = () => {
         console.log('Hours since food:', hoursSinceFood);
         if (hoursSinceFood > 8) {
           score -= 1;
+<<<<<<< HEAD
           needs.push("alimentação");
           status.food = { status: 'late', hours: Math.round(hoursSinceFood) };
+=======
+          needs.push("comida");
+>>>>>>> d17186c97ac644fc020f9a08caba433bc69f0b8c
         } else if (hoursSinceFood <= 4) {
           score += 1;
         }
       } else {
         score -= 1;
+<<<<<<< HEAD
         needs.push("alimentação");
         status.food = { status: 'missing' };
+=======
+        needs.push("comida");
+>>>>>>> d17186c97ac644fc020f9a08caba433bc69f0b8c
       }
 
       // Walk check
       if (lastWalk) {
         const hoursSinceWalk = (now - lastWalk) / (1000 * 60 * 60);
+<<<<<<< HEAD
         console.log('Hours since walk:', hoursSinceWalk);
         if (hoursSinceWalk > 12) {
           score -= 1;
           needs.push("passeio");
           status.walk = { status: 'late', hours: Math.round(hoursSinceWalk) };
         } else if (hoursSinceWalk <= 6) {
+=======
+        if (hoursSinceWalk > 24) {
+          score -= 1;
+          needs.push("passeio");
+        } else if (hoursSinceWalk <= 12) {
+>>>>>>> d17186c97ac644fc020f9a08caba433bc69f0b8c
           score += 1;
         }
       } else {
@@ -97,6 +118,7 @@ const PetStatus = () => {
         console.log('Hours since training:', hoursSinceTraining);
         if (hoursSinceTraining > 24) {
           score -= 1;
+<<<<<<< HEAD
           needs.push("treinamento");
           status.training = { status: 'late', hours: Math.round(hoursSinceTraining) };
         } else if (hoursSinceTraining <= 12) {
@@ -106,6 +128,12 @@ const PetStatus = () => {
         score -= 1;
         needs.push("treinamento");
         status.training = { status: 'missing' };
+=======
+          needs.push("treino");
+        } else if (hoursSinceTraining <= 12) {
+          score += 1;
+        }
+>>>>>>> d17186c97ac644fc020f9a08caba433bc69f0b8c
       }
 
       // Vaccine check
@@ -115,6 +143,7 @@ const PetStatus = () => {
         if (monthsSinceVaccine > 12) {
           score -= 1;
           needs.push("vacina");
+<<<<<<< HEAD
           status.vaccine = { status: 'late', months: Math.round(monthsSinceVaccine) };
         } else if (monthsSinceVaccine <= 6) {
           score += 1;
@@ -160,6 +189,36 @@ const PetStatus = () => {
       }
 
       setMessages([message]);
+=======
+        }
+      }
+
+      // Determine mood based on score
+      if (score >= 1) {
+        setMood('happy');
+      } else if (score <= -1) {
+        setMood('sad');
+      } else {
+        setMood('neutral');
+      }
+
+      // Set messages based on needs
+      const messages = [];
+      if (needs.length > 0) {
+        if (needs.length === 1) {
+          messages.push(`Estou precisando de ${needs[0]}.`);
+        } else if (needs.length === 2) {
+          messages.push(`Estou precisando de ${needs[0]} e ${needs[1]}.`);
+        } else {
+          const lastNeed = needs.pop();
+          messages.push(`Estou precisando de ${needs.join(', ')} e ${lastNeed}.`);
+        }
+      } else {
+        messages.push(moodDescriptions[mood]);
+      }
+
+      setMessages(messages);
+>>>>>>> d17186c97ac644fc020f9a08caba433bc69f0b8c
     }
   }, [dashboardData]);
 
