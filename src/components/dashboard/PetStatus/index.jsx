@@ -8,15 +8,9 @@ const PetStatus = () => {
   const [messages, setMessages] = useState([]);
 
   const moodDescriptions = {
-<<<<<<< HEAD
     happy: 'Tudo em dia! 🐶',
     neutral: 'Tudo bem, mas podemos melhorar! 🐕',
     sad: 'Precisamos cuidar de algumas coisas... 🥺'
-=======
-    happy: 'Estou super feliz! Meus tutores cuidam muito bem de mim! 🐶',
-    neutral: 'Estou tranquilo e pronto para brincar! 🐕',
-    sad: 'Preciso de mais atenção e carinho... 🥺'
->>>>>>> d17186c97ac644fc020f9a08caba433bc69f0b8c
   };
 
   useEffect(() => {
@@ -69,41 +63,26 @@ const PetStatus = () => {
         console.log('Hours since food:', hoursSinceFood);
         if (hoursSinceFood > 8) {
           score -= 1;
-<<<<<<< HEAD
           needs.push("alimentação");
           status.food = { status: 'late', hours: Math.round(hoursSinceFood) };
-=======
-          needs.push("comida");
->>>>>>> d17186c97ac644fc020f9a08caba433bc69f0b8c
         } else if (hoursSinceFood <= 4) {
           score += 1;
         }
       } else {
         score -= 1;
-<<<<<<< HEAD
         needs.push("alimentação");
         status.food = { status: 'missing' };
-=======
-        needs.push("comida");
->>>>>>> d17186c97ac644fc020f9a08caba433bc69f0b8c
       }
 
       // Walk check
       if (lastWalk) {
         const hoursSinceWalk = (now - lastWalk) / (1000 * 60 * 60);
-<<<<<<< HEAD
         console.log('Hours since walk:', hoursSinceWalk);
         if (hoursSinceWalk > 12) {
           score -= 1;
           needs.push("passeio");
           status.walk = { status: 'late', hours: Math.round(hoursSinceWalk) };
         } else if (hoursSinceWalk <= 6) {
-=======
-        if (hoursSinceWalk > 24) {
-          score -= 1;
-          needs.push("passeio");
-        } else if (hoursSinceWalk <= 12) {
->>>>>>> d17186c97ac644fc020f9a08caba433bc69f0b8c
           score += 1;
         }
       } else {
@@ -118,7 +97,6 @@ const PetStatus = () => {
         console.log('Hours since training:', hoursSinceTraining);
         if (hoursSinceTraining > 24) {
           score -= 1;
-<<<<<<< HEAD
           needs.push("treinamento");
           status.training = { status: 'late', hours: Math.round(hoursSinceTraining) };
         } else if (hoursSinceTraining <= 12) {
@@ -128,12 +106,6 @@ const PetStatus = () => {
         score -= 1;
         needs.push("treinamento");
         status.training = { status: 'missing' };
-=======
-          needs.push("treino");
-        } else if (hoursSinceTraining <= 12) {
-          score += 1;
-        }
->>>>>>> d17186c97ac644fc020f9a08caba433bc69f0b8c
       }
 
       // Vaccine check
@@ -143,7 +115,6 @@ const PetStatus = () => {
         if (monthsSinceVaccine > 12) {
           score -= 1;
           needs.push("vacina");
-<<<<<<< HEAD
           status.vaccine = { status: 'late', months: Math.round(monthsSinceVaccine) };
         } else if (monthsSinceVaccine <= 6) {
           score += 1;
@@ -159,39 +130,6 @@ const PetStatus = () => {
         needs,
         status
       });
-
-      // Generate message based on status
-      let message = '';
-      if (score >= 2) {
-        setMood('happy');
-        message = "Estou super bem! Tudo em dia e pronto para brincar! 🐾";
-      } else if (score >= -1) {
-        setMood('neutral');
-        if (needs.length > 0) {
-          const needsText = needs.join(", ");
-          message = `Estou bem, mas precisamos cuidar do meu ${needsText}. 🐕`;
-        } else {
-          message = "Estou tranquilo e pronto para o que der e vier! 🐾";
-        }
-      } else {
-        setMood('sad');
-        if (status.food.status === 'late') {
-          message = `Estou com fome! Faz ${status.food.hours} horas que não como. 🥺`;
-        } else if (status.walk.status === 'late') {
-          message = `Quero passear! Faz ${status.walk.hours} horas que não saio. 🐕`;
-        } else if (status.training.status === 'late') {
-          message = `Precisamos treinar! Faz ${status.training.hours} horas que não praticamos. 🎾`;
-        } else if (status.vaccine.status === 'late') {
-          message = `Está na hora da vacina! Faz ${status.vaccine.months} meses que não vacino. 💉`;
-        } else {
-          message = `Precisamos cuidar de algumas coisas... ${needs.join(", ")}. 🐾`;
-        }
-      }
-
-      setMessages([message]);
-=======
-        }
-      }
 
       // Determine mood based on score
       if (score >= 1) {
@@ -218,9 +156,12 @@ const PetStatus = () => {
       }
 
       setMessages(messages);
->>>>>>> d17186c97ac644fc020f9a08caba433bc69f0b8c
     }
   }, [dashboardData]);
+
+  if (loading) {
+    return <div className="pet-status loading">Carregando status do pet...</div>;
+  }
 
   return (
     <div className="pet-status-container">
