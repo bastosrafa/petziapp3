@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
 import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useFirestore } from "@/hooks/useFirestore";
 import { Timestamp } from 'firebase/firestore';
-import LessonBase from "@/components/LessonBase";
+import { useNavigate } from "react-router-dom";
+import ModuleCompletionPopup from "@/components/ModuleCompletionPopup";
+import socialization4Image from "@/assets/images/training/socialization4.png";
 
 const LessonContainer = styled.div`
   padding: 2rem;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
 `;
 
@@ -18,22 +19,24 @@ const Title = styled.h1`
   color: #2D3748;
   margin-bottom: 2rem;
   text-align: center;
+  padding-top: 0;
 `;
 
 const CarouselContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 500px;
+  height: 600px;
   overflow: hidden;
+  max-width: 1000px;
+  margin: 0 auto;
 `;
 
 const Slide = styled.div`
   position: absolute;
   width: 100%;
-  height: calc(100% - 80px);
+  height: 100%;
   opacity: ${props => (props.active ? 1 : 0)};
   transition: opacity 0.3s ease-in-out;
-  padding: 20px;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -46,14 +49,15 @@ const Slide = styled.div`
 const SlideContent = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding-right: 10px;
-  max-height: 420px;
+  padding: 2.5rem;
+  padding-bottom: 3rem;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   scrollbar-color: #4299E1 #F7FAFC;
   pointer-events: auto;
   position: relative;
   z-index: 1;
+  max-height: 500px;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -84,41 +88,116 @@ const SlideTitle = styled.h2`
 const ContentText = styled.p`
   font-size: 1rem;
   line-height: 1.6;
-  color: #333;
+  color: #4A5568;
   margin-bottom: 15px;
   word-wrap: break-word;
   white-space: pre-wrap;
 `;
 
-const ImageContainer = styled.div`
+const BulletList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const BulletItem = styled.li`
+  color: #2D3748;
+  padding: 1rem;
+  padding-left: 2.5rem;
+  position: relative;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    transform: translateX(4px) scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:before {
+    content: "•";
+    font-weight: bold;
+    font-size: 1.5rem;
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+`;
+
+const PreparationBullet = styled(BulletItem)`
+  background: #EBF8FF;
+  border-left: 4px solid #4299E1;
+
+  &:hover {
+    background: #BEE3F8;
+  }
+
+  &:before {
+    color: #4299E1;
+  }
+`;
+
+const InteractionBullet = styled(BulletItem)`
+  background: #F0FFF4;
+  border-left: 4px solid #48BB78;
+
+  &:hover {
+    background: #C6F6D5;
+  }
+
+  &:before {
+    color: #48BB78;
+  }
+`;
+
+const ComfortBullet = styled(BulletItem)`
+  background: #FAF5FF;
+  border-left: 4px solid #9F7AEA;
+
+  &:hover {
+    background: #E9D8FD;
+  }
+
+  &:before {
+    color: #9F7AEA;
+  }
+`;
+
+const ImagePlaceholder = styled.div`
   width: 100%;
   height: 200px;
   background: #F7FAFC;
   border-radius: 8px;
   margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-`;
-
-const ImagePlaceholder = styled.div`
-  color: #A0AEC0;
-  font-size: 1.1rem;
-`;
-
-const IntroductionText = styled.p`
-  color: #4A5568;
-  line-height: 1.6;
-  text-align: center;
-  font-size: 1.1rem;
+  background-image: url(${socialization4Image});
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 `;
 
 const NavigationButtons = styled.div`
   display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 2rem;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
 `;
 
 const Button = styled.button`
@@ -156,256 +235,81 @@ const Dot = styled.div`
   transition: background 0.2s;
 `;
 
-const Socialization4 = ({ onNextLesson }) => {
+export default function Socialization4({ onNextLesson }) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [showPopup, setShowPopup] = useState(false);
   const { user } = useAuthContext();
   const { addDocument: addProgress } = useFirestore("progress");
   const { updateTraining, refreshData } = useDashboard();
 
   const slides = [
     {
-      title: "Introdução ao Controle de Impulsos",
-      image: "/images/socialization/impulse-control.jpg",
-      imageAlt: "Cão em treinamento de controle de impulsos",
+      title: "Controle de Impulsos",
+      subtitle: "Aprendendo a esperar",
       content: (
         <div>
-          <p>
-            O controle de impulsos é uma habilidade essencial para o bem-estar
-            do seu cão e para a convivência harmoniosa. Envolve ensinar o cão
-            a controlar seus instintos naturais e reagir de forma adequada
-            a diferentes situações.
-          </p>
+          <ImagePlaceholder />
+          <ContentText>
+            O controle de impulsos é fundamental para um cão bem-comportado e equilibrado. 
+            Vamos aprender técnicas para ajudar seu cão a desenvolver autocontrole.
+          </ContentText>
         </div>
       )
     },
     {
-      title: "Técnicas de Controle",
+      title: "Exercícios Básicos",
+      subtitle: "Começando com o simples",
       content: (
-        <div style={{ 
-          flex: 1,
-          overflowY: 'auto',
-          paddingRight: '10px',
-          maxHeight: '420px',
-          WebkitOverflowScrolling: 'touch',
-          scrollbarWidth: 'thin',
-          scrollbarColor: '#4299E1 #F7FAFC',
-          pointerEvents: 'auto',
-          position: 'relative',
-          zIndex: 1
-        }}>
-          <h3 style={{ 
-            fontSize: '18px',
-            color: '#444',
-            marginBottom: '15px',
-            fontWeight: '600'
-          }}>Métodos de Treinamento</h3>
-          <ol style={{ 
-            listStyle: 'none',
-            padding: '0',
-            marginBottom: '20px',
-            counterReset: 'item',
-            overflow: 'visible'
-          }}>
-            <li style={{ 
-              marginBottom: '15px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>1. Exercícios de Espera</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Ensine seu cão a esperar antes de receber comida, brinquedos ou atenção, reforçando a paciência e o autocontrole.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '15px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>2. Comandos de Controle</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Utilize comandos como "senta", "fica" e "espera" para ajudar seu cão a controlar seus impulsos em diferentes situações.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '15px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>3. Jogos de Autocontrole</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Pratique jogos que estimulam o autocontrole, como esconder petiscos e pedir para o cão esperar antes de procurá-los.
-              </p>
-            </li>
-          </ol>
+        <div>
+          <BulletList>
+            <PreparationBullet>
+              <strong>Ficar Parado:</strong> Ensine seu cão a permanecer calmo em diferentes situações.
+            </PreparationBullet>
+            <PreparationBullet>
+              <strong>Esperar por Comida:</strong> Treine para que ele aguarde sua permissão antes de comer.
+            </PreparationBullet>
+            <PreparationBullet>
+              <strong>Controle na Porta:</strong> Aprenda a não sair correndo quando a porta é aberta.
+            </PreparationBullet>
+          </BulletList>
         </div>
       )
     },
     {
-      title: "Aplicação Prática",
+      title: "Técnicas de Treinamento",
+      subtitle: "Métodos eficazes",
       content: (
-        <div style={{ 
-          flex: 1,
-          overflowY: 'auto',
-          paddingRight: '10px',
-          maxHeight: '420px',
-          WebkitOverflowScrolling: 'touch',
-          scrollbarWidth: 'thin',
-          scrollbarColor: '#4299E1 #F7FAFC',
-          pointerEvents: 'auto',
-          position: 'relative',
-          zIndex: 1
-        }}>
-          <h3 style={{ 
-            fontSize: '18px',
-            color: '#444',
-            marginBottom: '15px',
-            fontWeight: '600'
-          }}>Situações do Dia a Dia</h3>
-          <ul style={{ 
-            listStyle: 'none',
-            padding: '0',
-            marginBottom: '20px',
-            overflow: 'visible'
-          }}>
-            <li style={{ 
-              marginBottom: '15px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>• Durante as Refeições</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Pratique o controle de impulsos durante as refeições, ensinando seu cão a esperar antes de comer e a não roubar comida.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '15px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>• Encontros com Outros Cães</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Treine seu cão a manter a calma ao encontrar outros cães, controlando a excitação e evitando comportamentos impulsivos.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '15px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>• Recebendo Visitantes</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Ensine seu cão a controlar a excitação ao receber visitas, mantendo-se calmo e esperando sua permissão para interagir.
-              </p>
-            </li>
-          </ul>
+        <div>
+          <BulletList>
+            <InteractionBullet>
+              <strong>Comandos Claros:</strong> Use comandos consistentes como "espera" e "fica".
+            </InteractionBullet>
+            <InteractionBullet>
+              <strong>Reforço Positivo:</strong> Recompense o comportamento calmo e controlado.
+            </InteractionBullet>
+            <InteractionBullet>
+              <strong>Progressão Gradual:</strong> Aumente a dificuldade dos exercícios aos poucos.
+            </InteractionBullet>
+          </BulletList>
+        </div>
+      )
+    },
+    {
+      title: "Dicas Importantes",
+      subtitle: "Para um treinamento eficaz",
+      content: (
+        <div>
+          <BulletList>
+            <ComfortBullet>
+              <strong>Paciência:</strong> Cada cão tem seu próprio ritmo de aprendizado.
+            </ComfortBullet>
+            <ComfortBullet>
+              <strong>Consistência:</strong> Mantenha a rotina de treinos e comandos.
+            </ComfortBullet>
+            <ComfortBullet>
+              <strong>Ambiente Controlado:</strong> Comece em locais tranquilos e sem distrações.
+            </ComfortBullet>
+          </BulletList>
         </div>
       )
     }
@@ -413,12 +317,15 @@ const Socialization4 = ({ onNextLesson }) => {
 
   const nextSlide = async () => {
     if (currentSlide === slides.length - 1) {
+      // Salvar no localStorage primeiro
+      localStorage.setItem("socialization4_completed", "true");
+      window.dispatchEvent(new Event('storage'));
+      
+      // Avançar para a próxima lição imediatamente
+      onNextLesson();
+      
+      // Tentar salvar no Firestore em segundo plano
       try {
-        // Salvar no localStorage
-        localStorage.setItem("socialization4_completed", "true");
-        window.dispatchEvent(new Event('storage'));
-        
-        // Atualizar o progresso no Firestore
         if (user) {
           const progressData = {
             lessonId: "socialization4",
@@ -427,32 +334,31 @@ const Socialization4 = ({ onNextLesson }) => {
             userId: user.uid,
             status: "completed",
             completedAt: Timestamp.fromDate(new Date()),
-            duration: 15 // Duração estimada em minutos
+            duration: 15
           };
           
-          // Adicionar o progresso
-          await addProgress(progressData);
-          
-          // Atualizar o dashboard
-          await updateTraining({
-            completedLessons: 14, // Incrementar o número de lições completadas
-            currentLevel: 'intermediate',
-            lastSession: new Date(),
-            totalTime: 145 // Tempo total em minutos
+          // Usar Promise.race para não bloquear a navegação
+          Promise.race([
+            addProgress(progressData),
+            new Promise(resolve => setTimeout(resolve, 2000)) // Timeout de 2 segundos
+          ]).then(() => {
+            // Atualizar o dashboard em segundo plano
+            updateTraining({
+              completedLessons: 14,
+              currentLevel: 'intermediate',
+              lastSession: new Date(),
+              totalTime: 145
+            }).catch(err => console.error("Erro ao atualizar dashboard:", err));
+            
+            refreshData().catch(err => console.error("Erro ao atualizar dados:", err));
+            
+            console.log("Progresso da lição Socialization4 salvo com sucesso");
+          }).catch(error => {
+            console.error("Erro ao salvar progresso da lição:", error);
           });
-          
-          // Forçar atualização do dashboard
-          await refreshData();
-          
-          console.log("Progresso da lição Socialization4 salvo com sucesso");
         }
-        
-        // Avançar para a próxima lição
-        onNextLesson();
       } catch (error) {
-        console.error("Erro ao salvar progresso da lição:", error);
-        // Mesmo com erro, avançar para a próxima lição
-        onNextLesson();
+        console.error("Erro ao processar progresso da lição:", error);
       }
     } else {
       setCurrentSlide((prev) => prev + 1);
@@ -460,26 +366,61 @@ const Socialization4 = ({ onNextLesson }) => {
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => prev - 1);
+    if (currentSlide > 0) {
+      setCurrentSlide(currentSlide - 1);
+    }
   };
 
   const goToSlide = (index) => {
     setCurrentSlide(index);
   };
 
-  return (
-    <LessonBase
-      title="Controle de Impulsos"
-      slides={slides}
-      currentSlide={currentSlide}
-      onNextSlide={nextSlide}
-      onPrevSlide={prevSlide}
-      onGoToSlide={goToSlide}
-      height="500px"
-      contentHeight="calc(100% - 80px)"
-      scrollable={true}
-    />
-  );
-};
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    if (onNextLesson) {
+      onNextLesson();
+    }
+  };
 
-export default Socialization4; 
+  return (
+    <>
+      <LessonContainer>
+        <Title>Controlando Impulsos</Title>
+        <CarouselContainer>
+          {slides.map((slide, index) => (
+            <Slide key={index} active={currentSlide === index}>
+              <SlideContent>
+                {slide.subtitle && <SlideTitle>{slide.subtitle}</SlideTitle>}
+                {slide.content}
+              </SlideContent>
+            </Slide>
+          ))}
+          <NavigationButtons>
+            <Button onClick={prevSlide} disabled={currentSlide === 0}>
+              Anterior
+            </Button>
+            <Dots>
+              {slides.map((_, index) => (
+                <Dot
+                  key={index}
+                  active={currentSlide === index}
+                  onClick={() => goToSlide(index)}
+                />
+              ))}
+            </Dots>
+            <Button onClick={nextSlide}>
+              {currentSlide === slides.length - 1 ? "Concluir" : "Próximo"}
+            </Button>
+          </NavigationButtons>
+        </CarouselContainer>
+      </LessonContainer>
+      {showPopup && (
+        <ModuleCompletionPopup
+          onClose={handleClosePopup}
+          moduleName="Socialização"
+          nextModule="Comportamento"
+        />
+      )}
+    </>
+  );
+} 

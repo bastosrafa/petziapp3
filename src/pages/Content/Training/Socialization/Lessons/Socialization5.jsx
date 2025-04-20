@@ -1,357 +1,303 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import ModuleCompletionPopup from "../../../../../components/ModuleCompletionPopup";
-import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useFirestore } from "@/hooks/useFirestore";
 import { Timestamp } from 'firebase/firestore';
-import LessonBase from "@/components/LessonBase";
+import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
+import socialization5Image from "@/assets/images/training/socialization5.png";
 
 const LessonContainer = styled.div`
-  padding: 20px;
-  max-width: 800px;
+  max-width: 1400px;
   margin: 0 auto;
+  padding: 2rem;
+  min-height: calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const Title = styled.h1`
-  font-size: 24px;
-  margin-bottom: 20px;
-  color: #333;
+  font-size: 2rem;
+  color: #2D3748;
+  margin-bottom: 2rem;
+  text-align: center;
+  padding-top: 0;
 `;
 
 const CarouselContainer = styled.div`
-  position: relative;
   width: 100%;
-  height: 400px;
+  max-width: 1200px;
+  height: 600px;
+  position: relative;
+  margin: 0 auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 `;
 
 const Slide = styled.div`
-  position: absolute;
   width: 100%;
   height: 100%;
-  opacity: ${props => (props.active ? 1 : 0)};
-  transition: opacity 0.5s ease-in-out;
-  visibility: ${props => (props.active ? 'visible' : 'hidden')};
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  box-sizing: border-box;
+`;
+
+const SlideContent = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 1rem;
+  margin-bottom: 1rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #4299E1 #F7FAFC;
+  padding-left: 1rem;
+  padding-right: 1rem;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #F7FAFC;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #4299E1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #3182CE;
+  }
 `;
 
 const SlideTitle = styled.h2`
-  font-size: 20px;
-  margin-bottom: 15px;
-  color: #444;
-`;
-
-const ContentSection = styled.div`
-  margin-bottom: 20px;
-`;
-
-const SectionTitle = styled.h3`
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: #555;
-`;
-
-const ContentText = styled.p`
-  font-size: 16px;
-  line-height: 1.6;
-  color: #666;
-  margin-bottom: 15px;
+  font-size: 1.5rem;
+  color: #2D3748;
+  margin-bottom: 1.5rem;
+  text-align: center;
 `;
 
 const NavigationButtons = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  align-items: center;
+  padding: 1rem 0.75rem;
+  background: white;
+  border-top: 1px solid #E2E8F0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
 `;
 
-const Button = styled.button`
-  padding: 10px 20px;
-  background: #4299E1;
+const NavButton = styled.button`
+  background-color: ${props => props.disabled ? '#CBD5E0' : '#4299E1'};
   color: white;
   border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.2s;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+  transition: background-color 0.2s;
+  width: 120px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
-    background: #3182CE;
-  }
-
-  &:disabled {
-    background: #CBD5E0;
-    cursor: not-allowed;
+    background-color: ${props => props.disabled ? '#CBD5E0' : '#3182CE'};
   }
 `;
 
-const Dots = styled.div`
+const ProgressDots = styled.div`
   display: flex;
-  justify-content: center;
   gap: 0.5rem;
-  margin-top: 1rem;
+  margin: 0 0.5rem;
 `;
 
 const Dot = styled.div`
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: ${props => props.active === "true" ? '#4299E1' : '#CBD5E0'};
+  background-color: ${props => props.$active ? '#4299E1' : '#CBD5E0'};
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background-color 0.2s;
 `;
 
-const Socialization5 = ({ onNextLesson }) => {
-  const navigate = useNavigate();
+const ContentText = styled.p`
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4A5568;
+  margin-bottom: 1rem;
+`;
+
+const BulletList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const BulletItem = styled.li`
+  color: #2D3748;
+  padding: 1rem;
+  padding-left: 2.5rem;
+  position: relative;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    transform: translateX(4px) scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:before {
+    content: "•";
+    font-weight: bold;
+    font-size: 1.5rem;
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+`;
+
+const PreparationBullet = styled(BulletItem)`
+  background: #EBF8FF;
+  border-left: 4px solid #4299E1;
+
+  &:hover {
+    background: #BEE3F8;
+  }
+
+  &:before {
+    color: #4299E1;
+  }
+`;
+
+const InteractionBullet = styled(BulletItem)`
+  background: #F0FFF4;
+  border-left: 4px solid #48BB78;
+
+  &:hover {
+    background: #C6F6D5;
+  }
+
+  &:before {
+    color: #48BB78;
+  }
+`;
+
+const ComfortBullet = styled(BulletItem)`
+  background: #FAF5FF;
+  border-left: 4px solid #9F7AEA;
+
+  &:hover {
+    background: #E9D8FD;
+  }
+
+  &:before {
+    color: #9F7AEA;
+  }
+`;
+
+const Subtitle = styled.h3`
+  font-size: 1.25rem;
+  color: #2D3748;
+  margin-bottom: 1rem;
+`;
+
+const ImagePlaceholder = styled.div`
+  width: 100%;
+  height: 200px;
+  background: #F7FAFC;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  background-image: url(${socialization5Image});
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+`;
+
+export default function Socialization5({ onNextLesson }) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [showPopup, setShowPopup] = useState(false);
   const { user } = useAuthContext();
   const { addDocument: addProgress } = useFirestore("progress");
   const { updateTraining, refreshData } = useDashboard();
 
   const slides = [
     {
-      title: "Introdução aos Ambientes Desafiadores",
-      image: "/images/socialization/challenging-environments.jpg",
-      imageAlt: "Cão em ambiente desafiador",
+      title: "Ambientes Desafiadores",
+      subtitle: "Expandindo os limites",
       content: (
         <div>
-          <p>
-            A socialização em ambientes desafiadores é crucial para desenvolver
-            a confiança e adaptabilidade do seu cão. Envolve expor seu pet a
-            diferentes situações e locais que podem ser estressantes ou
-            desconhecidos.
-          </p>
+          <ImagePlaceholder />
+          <ContentText>
+            A socialização com diferentes ambientes é crucial para um cão confiante e adaptável. 
+            Vamos aprender como ajudar seu cão a se sentir seguro em diversos contextos.
+          </ContentText>
+        </div>
+      )
+    },
+    {
+      title: "Preparação",
+      content: (
+        <div>
+          <ContentText>
+            Antes de expor seu cão a ambientes desafiadores:
+          </ContentText>
+          <BulletList>
+            <PreparationBullet>Comece com ambientes mais tranquilos e conhecidos</PreparationBullet>
+            <PreparationBullet>Use equipamentos de segurança adequados</PreparationBullet>
+            <PreparationBullet>Leve petiscos para reforço positivo</PreparationBullet>
+          </BulletList>
         </div>
       )
     },
     {
       title: "Tipos de Ambientes",
       content: (
-        <div style={{ 
-          flex: 1,
-          overflowY: 'auto',
-          paddingRight: '10px',
-          maxHeight: '420px',
-          WebkitOverflowScrolling: 'touch',
-          scrollbarWidth: 'thin',
-          scrollbarColor: '#4299E1 #F7FAFC',
-          pointerEvents: 'auto',
-          position: 'relative',
-          zIndex: 1
-        }}>
-          <h3 style={{ 
-            fontSize: '18px',
-            color: '#444',
-            marginBottom: '15px',
-            fontWeight: '600'
-          }}>Ambientes Desafiadores</h3>
-          <ol style={{ 
-            listStyle: 'none',
-            padding: '0',
-            marginBottom: '20px',
-            counterReset: 'item',
-            overflow: 'visible'
-          }}>
-            <li style={{ 
-              marginBottom: '15px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>1. Locais Movimentados</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Praças, parques e ruas movimentadas, onde há muitas pessoas, sons e estímulos visuais diferentes.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '15px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>2. Transportes Públicos</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Ônibus, metrôs e trens, onde o cão precisa se adaptar a espaços confinados e diferentes sons e movimentos.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '15px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>3. Ambientes com Diferentes Superfícies</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Locais com pisos escorregadios, escadas, grama, areia e outras texturas que podem ser desconhecidas para o cão.
-              </p>
-            </li>
-          </ol>
+        <div>
+          <ContentText>
+            Ambientes que podem ser desafiadores:
+          </ContentText>
+          <BulletList>
+            <InteractionBullet>Centros urbanos com tráfego e multidões</InteractionBullet>
+            <InteractionBullet>Locais com sons altos e inesperados</InteractionBullet>
+            <InteractionBullet>Espaços com diferentes superfícies e texturas</InteractionBullet>
+          </BulletList>
         </div>
       )
     },
     {
-      title: "Estratégias de Adaptação",
+      title: "Dicas Importantes",
       content: (
-        <div style={{ 
-          flex: 1,
-          overflowY: 'auto',
-          paddingRight: '10px',
-          maxHeight: '420px',
-          WebkitOverflowScrolling: 'touch',
-          scrollbarWidth: 'thin',
-          scrollbarColor: '#4299E1 #F7FAFC',
-          pointerEvents: 'auto',
-          position: 'relative',
-          zIndex: 1
-        }}>
-          <h3 style={{ 
-            fontSize: '18px',
-            color: '#444',
-            marginBottom: '15px',
-            fontWeight: '600'
-          }}>Dicas para Adaptação</h3>
-          <ul style={{ 
-            listStyle: 'none',
-            padding: '0',
-            marginBottom: '20px',
-            overflow: 'visible'
-          }}>
-            <li style={{ 
-              marginBottom: '15px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>• Exposição Gradual</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Comece com exposições curtas e em horários mais tranquilos, aumentando gradualmente a duração e a complexidade.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '15px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>• Reforço Positivo</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Recompense comportamentos calmos e positivos com petiscos, carinho e elogios para criar associações positivas.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '15px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>• Observação dos Sinais</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Fique atento aos sinais de estresse ou desconforto do seu cão e respeite seus limites, interrompendo a exposição se necessário.
-              </p>
-            </li>
-          </ul>
+        <div>
+          <ContentText>
+            Para uma exposição segura e positiva:
+          </ContentText>
+          <BulletList>
+            <ComfortBullet>Respeite o ritmo do seu cão</ComfortBullet>
+            <ComfortBullet>Mantenha sessões curtas e positivas</ComfortBullet>
+            <ComfortBullet>Observe os sinais de estresse</ComfortBullet>
+          </BulletList>
         </div>
       )
     }
@@ -359,47 +305,12 @@ const Socialization5 = ({ onNextLesson }) => {
 
   const nextSlide = async () => {
     if (currentSlide === slides.length - 1) {
-      try {
-        // Salvar no localStorage
-        localStorage.setItem("socialization5_completed", "true");
-        window.dispatchEvent(new Event('storage'));
-        
-        // Atualizar o progresso no Firestore
-        if (user) {
-          const progressData = {
-            lessonId: "socialization5",
-            moduleId: "socialization",
-            courseId: "9DwWIAtShVCPXyRPSbqF",
-            userId: user.uid,
-            status: "completed",
-            completedAt: Timestamp.fromDate(new Date()),
-            duration: 15 // Duração estimada em minutos
-          };
-          
-          // Adicionar o progresso
-          await addProgress(progressData);
-          
-          // Atualizar o dashboard
-          await updateTraining({
-            completedLessons: 15, // Incrementar o número de lições completadas
-            currentLevel: 'intermediate',
-            lastSession: new Date(),
-            totalTime: 160 // Tempo total em minutos
-          });
-          
-          // Forçar atualização do dashboard
-          await refreshData();
-          
-          console.log("Progresso da lição Socialization5 salvo com sucesso");
-        }
-        
-        // Avançar para a próxima lição
-        onNextLesson();
-      } catch (error) {
-        console.error("Erro ao salvar progresso da lição:", error);
-        // Mesmo com erro, avançar para a próxima lição
-        onNextLesson();
-      }
+      // Salvar no localStorage primeiro
+      localStorage.setItem("socialization5_completed", "true");
+      window.dispatchEvent(new Event('storage'));
+      
+      // Avançar para a próxima lição usando a prop onNextLesson
+      onNextLesson();
     } else {
       setCurrentSlide((prev) => prev + 1);
     }
@@ -413,49 +324,41 @@ const Socialization5 = ({ onNextLesson }) => {
     setCurrentSlide(index);
   };
 
-  const handleClosePopup = () => {
-    setShowPopup(false);
-  };
-
-  const handleNextModule = async () => {
-    try {
-      // Update training progress in dashboard context
-      await updateTraining({
-        module: 'hygiene',
-        lesson: 'hygiene1',
-        status: 'unlocked',
-        completed: false,
-        lastAccessed: Timestamp.now()
-      });
-
-      // Desbloqueia a primeira aula do módulo de higiene
-      localStorage.setItem("hygiene1_unlocked", "true");
-      
-      // Desbloqueia o módulo na página de adestramento
-      localStorage.setItem("hygiene_unlocked", "true");
-      
-      // Navega para a primeira aula do módulo de higiene
-      navigate("/content/training/hygiene");
-    } catch (error) {
-      console.error('Error updating training progress:', error);
-      // Still navigate even if update fails
-      navigate("/content/training/hygiene");
-    }
-  };
-
   return (
-    <LessonBase
-      title="Ambientes Desafiadores"
-      slides={slides}
-      currentSlide={currentSlide}
-      onNextSlide={nextSlide}
-      onPrevSlide={prevSlide}
-      onGoToSlide={goToSlide}
-      height="500px"
-      contentHeight="calc(100% - 80px)"
-      scrollable={true}
-    />
+    <>
+      <LessonContainer>
+        <Title>Ambientes Desafiadores</Title>
+        <CarouselContainer>
+          <Slide>
+            <SlideTitle>{slides[currentSlide].title}</SlideTitle>
+            <SlideContent>
+              {slides[currentSlide].content}
+            </SlideContent>
+            <NavigationButtons>
+              <NavButton 
+                onClick={prevSlide} 
+                disabled={currentSlide === 0}
+              >
+                Anterior
+              </NavButton>
+              <ProgressDots>
+                {slides.map((_, index) => (
+                  <Dot 
+                    key={index} 
+                    $active={index === currentSlide}
+                    onClick={() => goToSlide(index)}
+                  />
+                ))}
+              </ProgressDots>
+              <NavButton 
+                onClick={nextSlide} 
+              >
+                {currentSlide === slides.length - 1 ? "Concluir" : "Próximo"}
+              </NavButton>
+            </NavigationButtons>
+          </Slide>
+        </CarouselContainer>
+      </LessonContainer>
+    </>
   );
-};
-
-export default Socialization5; 
+} 

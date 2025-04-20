@@ -1,9 +1,225 @@
 import React, { useState } from "react";
-import LessonBase from "@/components/LessonBase";
-import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useFirestore } from "@/hooks/useFirestore";
 import { Timestamp } from 'firebase/firestore';
+import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
+import socialization3Image from "@/assets/images/training/socialization3.png";
+
+const LessonContainer = styled.div`
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+`;
+
+const Title = styled.h1`
+  font-size: 2rem;
+  color: #2D3748;
+  margin-bottom: 2rem;
+  text-align: center;
+`;
+
+const CarouselContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 600px;
+  overflow: hidden;
+`;
+
+const Slide = styled.div`
+  position: absolute;
+  width: 100%;
+  height: calc(100% - 100px);
+  opacity: ${props => props.active === "true" ? 1 : 0};
+  transition: opacity 0.5s ease-in-out;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  pointer-events: ${props => props.active === "true" ? 'auto' : 'none'};
+`;
+
+const SlideContent = styled.div`
+  height: 100%;
+  padding: 2.5rem;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #4299E1 #F7FAFC;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #F7FAFC;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #4299E1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #3182CE;
+  }
+`;
+
+const SlideTitle = styled.h2`
+  font-size: 1.5rem;
+  color: #2D3748;
+  margin-bottom: 1.5rem;
+  text-align: center;
+`;
+
+const ContentText = styled.p`
+  color: #4A5568;
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+  font-size: 1.1rem;
+  word-wrap: break-word;
+`;
+
+const BulletList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const BulletItem = styled.li`
+  color: #2D3748;
+  padding: 1rem;
+  padding-left: 2.5rem;
+  position: relative;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    transform: translateX(4px) scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:before {
+    content: "•";
+    font-weight: bold;
+    font-size: 1.5rem;
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+`;
+
+const PreparationBullet = styled(BulletItem)`
+  background: #EBF8FF;
+  border-left: 4px solid #4299E1;
+
+  &:hover {
+    background: #BEE3F8;
+  }
+
+  &:before {
+    color: #4299E1;
+  }
+`;
+
+const InteractionBullet = styled(BulletItem)`
+  background: #F0FFF4;
+  border-left: 4px solid #48BB78;
+
+  &:hover {
+    background: #C6F6D5;
+  }
+
+  &:before {
+    color: #48BB78;
+  }
+`;
+
+const AfterBullet = styled(BulletItem)`
+  background: #FAF5FF;
+  border-left: 4px solid #9F7AEA;
+
+  &:hover {
+    background: #E9D8FD;
+  }
+
+  &:before {
+    color: #9F7AEA;
+  }
+`;
+
+const ImagePlaceholder = styled.div`
+  width: 100%;
+  height: 200px;
+  background: #F7FAFC;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  background-image: url(${socialization3Image});
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+`;
+
+const NavigationButtons = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0.75rem;
+  background: white;
+  border-top: 1px solid #E2E8F0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+`;
+
+const NavButton = styled.button`
+  background-color: ${props => props.disabled ? '#CBD5E0' : '#4299E1'};
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.9rem;
+  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+  transition: background-color 0.2s;
+  width: 100px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: ${props => props.disabled ? '#CBD5E0' : '#3182CE'};
+  }
+`;
+
+const ProgressDots = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  margin: 0 0.5rem;
+`;
+
+const Dot = styled.div`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: ${props => props.active ? '#4299E1' : '#CBD5E0'};
+  cursor: pointer;
+  transition: background-color 0.2s;
+`;
 
 export default function Socialization3({ onNextLesson }) {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -13,248 +229,103 @@ export default function Socialization3({ onNextLesson }) {
 
   const slides = [
     {
-      title: "Introdução à Socialização com Cães",
-      image: "/images/socialization/dogs-socialization.jpg",
-      imageAlt: "Cães interagindo em um parque",
+      title: "Socialização com Outros Cães",
+      subtitle: "Construindo amizades caninas",
       content: (
         <div>
-          <p>
-            A socialização com outros cães é essencial para o desenvolvimento
-            social do seu pet. Isso ajuda a prevenir problemas de agressividade
-            e medo, e permite que seu cão desenvolva habilidades sociais
-            importantes.
-          </p>
+          <ImagePlaceholder />
+          <ContentText>
+            A socialização com outros cães é essencial para o desenvolvimento social do seu pet. 
+            Vamos aprender como criar encontros seguros e positivos entre cães.
+          </ContentText>
         </div>
       )
     },
     {
-      title: "Encontros Controlados",
+      title: "Preparação para Encontros",
+      subtitle: "Configurando para o sucesso",
       content: (
-        <div style={{ 
-          flex: 1,
-          overflowY: 'auto',
-          paddingRight: '10px',
-          maxHeight: '420px',
-          WebkitOverflowScrolling: 'touch',
-          scrollbarWidth: 'thin',
-          scrollbarColor: '#4299E1 #F7FAFC',
-          pointerEvents: 'auto',
-          position: 'relative',
-          zIndex: 1
-        }}>
-          <h3 style={{ 
-            fontSize: '18px',
-            color: '#444',
-            marginBottom: '15px',
-            fontWeight: '600'
-          }}>Passo a Passo</h3>
-          <ol style={{ 
-            listStyle: 'none',
-            padding: '0',
-            marginBottom: '20px',
-            counterReset: 'item',
-            overflow: 'visible'
-          }}>
-            <li style={{ 
-              marginBottom: '15px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>1. Escolha do Parceiro</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Selecione um cão com temperamento compatível, preferencialmente um que já seja bem socializado e calmo.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '15px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>2. Ambiente Adequado</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Realize o encontro em um local neutro, espaçoso e sem distrações, como um parque vazio ou quintal.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '15px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>3. Supervisão Atenta</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Mantenha os cães na guia inicialmente e observe atentamente suas reações, intervindo se necessário.
-              </p>
-            </li>
-          </ol>
+        <div>
+          <BulletList>
+            <PreparationBullet>
+              <strong>Escolha do Local:</strong> Opte por parques para cães ou áreas seguras e controladas.
+            </PreparationBullet>
+            <PreparationBullet>
+              <strong>Horário Adequado:</strong> Evite horários de pico e escolha momentos mais tranquilos.
+            </PreparationBullet>
+            <PreparationBullet>
+              <strong>Equipamentos:</strong> Use coleira e guia adequadas, e leve petiscos para reforço positivo.
+            </PreparationBullet>
+            <PreparationBullet>
+              <strong>Estado do Cão:</strong> Certifique-se que seu cão está calmo e bem alimentado antes do encontro.
+            </PreparationBullet>
+          </BulletList>
         </div>
       )
     },
     {
-      title: "Parques e Grupos de Socialização",
+      title: "Durante o Encontro",
+      subtitle: "Interações seguras e positivas",
       content: (
-        <div style={{ 
-          flex: 1,
-          overflowY: 'auto',
-          paddingRight: '10px',
-          maxHeight: '420px',
-          WebkitOverflowScrolling: 'touch',
-          scrollbarWidth: 'thin',
-          scrollbarColor: '#4299E1 #F7FAFC',
-          pointerEvents: 'auto',
-          position: 'relative',
-          zIndex: 1
-        }}>
-          <h3 style={{ 
-            fontSize: '18px',
-            color: '#444',
-            marginBottom: '15px',
-            fontWeight: '600'
-          }}>Dicas Importantes</h3>
-          <ul style={{ 
-            listStyle: 'none',
-            padding: '0',
-            marginBottom: '20px',
-            overflow: 'visible'
-          }}>
-            <li style={{ 
-              marginBottom: '15px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>• Preparação Prévia</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Certifique-se que seu cão está com todas as vacinas em dia e em boas condições de saúde antes de frequentar parques.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '15px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>• Horários Adequados</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Visite os parques em horários mais tranquilos, evitando períodos de pico quando há muitos cães.
-              </p>
-            </li>
-            <li style={{ 
-              marginBottom: '15px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#f8f9fa',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              ':hover': {
-                backgroundColor: '#e9ecef',
-                transform: 'translateX(5px)'
-              }
-            }}>
-              <span style={{ 
-                color: '#007bff', 
-                fontWeight: '600',
-                fontSize: '16px',
-                display: 'block',
-                marginBottom: '8px'
-              }}>• Grupos de Socialização</span>
-              <p style={{ 
-                fontSize: '14px', 
-                color: '#666', 
-                margin: '0',
-                lineHeight: '1.6'
-              }}>
-                Participe de grupos de socialização organizados por profissionais, onde o ambiente é controlado e supervisionado.
-              </p>
-            </li>
-          </ul>
+        <div>
+          <BulletList>
+            <InteractionBullet>
+              <strong>Apresentação Gradual:</strong> Permita que os cães se cheirem e se conheçam aos poucos.
+            </InteractionBullet>
+            <InteractionBullet>
+              <strong>Linguagem Corporal:</strong> Observe e interprete os sinais de comunicação canina.
+            </InteractionBullet>
+            <InteractionBullet>
+              <strong>Intervenção:</strong> Esteja preparado para interromper se necessário, mas sem pânico.
+            </InteractionBullet>
+            <InteractionBullet>
+              <strong>Reforço Positivo:</strong> Recompense comportamentos calmos e amigáveis.
+            </InteractionBullet>
+          </BulletList>
+        </div>
+      )
+    },
+    {
+      title: "Tipos de Interação",
+      subtitle: "Diferentes formas de socialização",
+      content: (
+        <div>
+          <BulletList>
+            <InteractionBullet>
+              <strong>Brincadeiras:</strong> Observe e incentive brincadeiras apropriadas e recíprocas.
+            </InteractionBullet>
+            <InteractionBullet>
+              <strong>Passeios em Grupo:</strong> Organize passeios com outros cães para socialização em movimento.
+            </InteractionBullet>
+            <InteractionBullet>
+              <strong>Parques para Cães:</strong> Utilize áreas específicas para interação canina.
+            </InteractionBullet>
+            <InteractionBullet>
+              <strong>Encontros Controlados:</strong> Comece com encontros individuais antes de grupos maiores.
+            </InteractionBullet>
+          </BulletList>
+        </div>
+      )
+    },
+    {
+      title: "Dicas Importantes",
+      subtitle: "Para uma socialização segura",
+      content: (
+        <div>
+          <BulletList>
+            <AfterBullet>
+              <strong>Respeite os Limites:</strong> Cada cão tem seu próprio ritmo de socialização.
+            </AfterBullet>
+            <AfterBullet>
+              <strong>Supervisão Constante:</strong> Mantenha-se atento durante todo o encontro.
+            </AfterBullet>
+            <AfterBullet>
+              <strong>Petiscos e Recompensas:</strong> Use reforços positivos para criar associações agradáveis.
+            </AfterBullet>
+            <AfterBullet>
+              <strong>Consistência:</strong> Mantenha uma rotina regular de socialização.
+            </AfterBullet>
+          </BulletList>
         </div>
       )
     }
@@ -262,12 +333,15 @@ export default function Socialization3({ onNextLesson }) {
 
   const nextSlide = async () => {
     if (currentSlide === slides.length - 1) {
+      // Salvar no localStorage primeiro
+      localStorage.setItem("socialization3_completed", "true");
+      window.dispatchEvent(new Event('storage'));
+      
+      // Avançar para a próxima lição imediatamente
+      onNextLesson();
+      
+      // Tentar salvar no Firestore em segundo plano
       try {
-        // Salvar no localStorage
-        localStorage.setItem("socialization3_completed", "true");
-        window.dispatchEvent(new Event('storage'));
-        
-        // Atualizar o progresso no Firestore
         if (user) {
           const progressData = {
             lessonId: "socialization3",
@@ -276,32 +350,31 @@ export default function Socialization3({ onNextLesson }) {
             userId: user.uid,
             status: "completed",
             completedAt: Timestamp.fromDate(new Date()),
-            duration: 15 // Duração estimada em minutos
+            duration: 15
           };
           
-          // Adicionar o progresso
-          await addProgress(progressData);
-          
-          // Atualizar o dashboard
-          await updateTraining({
-            completedLessons: 13, // Incrementar o número de lições completadas
-            currentLevel: 'intermediate',
-            lastSession: new Date(),
-            totalTime: 130 // Tempo total em minutos
+          // Usar Promise.race para não bloquear a navegação
+          Promise.race([
+            addProgress(progressData),
+            new Promise(resolve => setTimeout(resolve, 2000)) // Timeout de 2 segundos
+          ]).then(() => {
+            // Atualizar o dashboard em segundo plano
+            updateTraining({
+              completedLessons: 13,
+              currentLevel: 'intermediate',
+              lastSession: new Date(),
+              totalTime: 130
+            }).catch(err => console.error("Erro ao atualizar dashboard:", err));
+            
+            refreshData().catch(err => console.error("Erro ao atualizar dados:", err));
+            
+            console.log("Progresso da lição Socialization3 salvo com sucesso");
+          }).catch(error => {
+            console.error("Erro ao salvar progresso da lição:", error);
           });
-          
-          // Forçar atualização do dashboard
-          await refreshData();
-          
-          console.log("Progresso da lição Socialization3 salvo com sucesso");
         }
-        
-        // Avançar para a próxima lição
-        onNextLesson();
       } catch (error) {
-        console.error("Erro ao salvar progresso da lição:", error);
-        // Mesmo com erro, avançar para a próxima lição
-        onNextLesson();
+        console.error("Erro ao processar progresso da lição:", error);
       }
     } else {
       setCurrentSlide((prev) => prev + 1);
@@ -317,16 +390,38 @@ export default function Socialization3({ onNextLesson }) {
   };
 
   return (
-    <LessonBase
-      title="Socialização com Outros Cães"
-      slides={slides}
-      currentSlide={currentSlide}
-      onNextSlide={nextSlide}
-      onPrevSlide={prevSlide}
-      onGoToSlide={goToSlide}
-      height="500px"
-      contentHeight="calc(100% - 80px)"
-      scrollable={true}
-    />
+    <>
+      <LessonContainer>
+        <Title>Socialização com Outros Cães</Title>
+        <CarouselContainer>
+          {slides.map((slide, index) => (
+            <Slide key={index} active={(currentSlide === index).toString()}>
+              <SlideContent>
+                <SlideTitle>{slide.title}</SlideTitle>
+                {slide.content}
+              </SlideContent>
+            </Slide>
+          ))}
+
+          <NavigationButtons>
+            <NavButton onClick={prevSlide} disabled={currentSlide === 0}>
+              Anterior
+            </NavButton>
+            <ProgressDots>
+              {slides.map((_, index) => (
+                <Dot
+                  key={index}
+                  active={currentSlide === index}
+                  onClick={() => goToSlide(index)}
+                />
+              ))}
+            </ProgressDots>
+            <NavButton onClick={nextSlide}>
+              {currentSlide === slides.length - 1 ? "Concluir" : "Próximo"}
+            </NavButton>
+          </NavigationButtons>
+        </CarouselContainer>
+      </LessonContainer>
+    </>
   );
 } 
