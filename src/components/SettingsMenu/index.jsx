@@ -28,10 +28,10 @@ const SettingsMenu = ({ isOpen, onClose }) => {
       description: 'Encontre respostas para suas dúvidas'
     },
     {
-      id: 'about',
-      icon: 'ℹ️',
-      label: 'Sobre',
-      description: 'Saiba mais sobre o PetziApp'
+      id: 'reportProblem',
+      icon: '🐞',
+      label: 'Reporte um Problema',
+      description: 'Informe-nos sobre algum problema que encontrou'
     },
     {
       id: 'terms',
@@ -63,8 +63,8 @@ const SettingsMenu = ({ isOpen, onClose }) => {
         navigate('/help');
         onClose();
         break;
-      case 'about':
-        navigate('/about');
+      case 'reportProblem':
+        navigate('/report-problem');
         onClose();
         break;
       case 'terms':

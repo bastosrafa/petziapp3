@@ -43,6 +43,7 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Report from "./pages/Report";
 import ReportSuccess from "./pages/Report/Success";
+import ReportProblem from "./pages/ReportProblem";
 
 export default function AppRoutes() {
   const { user } = useAuthContext();
@@ -151,6 +152,7 @@ export default function AppRoutes() {
                     <Route path="/about" element={<About />} />
                     <Route path="/terms" element={<Terms />} />
                     <Route path="/privacy" element={<Privacy />} />
+                    <Route path="/report-problem" element={<ReportProblem />} />
                     <Route path="/report" element={<Report />} />
                     <Route
                       path="/report/success"
