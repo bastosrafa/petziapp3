@@ -13,6 +13,15 @@ const fadeIn = keyframes`
   }
 `;
 
+const typewriter = keyframes`
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+`;
+
 // Container principal
 export const OnboardingContainer = styled.div`
   display: flex;
@@ -348,4 +357,194 @@ export const WelcomeText = styled.p`
 // Animações e efeitos
 export const StepTransition = styled.div`
   animation: ${fadeIn} 0.3s ease-in-out;
+`;
+
+export const ChatContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+  margin: 0 auto;
+  height: 100vh;
+  padding: 20px;
+  background-color: #f8f9fa;
+  overflow-y: auto;
+  position: relative;
+`;
+
+export const HeaderContainer = styled.div`
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
+`;
+
+export const ProgressText = styled.div`
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+`;
+
+export const MessagesContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 80px;
+`;
+
+export const MessageBubble = styled.div`
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  margin-bottom: 12px;
+  animation: ${fadeIn} 0.3s ease-in-out;
+  line-height: 1.5;
+  
+  ${props => props.isUser ? css`
+    background-color: #007bff;
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+  ` : css`
+    background-color: #f0f0f0;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+  `}
+`;
+
+export const TypingIndicator = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  align-self: flex-start;
+
+  span {
+    height: 8px;
+    width: 8px;
+    background-color: #999;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 2px;
+    animation: pulse 1.5s infinite ease-in-out;
+  }
+
+  span:nth-child(1) {
+    animation-delay: 0s;
+  }
+
+  span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes pulse {
+    0%, 60%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    30% {
+      transform: scale(1.5);
+      opacity: 0.8;
+    }
+  }
+`;
+
+export const OptionsContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+  align-self: flex-start;
+`;
+
+export const OptionButton = styled.button`
+  padding: 10px 16px;
+  border-radius: 18px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+
+  &:hover {
+    background-color: #f5f5f5;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
+export const InputContainer = styled.div`
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  padding: 12px 16px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  z-index: 10;
+  max-width: 600px;
+  margin: 0 auto;
+`;
+
+export const TextInput = styled.input`
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 24px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  outline: none;
+
+  &:focus {
+    border-color: #007bff;
+  }
+`;
+
+export const SendButton = styled.button`
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: #0069d9;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
+// Este componente pode ser usado para efeito de digitação
+export const TypewriterText = styled.div`
+  overflow: hidden;
+  white-space: nowrap;
+  animation: ${typewriter} 1s steps(40, end);
 `; 
