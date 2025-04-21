@@ -6,6 +6,7 @@ import { useFirestore } from "@/hooks/useFirestore";
 import { Timestamp } from 'firebase/firestore';
 import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
 import ModuleCompletionPopup from "@/components/ModuleCompletionPopup";
+import badhabits4Image from "@/assets/images/training/badhabits4.png";
 
 const LessonContainer = styled.div`
   padding: 2rem;
@@ -183,9 +184,10 @@ const ImageContainer = styled.div`
   overflow: hidden;
 `;
 
-const ImagePlaceholder = styled.div`
-  color: #A0AEC0;
-  font-size: 1.1rem;
+const SlideImage = styled.img`
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 `;
 
 const IntroductionText = styled.p`
@@ -269,7 +271,7 @@ export default function BadHabits4({ onNextLesson }) {
         <Slide active={currentSlide === 0}>
           <SlideTitle>Bem-vindo à Aula!</SlideTitle>
           <ImageContainer>
-            <ImagePlaceholder>Imagem ilustrativa de cão andando calmamente na coleira</ImagePlaceholder>
+            <SlideImage src={badhabits4Image} alt="Cão andando calmamente na coleira" />
           </ImageContainer>
           <IntroductionText>
             Nesta aula, vamos aprender como ensinar seu cão a não puxar na coleira durante os passeios, tornando as caminhadas mais agradáveis para ambos.

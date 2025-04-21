@@ -153,8 +153,8 @@ function BadHabitsModule() {
     },
     {
       id: "badhabits4",
-      title: "Destruição de Móveis",
-      description: "Evitar que o cão destrua móveis e objetos",
+      title: "Puxar na Coleira",
+      description: "Ensinar o cão a andar sem puxar durante os passeios",
       duration: "15 min",
       component: BadHabits4,
       locked: localStorage.getItem("badhabits3_completed") !== "true",
