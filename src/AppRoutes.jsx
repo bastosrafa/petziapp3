@@ -1,6 +1,6 @@
 import "./App.css";
 import Sidebar from "./components/Sidebar";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login/Login";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import { useAuthContext } from "./hooks/useAuthContext";
@@ -55,125 +55,124 @@ export default function AppRoutes() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <Toaster />
-      <BrowserRouter>
-        {user ? (
-          <UserDocProvider user={user}>
-            <ReferrerDocProvider user={user}>
-              <VaccineProvider>
-                <DashboardProvider>
-                {isMobile ? (
-                  <TopbarMobile setRerender={setRerender} />
-                ) : (
-                  <Topbar setRerender={setRerender} />
-                )}
-                {isMobile ? null : (
-                  <div
-                    className={`${
-                      sidebarExpanded ? "w-[284px]" : "w-[90px]"
-                    } w-[286px] h-[calc(100vh_-_120px)] fixed top-24 left-5 bottom-5 overflow-y-hidden border rounded-md`}
-                  >
-                    <Sidebar
-                      rerender={rerender}
-                      setRerender={setRerender}
-                      sidebarExpanded={sidebarExpanded}
-                      setSidebarExpanded={setSidebarExpanded}
-                      isWatching={isWatching}
-                      setIsWatching={setIsWatching}
-                    />
-                  </div>
-                )}
+      {user ? (
+        <UserDocProvider user={user}>
+          <ReferrerDocProvider user={user}>
+            <VaccineProvider>
+              <DashboardProvider>
+              {isMobile ? (
+                <TopbarMobile setRerender={setRerender} />
+              ) : (
+                <Topbar setRerender={setRerender} />
+              )}
+              {isMobile ? null : (
                 <div
                   className={`${
-                    isMobile
-                      ? "w-full"
-                      : sidebarExpanded
-                      ? "w-[calc(100%_-_300px)]"
-                      : "w-[calc(100%_-_100px)]"
-                  } ${isMobile ? "mt-20" : "mt-24"} ${
-                    isMobile ? "mb-20" : "mb-5"
-                  } ${
-                    isMobile ? "mx-0" : "mx-5"
-                  } float-right overflow-y-auto h-[calc(100vh_-_120px)]`}
+                    sidebarExpanded ? "w-[284px]" : "w-[90px]"
+                  } w-[286px] h-[calc(100vh_-_120px)] fixed top-24 left-5 bottom-5 overflow-y-hidden border rounded-md`}
                 >
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/content" element={<Content />} />
-                    <Route path="/content/training" element={<Training />} />
-                    <Route
-                      path="/content/training/start-here"
-                      element={<StartHereModule />}
-                    />
-                    <Route
-                      path="/content/training/behavior"
-                      element={<BehaviorModule />}
-                    />
-                    <Route
-                      path="/content/training/socialization"
-                      element={<SocializationModule />}
-                    />
-                    <Route
-                      path="/content/training/hygiene"
-                      element={<HygieneModule />}
-                    />
-                    <Route
-                      path="/content/training/badhabits"
-                      element={<BadHabitsModule />}
-                    />
-                    <Route
-                      path="/content/training/mental"
-                      element={<MentalModule />}
-                    />
-                    <Route
-                      path="/content/training/behavior/lessons/behavior1"
-                      element={<Behavior1 />}
-                    />
-                    <Route
-                      path="/content/training/behavior/lessons/behavior2"
-                      element={<Behavior2 />}
-                    />
-                    <Route
-                      path="/content/training/behavior/lessons/behavior3"
-                      element={<Behavior3 />}
-                    />
-                    <Route
-                      path="/content/training/behavior/lessons/behavior4"
-                      element={<Behavior4 />}
-                    />
-                    <Route
-                      path="/content/training/behavior/lessons/behavior5"
-                      element={<Behavior5 />}
-                    />
-                    <Route path="/content/vaccines" element={<Vaccines />} />
-                    <Route path="/content/diary" element={<Diary />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/notifications" element={<Notifications />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/help" element={<Help />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/terms" element={<Terms />} />
-                    <Route path="/privacy" element={<Privacy />} />
-                    <Route path="/report-problem" element={<ReportProblem />} />
-                    <Route path="/report" element={<Report />} />
-                    <Route
-                      path="/report/success"
-                      element={<ReportSuccess />}
-                    />
-                    <Route path="*" element={<Navigate to="/" />} />
-                  </Routes>
+                  <Sidebar
+                    rerender={rerender}
+                    setRerender={setRerender}
+                    sidebarExpanded={sidebarExpanded}
+                    setSidebarExpanded={setSidebarExpanded}
+                    isWatching={isWatching}
+                    setIsWatching={setIsWatching}
+                  />
                 </div>
-                {isMobile && <BottomBar />}
-                </DashboardProvider>
-              </VaccineProvider>
-            </ReferrerDocProvider>
-          </UserDocProvider>
-        ) : (
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/recover" element={<PasswordRecovery />} />
-            <Route path="*" element={<Navigate to="/login" />} />
-          </Routes>
-        )}
-      </BrowserRouter>
+              )}
+              <div
+                className={`${
+                  isMobile
+                    ? "w-full"
+                    : sidebarExpanded
+                    ? "w-[calc(100%_-_300px)]"
+                    : "w-[calc(100%_-_100px)]"
+                } ${isMobile ? "mt-20" : "mt-24"} ${
+                  isMobile ? "mb-20" : "mb-5"
+                } ${
+                  isMobile ? "mx-0" : "mx-5"
+                } float-right overflow-y-auto h-[calc(100vh_-_120px)]`}
+              >
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/content" element={<Content />} />
+                  <Route path="/content/training" element={<Training />} />
+                  <Route path="/training" element={<Navigate to="/content/training" />} />
+                  <Route
+                    path="/content/training/start-here"
+                    element={<StartHereModule />}
+                  />
+                  <Route
+                    path="/content/training/behavior"
+                    element={<BehaviorModule />}
+                  />
+                  <Route
+                    path="/content/training/socialization"
+                    element={<SocializationModule />}
+                  />
+                  <Route
+                    path="/content/training/hygiene"
+                    element={<HygieneModule />}
+                  />
+                  <Route
+                    path="/content/training/badhabits"
+                    element={<BadHabitsModule />}
+                  />
+                  <Route
+                    path="/content/training/mental"
+                    element={<MentalModule />}
+                  />
+                  <Route
+                    path="/content/training/behavior/lessons/behavior1"
+                    element={<Behavior1 />}
+                  />
+                  <Route
+                    path="/content/training/behavior/lessons/behavior2"
+                    element={<Behavior2 />}
+                  />
+                  <Route
+                    path="/content/training/behavior/lessons/behavior3"
+                    element={<Behavior3 />}
+                  />
+                  <Route
+                    path="/content/training/behavior/lessons/behavior4"
+                    element={<Behavior4 />}
+                  />
+                  <Route
+                    path="/content/training/behavior/lessons/behavior5"
+                    element={<Behavior5 />}
+                  />
+                  <Route path="/content/vaccines" element={<Vaccines />} />
+                  <Route path="/content/diary" element={<Diary />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/notifications" element={<Notifications />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/help" element={<Help />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/terms" element={<Terms />} />
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/report-problem" element={<ReportProblem />} />
+                  <Route path="/report" element={<Report />} />
+                  <Route
+                    path="/report/success"
+                    element={<ReportSuccess />}
+                  />
+                  <Route path="*" element={<Navigate to="/" />} />
+                </Routes>
+              </div>
+              {isMobile && <BottomBar />}
+              </DashboardProvider>
+            </VaccineProvider>
+          </ReferrerDocProvider>
+        </UserDocProvider>
+      ) : (
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/recover" element={<PasswordRecovery />} />
+          <Route path="*" element={<Navigate to="/login" />} />
+        </Routes>
+      )}
     </ThemeProvider>
   );
 }

@@ -4,6 +4,7 @@ import App from "./App.jsx";
 import "./index.css";
 import { AuthContextProvider } from "./contexts/AuthContext";
 import { registerSW } from "virtual:pwa-register";
+import { BrowserRouter } from "react-router-dom";
 
 // import { Toaster } from "@/shadcn/components/ui/toaster";
 
@@ -48,7 +49,9 @@ registerSW({ immediate: true });
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <AuthContextProvider>
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
     {/* <Toaster /> */}
   </AuthContextProvider>
 );

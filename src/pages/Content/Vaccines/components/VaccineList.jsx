@@ -36,19 +36,19 @@ const TabsList = styled.div`
 const TabButton = styled.button`
   padding: 10px;
   border: none;
-  background: ${props => props.active ? '#007bff' : '#f8f9fa'};
-  color: ${props => props.active ? 'white' : '#333'};
+  background: ${props => props.$active ? '#007bff' : '#f8f9fa'};
+  color: ${props => props.$active ? 'white' : '#333'};
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    background: ${props => props.active ? '#0056b3' : '#e9ecef'};
+    background: ${props => props.$active ? '#0056b3' : '#e9ecef'};
   }
 `;
 
 const TabContent = styled.div`
-  display: ${props => props.active ? 'block' : 'none'};
+  display: ${props => props.$active ? 'block' : 'none'};
 `;
 
 const VaccineCard = styled.div`
@@ -83,7 +83,7 @@ const Badge = styled.span`
   border-radius: 4px;
   font-size: 12px;
   font-weight: 500;
-  background-color: ${props => props.variant === 'success' ? '#28a745' : '#6c757d'};
+  background-color: ${props => props.$variant === 'success' ? '#28a745' : '#6c757d'};
   color: white;
 `;
 
@@ -199,20 +199,20 @@ export default function VaccineList() {
       <TabsContainer>
         <TabsList>
           <TabButton
-            active={activeTab === 'pending'}
+            $active={activeTab === 'pending'}
             onClick={() => setActiveTab('pending')}
           >
             Pendentes ({pendingVaccines.length})
           </TabButton>
           <TabButton
-            active={activeTab === 'applied'}
+            $active={activeTab === 'applied'}
             onClick={() => setActiveTab('applied')}
           >
             Aplicadas ({appliedVaccines.length})
           </TabButton>
         </TabsList>
 
-        <TabContent active={activeTab === 'pending'}>
+        <TabContent $active={activeTab === 'pending'}>
           {pendingVaccines.length > 0 ? (
             pendingVaccines.map((vaccine) => (
               <VaccineCard key={vaccine.id}>
@@ -221,7 +221,9 @@ export default function VaccineList() {
                     <VaccineTitle>{vaccine.name}</VaccineTitle>
                     <VaccineInfo>Tipo: {vaccine.type}</VaccineInfo>
                     <VaccineInfo>
-                      Data: {format(new Date(vaccine.date), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                      Data: {vaccine.date && !isNaN(new Date(vaccine.date).getTime()) 
+                        ? format(new Date(vaccine.date), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
+                        : "Data não disponível"}
                     </VaccineInfo>
                     {vaccine.notes && (
                       <VaccineInfo>Obs: {vaccine.notes}</VaccineInfo>
@@ -241,7 +243,7 @@ export default function VaccineList() {
           )}
         </TabContent>
 
-        <TabContent active={activeTab === 'applied'}>
+        <TabContent $active={activeTab === 'applied'}>
           {appliedVaccines.length > 0 ? (
             appliedVaccines.map((vaccine) => (
               <VaccineCard key={vaccine.id}>
@@ -250,13 +252,15 @@ export default function VaccineList() {
                     <VaccineTitle>{vaccine.name}</VaccineTitle>
                     <VaccineInfo>Tipo: {vaccine.type}</VaccineInfo>
                     <VaccineInfo>
-                      Data: {format(new Date(vaccine.date), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                      Data: {vaccine.date && !isNaN(new Date(vaccine.date).getTime()) 
+                        ? format(new Date(vaccine.date), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
+                        : "Data não disponível"}
                     </VaccineInfo>
                     {vaccine.notes && (
                       <VaccineInfo>Obs: {vaccine.notes}</VaccineInfo>
                     )}
                   </div>
-                  <Badge variant="success">Aplicada</Badge>
+                  <Badge $variant="success">Aplicada</Badge>
                 </VaccineHeader>
               </VaccineCard>
             ))

@@ -6,6 +6,7 @@ import { useFirestore } from "@/hooks/useFirestore";
 import { Timestamp } from 'firebase/firestore';
 import { useNavigate } from "react-router-dom";
 import ModuleCompletionPopup from "@/components/ModuleCompletionPopup";
+import badhabits1Image from '@/assets/images/training/badhabits1.png';
 
 const LessonContainer = styled.div`
   padding: 2rem;
@@ -77,6 +78,15 @@ const SlideTitle = styled.h2`
   color: #2D3748;
   margin-bottom: 2rem;
   text-align: center;
+`;
+
+const ContentText = styled.p`
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 15px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
 `;
 
 const ImageContainer = styled.div`
@@ -208,6 +218,144 @@ const Dot = styled.div`
   transition: background 0.2s;
 `;
 
+// Adicionando componentes do StartHere1 que podem estar faltando
+const ExerciseSteps = styled.ol`
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const ExerciseStep = styled.li`
+  color: #2D3748;
+  padding: 1rem;
+  padding-left: 2.5rem;
+  position: relative;
+  background: #F0FFF4;
+  border-radius: 8px;
+  border-left: 4px solid #48BB78;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #E6FFED;
+    transform: translateX(4px);
+  }
+
+  &:before {
+    content: attr(data-step);
+    color: #48BB78;
+    font-weight: bold;
+    font-size: 1.2rem;
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+`;
+
+const BulletList = styled.ul`
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const BulletItem = styled.li`
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #2D3748;
+  padding: 1rem;
+  padding-left: 2.5rem;
+  position: relative;
+  background: #F7FAFC;
+  border-radius: 8px;
+  border-left: 4px solid #4299E1;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #EBF8FF;
+    transform: translateX(4px);
+  }
+
+  &:before {
+    content: "•";
+    color: #4299E1;
+    font-size: 2rem;
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+`;
+
+const WarningList = styled.ul`
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const WarningItem = styled.li`
+  color: #2D3748;
+  padding: 1rem;
+  padding-left: 2.5rem;
+  position: relative;
+  background: #FFF5F5;
+  border-radius: 8px;
+  border-left: 4px solid #E53E3E;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #FFEBEB;
+    transform: translateX(4px);
+  }
+
+  &:before {
+    content: "⚠";
+    color: #E53E3E;
+    font-size: 1.2rem;
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+`;
+
+const SummaryList = styled.ul`
+  list-style: none;
+  padding: 0;
+`;
+
+const SummaryItem = styled.li`
+  color: #4A5568;
+  margin-bottom: 0.75rem;
+  padding-left: 1.5rem;
+  position: relative;
+  line-height: 1.6;
+
+  &:before {
+    content: "✓";
+    color: #48BB78;
+    position: absolute;
+    left: 0;
+  }
+`;
+
+const SlideImage = styled.img`
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
 export default function BadHabits1({ onNextLesson }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { user } = useAuthContext();
@@ -219,20 +367,21 @@ export default function BadHabits1({ onNextLesson }) {
     {
       title: "Bem-vindo à Aula!",
       content: (
-        <SlideContent>
-          <ImageContainer>
-            <ImagePlaceholder>Imagem ilustrativa de cão com brinquedos apropriados</ImagePlaceholder>
-          </ImageContainer>
-          <SlideIntro>
+        <>
+          <SlideImage src={badhabits1Image} alt="Cão com brinquedos apropriados para mastigação" />
+          <ContentText>
             Nesta aula, vamos aprender como redirecionar o comportamento de mordidas e mastigação excessiva para brinquedos adequados.
-          </SlideIntro>
-        </SlideContent>
+          </ContentText>
+        </>
       )
     },
     {
       title: "Por que ensinar?",
       content: (
-        <SlideContent>
+        <>
+          <SlideIntro>
+            Por que é importante redirecionar o comportamento de mordidas e mastigação:
+          </SlideIntro>
           <StepsGrid>
             <StepItem>
               <StepHeader>
@@ -271,13 +420,16 @@ export default function BadHabits1({ onNextLesson }) {
               </StepDescription>
             </StepItem>
           </StepsGrid>
-        </SlideContent>
+        </>
       )
     },
     {
       title: "Métodos de Treinamento",
       content: (
-        <SlideContent>
+        <>
+          <SlideIntro>
+            Como redirecionar o comportamento de mordidas e mastigação:
+          </SlideIntro>
           <StepsGrid>
             <StepItem>
               <StepHeader>
@@ -316,7 +468,55 @@ export default function BadHabits1({ onNextLesson }) {
               </StepDescription>
             </StepItem>
           </StepsGrid>
-        </SlideContent>
+        </>
+      )
+    },
+    {
+      title: "Dicas Importantes",
+      content: (
+        <>
+          <SlideIntro>
+            Recomendações para o sucesso do treinamento:
+          </SlideIntro>
+          <BulletList>
+            <BulletItem>Ofereça uma variedade de brinquedos com diferentes texturas e formatos para manter o interesse do cão</BulletItem>
+            <BulletItem>Nunca use as mãos ou outras partes do corpo como brinquedos de mordida, para não confundir o cão</BulletItem>
+            <BulletItem>Lembre-se que filhotes tem necessidades maiores de mastigar durante a fase de dentição</BulletItem>
+            <BulletItem>Elogie efusivamente quando o cão escolher o brinquedo certo para mastigar</BulletItem>
+            <BulletItem>Brinquedos com petiscos escondidos podem ajudar a aumentar o interesse pelos itens apropriados</BulletItem>
+          </BulletList>
+          <WarningList>
+            <WarningItem>Evite brinquedos muito pequenos que possam ser engolidos ou causar asfixia</WarningItem>
+            <WarningItem>Não ceda e permita a mastigação inapropriada "só desta vez", pois isso confunde o treinamento</WarningItem>
+            <WarningItem>Supervisione sempre o uso de brinquedos novos até ter certeza de que são seguros</WarningItem>
+          </WarningList>
+        </>
+      )
+    },
+    {
+      title: "Resumo",
+      content: (
+        <>
+          <SlideIntro>
+            Parabéns! Você aprendeu sobre como redirecionar o comportamento de mordidas e mastigação do seu cão.
+          </SlideIntro>
+          <BulletList>
+            <BulletItem>A mastigação é um comportamento natural dos cães e deve ser direcionada corretamente</BulletItem>
+            <BulletItem>Oferecer brinquedos apropriados ajuda a proteger seus pertences e promover a saúde do cão</BulletItem>
+            <BulletItem>A consistência e o reforço positivo são essenciais para o sucesso do treinamento</BulletItem>
+            <BulletItem>Criar um ambiente seguro ajuda a prevenir acidentes e facilita o aprendizado</BulletItem>
+            <BulletItem>Com paciência e prática, seu cão aprenderá o que é apropriado para mastigar</BulletItem>
+          </BulletList>
+          
+          <SlideIntro>
+            Próximos passos:
+          </SlideIntro>
+          <BulletList>
+            <BulletItem>Estabeleça uma rotina para oferecer brinquedos apropriados ao seu cão</BulletItem>
+            <BulletItem>Mantenha a consistência no redirecionamento de comportamentos inadequados</BulletItem>
+            <BulletItem>Continue para a próxima lição para aprender mais sobre bons hábitos</BulletItem>
+          </BulletList>
+        </>
       )
     }
   ];
@@ -346,26 +546,26 @@ export default function BadHabits1({ onNextLesson }) {
               duration: 15 // Duração estimada em minutos
             };
             
-            // Simplificar o processo para evitar erros
-            // Não usar Promise.race que pode estar causando o problema
-            addProgress(progressData)
-              .then(() => {
-                // Atualizar o dashboard em segundo plano
-                updateTraining({
-                  completedLessons: 20,
-                  currentLevel: 'intermediate',
-                  lastSession: new Date(),
-                  totalTime: 235,
-                  unlockedModules: ['startHere', 'hygiene', 'badhabits']
-                }).catch(err => console.error("Erro ao atualizar dashboard:", err));
-                
-                refreshData().catch(err => console.error("Erro ao atualizar dados:", err));
-                
-                console.log("Progresso da lição BadHabits1 salvo com sucesso");
-              })
-              .catch(error => {
-                console.error("Erro ao salvar progresso da lição:", error);
-              });
+            // Usar Promise.race para não bloquear a navegação
+            Promise.race([
+              addProgress(progressData),
+              new Promise(resolve => setTimeout(resolve, 2000)) // Timeout de 2 segundos
+            ]).then(() => {
+              // Atualizar o dashboard em segundo plano
+              updateTraining({
+                completedLessons: 20,
+                currentLevel: 'intermediate',
+                lastSession: new Date(),
+                totalTime: 235,
+                unlockedModules: ['startHere', 'hygiene', 'badhabits']
+              }).catch(err => console.error("Erro ao atualizar dashboard:", err));
+              
+              refreshData().catch(err => console.error("Erro ao atualizar dados:", err));
+              
+              console.log("Progresso da lição BadHabits1 salvo com sucesso");
+            }).catch(error => {
+              console.error("Erro ao salvar progresso da lição:", error);
+            });
           } catch (error) {
             console.error("Erro ao processar progresso da lição:", error);
           }

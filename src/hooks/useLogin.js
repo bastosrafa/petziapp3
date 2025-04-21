@@ -41,22 +41,46 @@ export const useLogin = () => {
 
           if (exists) {
             const userRef = doc(db, "users", res.user.uid);
-            await updateDoc(userRef, {
+            
+            // Criar objeto de atualização com valores padrão
+            const updateData = {
               online: true,
               user_agent: navigator.userAgent,
               origin: window.location.href.split("?")[0],
-              fbp: getCookie("_fbp"),
-              fbc: getCookie("_fbc"),
-              utm: {
-                source: query.get("utm_source") || getCookie("utm_source"),
-                medium: query.get("utm_medium") || getCookie("utm_medium"),
-                campaign:
-                  query.get("utm_campaign") || getCookie("utm_campaign"),
-                term: query.get("utm_term") || getCookie("utm_term"),
-                content: query.get("utm_content") || getCookie("utm_content"),
-              },
-              sck: query.get("sck") || getCookie("sck"),
-            });
+            };
+
+            // Adicionar cookies apenas se existirem
+            const fbp = getCookie("_fbp");
+            const fbc = getCookie("_fbc");
+            if (fbp) updateData.fbp = fbp;
+            if (fbc) updateData.fbc = fbc;
+
+            // Adicionar parâmetros UTM apenas se existirem
+            const utmSource = query.get("utm_source") || getCookie("utm_source");
+            const utmMedium = query.get("utm_medium") || getCookie("utm_medium");
+            const utmCampaign = query.get("utm_campaign") || getCookie("utm_campaign");
+            const utmTerm = query.get("utm_term") || getCookie("utm_term");
+            const utmContent = query.get("utm_content") || getCookie("utm_content");
+            
+            // Criar objeto UTM apenas com valores não vazios
+            const utm = {};
+            if (utmSource) utm.source = utmSource;
+            if (utmMedium) utm.medium = utmMedium;
+            if (utmCampaign) utm.campaign = utmCampaign;
+            if (utmTerm) utm.term = utmTerm;
+            if (utmContent) utm.content = utmContent;
+
+            // Adicionar objeto UTM apenas se tiver alguma propriedade
+            if (Object.keys(utm).length > 0) {
+              updateData.utm = utm;
+            }
+
+            // Adicionar SCK apenas se existir
+            const sck = query.get("sck") || getCookie("sck");
+            if (sck) updateData.sck = sck;
+
+            await updateDoc(userRef, updateData);
+            
             dispatch({ type: "LOGIN", payload: res.user });
             break;
           }
@@ -95,22 +119,45 @@ export const useLogin = () => {
       const userDoc = await getDoc(userRef);
 
       if (userDoc.exists()) {
-        await updateDoc(userRef, {
+        // Criar objeto de atualização com valores padrão
+        const updateData = {
           online: true,
           lastLogin: new Date(),
           user_agent: navigator.userAgent,
           origin: window.location.href.split("?")[0],
-          fbp: getCookie("_fbp"),
-          fbc: getCookie("_fbc"),
-          utm: {
-            source: query.get("utm_source") || getCookie("utm_source"),
-            medium: query.get("utm_medium") || getCookie("utm_medium"),
-            campaign: query.get("utm_campaign") || getCookie("utm_campaign"),
-            term: query.get("utm_term") || getCookie("utm_term"),
-            content: query.get("utm_content") || getCookie("utm_content"),
-          },
-          sck: query.get("sck") || getCookie("sck"),
-        });
+        };
+
+        // Adicionar cookies apenas se existirem
+        const fbp = getCookie("_fbp");
+        const fbc = getCookie("_fbc");
+        if (fbp) updateData.fbp = fbp;
+        if (fbc) updateData.fbc = fbc;
+
+        // Adicionar parâmetros UTM apenas se existirem
+        const utmSource = query.get("utm_source") || getCookie("utm_source");
+        const utmMedium = query.get("utm_medium") || getCookie("utm_medium");
+        const utmCampaign = query.get("utm_campaign") || getCookie("utm_campaign");
+        const utmTerm = query.get("utm_term") || getCookie("utm_term");
+        const utmContent = query.get("utm_content") || getCookie("utm_content");
+        
+        // Criar objeto UTM apenas com valores não vazios
+        const utm = {};
+        if (utmSource) utm.source = utmSource;
+        if (utmMedium) utm.medium = utmMedium;
+        if (utmCampaign) utm.campaign = utmCampaign;
+        if (utmTerm) utm.term = utmTerm;
+        if (utmContent) utm.content = utmContent;
+
+        // Adicionar objeto UTM apenas se tiver alguma propriedade
+        if (Object.keys(utm).length > 0) {
+          updateData.utm = utm;
+        }
+
+        // Adicionar SCK apenas se existir
+        const sck = query.get("sck") || getCookie("sck");
+        if (sck) updateData.sck = sck;
+
+        await updateDoc(userRef, updateData);
       }
 
       dispatch({ type: "LOGIN", payload: res.user });

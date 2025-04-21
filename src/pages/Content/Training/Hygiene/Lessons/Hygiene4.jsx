@@ -580,6 +580,11 @@ export default function Hygiene4({ onNextLesson }) {
       try {
         // Salvar no localStorage primeiro
         localStorage.setItem("hygiene4_completed", "true");
+        
+        // Desbloquear a primeira lição do próximo módulo (BadHabits)
+        localStorage.setItem("badhabits1_unlocked", "true");
+        
+        // Disparar evento para atualizar a interface
         window.dispatchEvent(new Event('storage'));
 
         // Mostrar o popup de conclusão
@@ -650,9 +655,11 @@ export default function Hygiene4({ onNextLesson }) {
     // Desbloqueia o módulo na página de adestramento
     localStorage.setItem("badhabits_unlocked", "true");
     
-    // Desbloqueia o módulo na página de adestramento geral
+    // Desbloqueia o módulo na página de treinamento
     localStorage.setItem("startHere", "true");
-    localStorage.setItem("badhabits_unlocked", "true");
+    
+    // Dispara evento para atualizar a interface
+    window.dispatchEvent(new Event('storage'));
     
     // Atualiza o estado do módulo no Firestore
     if (user) {
@@ -662,10 +669,10 @@ export default function Hygiene4({ onNextLesson }) {
         lastSession: new Date(),
         totalTime: 220,
         unlockedModules: ['startHere', 'hygiene', 'badhabits']
-      });
+      }).catch(err => console.error("Erro ao atualizar dashboard:", err));
     }
     
-    // Navega para a primeira aula do módulo de maus hábitos
+    // Navega para o módulo de maus hábitos
     navigate("/content/training/badhabits");
   };
 

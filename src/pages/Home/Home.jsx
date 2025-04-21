@@ -11,19 +11,28 @@ import {
   PictureInPicture2Icon,
   PiggyBankIcon,
 } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useMediaQuery from "@/hooks/useMediaQuery";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import Subscriptions from "../Subscriptions/Subscriptions";
 import Dashboard from "../Dashboard";
 import { DashboardProvider } from "../Dashboard/contexts/DashboardContext";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 
 export default function Home() {
   const { user } = useAuthContext();
   const { userDoc } = useUserContext();
+  const { onboardingCompleted } = useOnboarding();
   const isWideScreen = useMediaQuery("(min-width: 1920px)");
   const navigate = useNavigate();
+
+  // Redirecionar para o onboarding se não estiver completo
+  useEffect(() => {
+    if (user && !onboardingCompleted) {
+      navigate('/onboarding');
+    }
+  }, [user, onboardingCompleted, navigate]);
 
   const options = [
     {
@@ -63,8 +72,9 @@ export default function Home() {
   ];
 
   if (!userDoc) return <Loading />;
-  if (userDoc.plan.status !== "active") return <Subscriptions />;
-
+  
+  // Mostrar o Dashboard independentemente do status do plano
+  // O gerenciamento da assinatura será feito na Hotmart
   return (
     <div className="w-full">
       <Dashboard />

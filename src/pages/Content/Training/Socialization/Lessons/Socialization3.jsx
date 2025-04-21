@@ -6,6 +6,7 @@ import { useFirestore } from "@/hooks/useFirestore";
 import { Timestamp } from 'firebase/firestore';
 import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
 import socialization3Image from "@/assets/images/training/socialization3.png";
+import ModuleCompletionPopup from "@/components/ModuleCompletionPopup";
 
 const LessonContainer = styled.div`
   padding: 2rem;

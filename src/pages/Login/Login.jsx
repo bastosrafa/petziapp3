@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import GoogleLogo from "@/components/GoogleLogo";
 import { signInWithCustomToken } from "firebase/auth";
 import { auth } from "@/firebase/config";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { db, timestamp } from "@/firebase/config";
 
 export default function Login() {
   const { login, isPending, error } = useLogin();
@@ -21,6 +23,7 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setErrorMsg("");
 
     if (!email.includes("@") || !email.includes(".")) {
       setErrorMsg("Por favor, insira um e-mail válido.");
@@ -40,7 +43,12 @@ export default function Login() {
       return;
     }
 
-    login(email, password);
+    try {
+      await login(email, password);
+      // Verificar e criar documento do usuário se necessário acontecerá automaticamente no AuthContext
+    } catch (error) {
+      setErrorMsg(error.message);
+    }
   };
 
   const toggleShowPassword = () => {

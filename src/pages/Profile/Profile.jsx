@@ -1,9 +1,16 @@
-import React, { useState } from "react";
-import { ModeToggle } from "@/shadcn/components/mode-toggle";
+import React, { useEffect, useState } from "react";
+import { useLogout } from "@/hooks/useLogout";
+import { doc, updateDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { db, storage } from "@/firebase/config";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useUserContext } from "@/hooks/useUserContext";
 import Loading from "@/components/Loading";
 import "./styles.css";
+import { useOnboarding } from "../../contexts/OnboardingContext";
+import { Button } from "@/shadcn/components/ui/button";
+import { toast } from "@/shadcn/components/ui/use-toast";
+import { ModeToggle } from "@/shadcn/components/mode-toggle";
 
 // TODO: Trocar pela URL da sua Cloud Function
 const url = "https://us-central1-petzia-f86b4.cloudfunctions.net/changePassword";
@@ -21,6 +28,7 @@ export default function Profile({ rerender, setRerender }) {
     user.providerData[0].providerId === "google.com"
       ? false
       : true;
+  const { resetOnboarding } = useOnboarding();
 
   const changePassword = async (e) => {
     e.preventDefault();
@@ -43,6 +51,22 @@ export default function Profile({ rerender, setRerender }) {
         newPassword: password,
       }),
     });
+  };
+
+  const handleResetOnboarding = async () => {
+    try {
+      await resetOnboarding();
+      toast({
+        title: "Onboarding resetado",
+        description: "O processo de onboarding foi resetado com sucesso. Faça logout e login novamente para testar.",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível resetar o onboarding.",
+        variant: "destructive",
+      });
+    }
   };
 
   if (!userDoc || !user) return <Loading />;
@@ -118,6 +142,12 @@ export default function Profile({ rerender, setRerender }) {
             </form>
           )}
         </div>
+      </div>
+
+      <div className="grid gap-4 mt-6">
+        <Button onClick={handleResetOnboarding} variant="outline" className="w-full">
+          Resetar Onboarding (Teste)
+        </Button>
       </div>
     </div>
   );

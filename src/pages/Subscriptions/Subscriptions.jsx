@@ -9,11 +9,13 @@ import Loading from "@/components/Loading";
 export default function Subscriptions() {
   const { user } = useAuthContext();
   const { userDoc } = useUserContext();
+  const isLatam = false;
 
   const getPlanStatus = () => {
-    if (userDoc.plan.status === "active") return "Ativo";
-    if (userDoc.plan.status === "refunded") return "Reembolsado";
-    if (userDoc.plan.status === "chargedback") return "Pedido de chargeback";
+    if (userDoc.plan?.status === "active") return "Ativo";
+    if (userDoc.plan?.status === "refunded") return "Reembolsado";
+    if (userDoc.plan?.status === "chargedback") return "Pedido de chargeback";
+    return "Inativo";
   };
 
   if (!userDoc) return <Loading />;
@@ -32,7 +34,7 @@ export default function Subscriptions() {
           <p className="mt-5 text-muted-foreground mb-1.5">Plano atual</p>
           <Input disabled value={"Premium"} readOnly type="text" />
           <p className="mt-5 text-muted-foreground mb-1.5">Status do plano</p>
-          <Input disabled value={getPlanStatus(userDoc.plan.status)} readOnly />
+          <Input disabled value={getPlanStatus()} readOnly />
           <p className="mt-5 mb-1.5">
             Para recuperar o acesso à Generic App, adquira novamente uma
             assinatura clicando no botão abaixo:
