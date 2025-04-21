@@ -65,7 +65,7 @@ const SlideContent = styled.div`
   &::-webkit-scrollbar-thumb {
     background: #4299E1;
     border-radius: 4px;
-  }
+    }
 
   &::-webkit-scrollbar-thumb:hover {
     background: #3182CE;
@@ -133,37 +133,33 @@ const SummaryItem = styled.li`
   padding: 1rem 1rem 1rem 3rem;
   position: relative;
   line-height: 1.6;
-  background: white;
+  background: #F7FAFC;
   border-radius: 8px;
+  border-left: 4px solid #4299E1;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
+  cursor: pointer;
 
   &:hover {
     transform: translateX(5px);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    background: #F7FAFC;
+    background: #EBF8FF;
   }
 
   &:before {
-    content: "✓";
-    color: white;
+    content: "•";
+    color: #4299E1;
+    font-weight: bold;
+    font-size: 1.5rem;
     position: absolute;
     left: 1rem;
-    width: 24px;
-    height: 24px;
-    background: linear-gradient(135deg, #48BB78, #38A169);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: bold;
-    box-shadow: 0 2px 4px rgba(72, 187, 120, 0.2);
-    transition: transform 0.3s ease;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: all 0.3s ease;
   }
 
   &:hover:before {
-    transform: scale(1.1);
+    transform: translateY(-50%) scale(1.2);
   }
 `;
 
@@ -523,13 +519,13 @@ export default function Mental2({ onNextLesson }) {
         {/* Slide 0: Introdução com Imagem */}
         <Slide active={currentSlide === 0}>
           <SlideContent>
-            <SlideTitle>Bem-vindo à Aula!</SlideTitle>
-            <ImageContainer>
+          <SlideTitle>Bem-vindo à Aula!</SlideTitle>
+          <ImageContainer>
               <StyledImage src={Mental2Image} alt="Imagem ilustrativa de cão brincando dentro de casa" />
-            </ImageContainer>
-            <IntroductionText>
-              Nesta aula, vamos aprender jogos e atividades divertidas para manter seu cão ativo mesmo dentro de casa.
-            </IntroductionText>
+          </ImageContainer>
+          <IntroductionText>
+            Nesta aula, vamos aprender jogos e atividades divertidas para manter seu cão ativo mesmo dentro de casa.
+          </IntroductionText>
           </SlideContent>
         </Slide>
 
@@ -592,28 +588,28 @@ export default function Mental2({ onNextLesson }) {
         {/* Slide 3: Resumo Rápido */}
         <Slide active={currentSlide === 3}>
           <SlideContent>
-            <SlideTitle>Resumo Rápido</SlideTitle>
-            <SummaryList>
-              <SummaryItem>Crie brincadeiras dentro de casa para gastar energia.</SummaryItem>
-              <SummaryItem>Use desafios mentais como esconde-esconde e busca de petiscos.</SummaryItem>
-              <SummaryItem>Intercale comandos de obediência com diversão.</SummaryItem>
-            </SummaryList>
+          <SlideTitle>Resumo Rápido</SlideTitle>
+          <SummaryList>
+            <SummaryItem>Crie brincadeiras dentro de casa para gastar energia.</SummaryItem>
+            <SummaryItem>Use desafios mentais como esconde-esconde e busca de petiscos.</SummaryItem>
+            <SummaryItem>Intercale comandos de obediência com diversão.</SummaryItem>
+          </SummaryList>
           </SlideContent>
         </Slide>
 
-        <NavigationButtons>
-          <Button onClick={prevSlide} disabled={currentSlide === 0}>
-            Anterior
-          </Button>
-          <Dots>
-            {[0, 1, 2, 3].map((index) => (
-              <Dot
-                key={index}
-                active={currentSlide === index}
-                onClick={() => goToSlide(index)}
-              />
-            ))}
-          </Dots>
+      <NavigationButtons>
+        <Button onClick={prevSlide} disabled={currentSlide === 0}>
+          Anterior
+        </Button>
+      <Dots>
+        {[0, 1, 2, 3].map((index) => (
+          <Dot
+            key={index}
+            active={currentSlide === index}
+            onClick={() => goToSlide(index)}
+          />
+        ))}
+      </Dots>
           <Button onClick={nextSlide}>
             {currentSlide === 3 ? "Próxima Aula" : "Próximo"}
           </Button>

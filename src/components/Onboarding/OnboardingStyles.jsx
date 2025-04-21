@@ -510,7 +510,7 @@ export const MessagesContainer = styled.div`
   flex: 1;
   overflow-y: auto;
   padding: 20px;
-  padding-bottom: 120px; /* Espaço para as opções de resposta */
+  padding-bottom: 30px;
   
   /* Estilizar scrollbar */
   &::-webkit-scrollbar {
@@ -525,20 +525,6 @@ export const MessagesContainer = styled.div`
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 20px;
   }
-`;
-
-export const ResponseAreaContainer = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(5px);
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 16px;
-  z-index: 50;
-  width: 100%;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
 `;
 
 export const MessageBubble = styled.div`
@@ -640,30 +626,25 @@ export const OptionsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 20px;
-  margin-bottom: 16px;
   width: 100%;
   animation: ${fadeIn} 0.5s ease-out;
-  position: relative;
-  z-index: 15; /* Maior que o z-index do InputContainer */
+  align-self: center;
+  margin-top: 8px;
   
   @media (min-width: 480px) {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
+    max-width: 90%;
   }
 `;
 
 export const OptionButton = styled.button`
-  width: 100%;
-  padding: 15px;
+  padding: 12px 16px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 16px;
   background-color: white;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
   text-align: left;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   position: relative;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
@@ -673,6 +654,9 @@ export const OptionButton = styled.button`
   opacity: 0;
   animation-fill-mode: forwards;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  max-width: 90%;
+  align-self: flex-start;
+  width: 100%;
   
   &:hover {
     background-color: #f7f9fd;
@@ -758,6 +742,7 @@ export const TextInput = styled.input`
   outline: none;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   transition: all 0.3s;
+  color: #333333;
   &.text-input {}
 
   &:focus {
