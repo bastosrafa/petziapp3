@@ -24,6 +24,7 @@ import Home from './pages/Home/Home';
 import Profile from './pages/Profile/Profile';
 import Dashboard from './pages/Dashboard';
 import Onboarding from './components/Onboarding/Onboarding';
+import ResetOnboarding from './pages/ResetOnboarding';
 import Content from './pages/Content/Content';
 import Training from './pages/Content/Training/index';
 import StartHereModule from './pages/Content/Training/StartHere/index';
@@ -130,6 +131,7 @@ function App() {
                         <Route path="/report" element={<Report />} />
                         <Route path="/report/success" element={<ReportSuccess />} />
                         <Route path="/onboarding" element={<Onboarding />} />
+                        <Route path="/reset-onboarding" element={<ResetOnboarding />} />
                         <Route path="*" element={<Navigate to="/" />} />
                       </Routes>
                     </div>

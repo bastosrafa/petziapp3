@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '@/contexts/AuthContext';
+import { useOnboarding } from '@/contexts/OnboardingContext';
 import './styles.css';
 
 const SettingsMenu = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const { logout } = useAuthContext();
+  const { resetOnboarding } = useOnboarding();
   const [activeSection, setActiveSection] = useState(null);
+  const [isResetting, setIsResetting] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const menuItems = [
     {
@@ -20,6 +24,12 @@ const SettingsMenu = ({ isOpen, onClose }) => {
       icon: '🔔',
       label: 'Notificações',
       description: 'Configure suas preferências de notificação'
+    },
+    {
+      id: 'updatePet',
+      icon: '🐾',
+      label: 'Atualizar Informações do Pet',
+      description: 'Refaça o cadastro para atualizar os dados do seu pet'
     },
     {
       id: 'help',
@@ -59,6 +69,9 @@ const SettingsMenu = ({ isOpen, onClose }) => {
         navigate('/notifications');
         onClose();
         break;
+      case 'updatePet':
+        setShowConfirmation(true);
+        break;
       case 'help':
         navigate('/help');
         onClose();
@@ -89,6 +102,18 @@ const SettingsMenu = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleResetOnboarding = async () => {
+    setIsResetting(true);
+    try {
+      await resetOnboarding();
+      onClose();
+      navigate('/onboarding');
+    } catch (error) {
+      console.error('Erro ao resetar onboarding:', error);
+      setIsResetting(false);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -115,6 +140,31 @@ const SettingsMenu = ({ isOpen, onClose }) => {
             </div>
           ))}
         </div>
+
+        {showConfirmation && (
+          <div className="confirmation-modal">
+            <div className="confirmation-content">
+              <h3>Atualizar Informações do Pet</h3>
+              <p>Esta ação irá resetar as informações do seu pet e você precisará refazer o cadastro. Deseja continuar?</p>
+              <div className="confirmation-buttons">
+                <button 
+                  className="cancel-button" 
+                  onClick={() => setShowConfirmation(false)}
+                  disabled={isResetting}
+                >
+                  Cancelar
+                </button>
+                <button 
+                  className="confirm-button" 
+                  onClick={handleResetOnboarding}
+                  disabled={isResetting}
+                >
+                  {isResetting ? 'Processando...' : 'Confirmar'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="settings-footer">
           <button className="logout-button" onClick={handleLogout}>

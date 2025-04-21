@@ -73,7 +73,13 @@ export const OnboardingProvider = ({ children }) => {
         resetAt: Timestamp.now()
       });
       
+      // Limpar o localStorage também
+      localStorage.removeItem('onboarding_progress');
+      localStorage.removeItem('onboarding_completed');
+      
       setOnboardingCompleted(false);
+      
+      // Retornar para indicar que o reset foi bem-sucedido
       return true;
     } catch (error) {
       console.error('Erro ao resetar onboarding:', error);
