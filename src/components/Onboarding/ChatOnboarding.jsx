@@ -11,7 +11,8 @@ import {
   ChatContainer,
   HeaderContainer,
   ProgressText,
-  MessagesContainer
+  MessagesContainer,
+  ResponseAreaContainer
 } from './OnboardingStyles';
 
 const ChatOnboarding = () => {
@@ -26,12 +27,41 @@ const ChatOnboarding = () => {
   const [isCompleted, setIsCompleted] = useState(false);
   const [showTyping, setShowTyping] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState(1);
+  const [darkMode, setDarkMode] = useState(
+    window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  );
   
-  // Ref para o container de mensagens (para auto-scroll)
+  // Refs para o container de mensagens e última mensagem (para auto-scroll)
+  const messagesContainerRef = useRef(null);
   const messagesEndRef = useRef(null);
   
   // Encontra o passo atual com base no ID
   const currentStep = onboardingSteps.find(step => step.id === currentStepId);
+  
+  // Detecta preferência de tema do sistema
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    const handleChange = (e) => {
+      setDarkMode(e.matches);
+    };
+    
+    // Adiciona ouvinte para mudanças no tema
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleChange);
+    } else {
+      // Para compatibilidade com navegadores mais antigos
+      mediaQuery.addListener(handleChange);
+    }
+    
+    return () => {
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener('change', handleChange);
+      } else {
+        mediaQuery.removeListener(handleChange);
+      }
+    };
+  }, []);
   
   // Inicializa a conversa com a primeira mensagem
   useEffect(() => {
@@ -52,9 +82,39 @@ const ChatOnboarding = () => {
   // Auto-scroll para a última mensagem quando novas mensagens são adicionadas
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      // Scroll imediato para o final ao adicionar mensagens
+      const scrollToBottom = () => {
+        messagesEndRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'end' 
+        });
+      };
+      
+      scrollToBottom();
+      
+      // Um segundo scroll após um pequeno delay, para garantir que
+      // todas as animações e renderizações tenham sido concluídas
+      const timer = setTimeout(scrollToBottom, 100);
+      return () => clearTimeout(timer);
     }
-  }, [messages]);
+  }, [messages, showTyping]);
+  
+  // Auto-scroll quando o passo muda
+  useEffect(() => {
+    // Garantir que sempre há espaço para visualizar opções/input
+    const scrollToEnd = () => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'end'
+        });
+      }
+    };
+    
+    // Pequeno delay para dar tempo aos componentes renderizarem
+    const timer = setTimeout(scrollToEnd, 400);
+    return () => clearTimeout(timer);
+  }, [currentStepId]);
   
   // Salva o progresso no localStorage
   useEffect(() => {
@@ -122,10 +182,35 @@ const ChatOnboarding = () => {
   const processUserResponse = (response) => {
     if (!currentStep) return;
     
-    // Adiciona a resposta do usuário às mensagens
+    // Formata a resposta para exibição amigável
+    let displayText = '';
+    
+    if (typeof response === 'object' && response !== null) {
+      if (response.label) {
+        displayText = response.label;
+      } else if (Array.isArray(response)) {
+        displayText = response.map(item => item.label).join(', ');
+      } else if (response.id === 'barking') {
+        displayText = 'Latidos excessivamente';
+      } else if (response.id === 'chewing') {
+        displayText = 'Mastiga objetos';
+      } else if (response.id && typeof response.id === 'string') {
+        // Humaniza outros IDs possíveis
+        displayText = response.id
+          .replace(/([A-Z])/g, ' $1') // Adiciona espaço antes de maiúsculas
+          .replace(/^./, str => str.toUpperCase()) // Capitaliza primeira letra
+          .trim();
+      } else {
+        displayText = 'Selecionado';
+      }
+    } else {
+      displayText = response;
+    }
+    
+    // Adiciona a resposta do usuário às mensagens com o texto formatado
     const userMessage = {
       id: `user-${Date.now()}`,
-      text: response.label || response,
+      text: displayText,
       type: 'user'
     };
     
@@ -248,12 +333,12 @@ const ChatOnboarding = () => {
   };
   
   return (
-    <ChatContainer>
+    <ChatContainer className={darkMode ? 'dark-mode' : 'light-mode'}>
       <HeaderContainer>
         <ProgressText>Etapa {currentStepIndex} de {onboardingSteps.length - 1}</ProgressText>
       </HeaderContainer>
       
-      <MessagesContainer>
+      <MessagesContainer ref={messagesContainerRef}>
         {messages.map(message => (
           <MessageBubble
             key={message.id}
@@ -268,7 +353,9 @@ const ChatOnboarding = () => {
         <div ref={messagesEndRef} />
       </MessagesContainer>
       
-      {renderResponseOptions()}
+      <ResponseAreaContainer>
+        {renderResponseOptions()}
+      </ResponseAreaContainer>
     </ChatContainer>
   );
 };
