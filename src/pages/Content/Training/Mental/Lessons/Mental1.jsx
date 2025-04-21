@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useDashboard } from "@/pages/Dashboard/contexts/DashboardContext";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { useFirestore } from "@/hooks/useFirestore";
+import { Timestamp } from 'firebase/firestore';
+import Mental1Image from '@/assets/images/training/Mental1.png';
 
 const LessonContainer = styled.div`
   padding: 2rem;
@@ -17,7 +22,7 @@ const Title = styled.h1`
 const CarouselContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 400px;
+  height: 600px;
   overflow: hidden;
 `;
 
@@ -25,23 +30,28 @@ const Slide = styled.div`
   position: absolute;
   width: 100%;
   height: 100%;
-  opacity: ${props => props.active ? 1 : 0};
-  transition: opacity 0.5s ease-in-out;
-  padding: 2rem;
+  opacity: ${props => (props.active ? 1 : 0)};
+  transition: opacity 0.3s ease-in-out;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  visibility: ${props => props.active ? 'visible' : 'hidden'};
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  pointer-events: ${props => props.active ? 'auto' : 'none'};
+  z-index: ${props => props.active ? 1 : 0};
 `;
 
 const SlideContent = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding-right: 1rem;
-  margin-right: -1rem;
+  padding: 2rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #4299E1 #F7FAFC;
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 60px; /* Espaço para os botões de navegação */
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -53,69 +63,70 @@ const SlideContent = styled.div`
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #CBD5E0;
+    background: #4299E1;
     border-radius: 4px;
-    transition: background 0.2s;
+  }
 
-    &:hover {
-      background: #A0AEC0;
-    }
+  &::-webkit-scrollbar-thumb:hover {
+    background: #3182CE;
   }
 `;
 
 const SlideTitle = styled.h2`
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   color: #2D3748;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
   text-align: center;
 `;
 
-const Text = styled.p`
-  color: #4A5568;
-  margin-bottom: 1rem;
+const ContentText = styled.p`
+  font-size: 1rem;
   line-height: 1.6;
+  color: #333;
+  margin-bottom: 15px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
 `;
 
-const StepList = styled.ol`
+const ExerciseSteps = styled.ol`
   list-style: none;
-  padding: 0;
-  margin-bottom: 1.5rem;
+  padding-left: 0;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
-const StepItem = styled.li`
-  color: #4A5568;
-  margin-bottom: 0.75rem;
-  padding-left: 1.5rem;
+const ExerciseStep = styled.li`
+  color: #2D3748;
+  padding: 1rem;
+  padding-left: 2.5rem;
   position: relative;
-  line-height: 1.6;
+  background: #F0FFF4;
+  border-radius: 8px;
+  border-left: 4px solid #48BB78;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #E6FFED;
+    transform: translateX(4px);
+  }
 
   &:before {
-    content: "1️⃣";
+    content: attr(data-step);
+    color: #48BB78;
+    font-weight: bold;
+    font-size: 1.2rem;
     position: absolute;
-    left: 0;
-  }
-
-  &:nth-child(2):before {
-    content: "2️⃣";
-  }
-
-  &:nth-child(3):before {
-    content: "3️⃣";
-  }
-
-  &:nth-child(4):before {
-    content: "4️⃣";
-  }
-
-  &:nth-child(5):before {
-    content: "5️⃣";
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
   }
 `;
 
 const SummaryList = styled.ul`
   list-style: none;
   padding: 0;
-  margin-bottom: 1.5rem;
 `;
 
 const SummaryItem = styled.li`
@@ -126,42 +137,27 @@ const SummaryItem = styled.li`
   line-height: 1.6;
 
   &:before {
-    content: "✔";
+    content: "✓";
     color: #48BB78;
     position: absolute;
     left: 0;
   }
 `;
 
-const ImageContainer = styled.div`
-  width: 100%;
-  height: 200px;
-  background: #F7FAFC;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-`;
-
-const ImagePlaceholder = styled.div`
-  color: #A0AEC0;
-  font-size: 1.1rem;
-`;
-
-const IntroductionText = styled.p`
-  color: #4A5568;
-  line-height: 1.6;
-  text-align: center;
-  font-size: 1.1rem;
-`;
-
 const NavigationButtons = styled.div`
   display: flex;
   justify-content: center;
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
 `;
 
 const Button = styled.button`
@@ -186,6 +182,7 @@ const Button = styled.button`
 const Dots = styled.div`
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 0.5rem;
   margin-top: 1rem;
 `;
@@ -199,174 +196,206 @@ const Dot = styled.div`
   transition: background 0.2s;
 `;
 
-const Card = styled.div`
+const ImageContainer = styled.div`
+  width: 100%;
+  height: 200px;
   background: #F7FAFC;
   border-radius: 8px;
-  padding: 1.5rem;
   margin-bottom: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 `;
 
-const CardTitle = styled.h3`
-  color: #2D3748;
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
+const StyledImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
 `;
 
-const BenefitsList = styled.ul`
+const IntroductionText = styled.p`
+  color: #4A5568;
+  line-height: 1.6;
+  text-align: center;
+  font-size: 1.1rem;
+`;
+
+const BulletList = styled.ul`
   list-style: none;
-  padding: 0;
-  margin: 0;
+  padding-left: 0;
+  margin-bottom: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 `;
 
-const BenefitItem = styled.li`
-  color: #4A5568;
-  padding: 1rem;
-  position: relative;
+const BulletItem = styled.li`
+  font-size: 1.1rem;
   line-height: 1.6;
-  background: white;
+  color: #2D3748;
+  padding: 1rem;
+  padding-left: 2.5rem;
+  position: relative;
+  background: #F7FAFC;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+  border-left: 4px solid #4299E1;
+  transition: all 0.2s ease;
 
   &:hover {
-    transform: translateX(5px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    background: #F7FAFC;
+    background: #EBF8FF;
+    transform: translateX(4px);
   }
 
   &:before {
-    content: "";
-    width: 24px;
-    height: 24px;
-    background: linear-gradient(135deg, #48BB78, #38A169);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
-    flex-shrink: 0;
-    box-shadow: 0 2px 4px rgba(72, 187, 120, 0.2);
-  }
-
-  &:nth-child(1):before {
-    content: "1";
-  }
-
-  &:nth-child(2):before {
-    content: "2";
-  }
-
-  &:nth-child(3):before {
-    content: "3";
-  }
-
-  &:nth-child(4):before {
-    content: "4";
-  }
-
-  &:nth-child(5):before {
-    content: "5";
+    content: "•";
+    color: #4299E1;
+    font-size: 2rem;
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
   }
 `;
 
-const BenefitText = styled.span`
-  flex: 1;
-  font-size: 1rem;
+const WarningList = styled.ul`
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const WarningItem = styled.li`
   color: #2D3748;
-`;
-
-const StepsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1.5rem;
-  perspective: 1000px;
-`;
-
-const StepCard = styled.div`
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  transform-style: preserve-3d;
+  padding: 1rem;
+  padding-left: 2.5rem;
   position: relative;
-  overflow: hidden;
+  background: #FFF5F5;
+  border-radius: 8px;
+  border-left: 4px solid #E53E3E;
+  transition: all 0.2s ease;
 
   &:hover {
-    transform: translateY(-5px) rotateX(5deg);
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+    background: #FFEBEB;
+    transform: translateX(4px);
   }
 
-  &::before {
-    content: '';
+  &:before {
+    content: "⚠";
+    color: #E53E3E;
+    font-size: 1.2rem;
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(90deg, #4299E1, #48BB78);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  &:hover::before {
-    opacity: 1;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
   }
 `;
 
-const StepNumber = styled.div`
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, #4299E1, #3182CE);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1.25rem;
-  font-weight: bold;
-  font-size: 1.25rem;
+const ContentSection = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 10px;
+  max-height: 420px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #4299E1 #F7FAFC;
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #F7FAFC;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #4299E1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #3182CE;
+  }
+`;
+
+const SectionTitle = styled.h3`
+  font-size: 1.8rem;
+  color: #2D3748;
+  margin-bottom: 2rem;
+  text-align: center;
+`;
+
+const SlideImage = styled.img`
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-
-  ${StepCard}:hover & {
-    transform: scale(1.1);
-  }
 `;
 
-const StepText = styled.p`
-  color: #4A5568;
-  line-height: 1.6;
-  margin: 0;
-  font-size: 1rem;
-  transition: color 0.3s ease;
-
-  ${StepCard}:hover & {
-    color: #2D3748;
-  }
-`;
-
-export default function MentalFun1({ onNextLesson }) {
+export default function Mental1({ onNextLesson }) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { user } = useAuthContext();
+  const { addDocument: addProgress } = useFirestore("progress");
+  const { updateTraining, refreshData } = useDashboard();
 
-  const nextSlide = () => {
-    if (currentSlide === 2) {
+  const nextSlide = async () => {
+    if (currentSlide === 3) {
+      // Salvar no localStorage primeiro
       localStorage.setItem("mental1_completed", "true");
-      // Força a atualização do estado
+      localStorage.setItem("mental2_unlocked", "true");
       window.dispatchEvent(new Event('storage'));
+      
+      // Avançar para a próxima lição imediatamente
       onNextLesson();
+      
+      // Tentar salvar no Firestore em segundo plano
+      try {
+        if (user) {
+          const progressData = {
+            lessonId: "mental1",
+            moduleId: "mental",
+            courseId: "9DwWIAtShVCPXyRPSbqF",
+            userId: user.uid,
+            status: "completed",
+            completedAt: Timestamp.fromDate(new Date()),
+            duration: 5
+          };
+          
+          // Usar Promise.race para não bloquear a navegação
+          Promise.race([
+            addProgress(progressData),
+            new Promise(resolve => setTimeout(resolve, 2000)) // Timeout de 2 segundos
+          ]).then(() => {
+            // Atualizar o dashboard em segundo plano
+            updateTraining({
+              completedLessons: 25,
+              currentLevel: 'advanced',
+              lastSession: new Date(),
+              totalTime: 305,
+              unlockedModules: ['startHere', 'hygiene', 'badhabits', 'mental']
+            }).catch(err => console.error("Erro ao atualizar dashboard:", err));
+            
+            refreshData().catch(err => console.error("Erro ao atualizar dados:", err));
+            
+            console.log("Progresso da lição Mental1 salvo com sucesso");
+          }).catch(error => {
+            console.error("Erro ao salvar progresso da lição:", error);
+          });
+        }
+      } catch (error) {
+        console.error("Erro ao processar progresso da lição:", error);
+      }
     } else {
-      setCurrentSlide((prev) => (prev + 1) % 3);
+      setCurrentSlide((prev) => (prev + 1) % 4);
     }
   };
 
@@ -378,107 +407,133 @@ export default function MentalFun1({ onNextLesson }) {
     setCurrentSlide(index);
   };
 
+  const slides = [
+    {
+      title: "Introdução ao Enriquecimento Mental",
+      content: (
+        <>
+          <SlideImage src={Mental1Image} alt="Cão brincando com brinquedos interativos" />
+          <ContentText>
+            Bem-vindo à aula sobre Brinquedos Interativos e Enriquecimento Ambiental! Nesta aula, você aprenderá como manter seu cão mentalmente estimulado através de atividades e brinquedos que desafiam sua inteligência.
+          </ContentText>
+          <ContentText>
+            O enriquecimento mental é tão importante quanto o exercício físico para a saúde e bem-estar do seu cão, ajudando a prevenir problemas comportamentais causados pelo tédio e falta de estímulo.
+          </ContentText>
+        </>
+      ),
+    },
+    {
+      title: "Benefícios do Enriquecimento Mental",
+      content: (
+        <>
+          <ContentText>
+            O enriquecimento mental oferece diversos benefícios para o seu cão, impactando positivamente sua saúde e comportamento.
+          </ContentText>
+          <BulletList>
+            <BulletItem>Reduz a ansiedade e o estresse, criando um estado mental mais equilibrado</BulletItem>
+            <BulletItem>Previne comportamentos destrutivos causados pelo tédio, como roer móveis e objetos</BulletItem>
+            <BulletItem>Estimula o desenvolvimento cognitivo, melhorando a capacidade de resolver problemas</BulletItem>
+            <BulletItem>Aumenta a confiança do cão ao superar desafios, reduzindo inseguranças</BulletItem>
+            <BulletItem>Fortalece o vínculo entre tutor e pet durante as atividades interativas</BulletItem>
+          </BulletList>
+          <ContentText>
+            Situações onde o enriquecimento mental é especialmente importante:
+          </ContentText>
+          <WarningList>
+            <WarningItem>Cães que ficam sozinhos por longos períodos, reduzindo o estresse da separação</WarningItem>
+            <WarningItem>Pets convalescentes ou com mobilidade reduzida, que precisam de estímulo sem esforço físico</WarningItem>
+            <WarningItem>Cães idosos, para manter a mente ativa e prevenir o declínio cognitivo</WarningItem>
+            <WarningItem>Filhotes em desenvolvimento, estimulando o aprendizado e a curiosidade natural</WarningItem>
+            <WarningItem>Cães muito ativos mentalmente, que precisam de desafios constantes</WarningItem>
+          </WarningList>
+        </>
+      ),
+    },
+    {
+      title: "Tipos de Enriquecimento Mental",
+      content: (
+        <>
+          <ContentText>
+            Existem diversas formas de proporcionar enriquecimento mental para seu cão:
+          </ContentText>
+          <ExerciseSteps>
+            <ExerciseStep data-step="1">Brinquedos interativos: Quebra-cabeças, brinquedos que liberam petiscos e mordedores recheáveis estimulam o raciocínio</ExerciseStep>
+            <ExerciseStep data-step="2">Jogos de farejar: Esconda petiscos pela casa ou jardim para estimular o olfato e a busca</ExerciseStep>
+            <ExerciseStep data-step="3">Treinamento de truques: Ensine novos comandos e habilidades, desafiando seu cão a aprender</ExerciseStep>
+            <ExerciseStep data-step="4">Rotação de brinquedos: Alterne os brinquedos disponíveis para manter a novidade e o interesse</ExerciseStep>
+            <ExerciseStep data-step="5">Mudanças no ambiente: Altere os arranjos de móveis ou crie túneis e obstáculos pela casa</ExerciseStep>
+          </ExerciseSteps>
+          <ContentText>
+            Dicas importantes para o sucesso:
+          </ContentText>
+          <BulletList>
+            <BulletItem>Comece com desafios simples e aumente gradualmente a dificuldade</BulletItem>
+            <BulletItem>Observe o que mais interessa seu cão e adapte as atividades às suas preferências</BulletItem>
+            <BulletItem>Reveze entre diferentes tipos de enriquecimento para manter o interesse</BulletItem>
+            <BulletItem>Dedique pelo menos 15-30 minutos diários para atividades de estimulação mental</BulletItem>
+            <BulletItem>Participe das atividades junto com seu cão para fortalecer o vínculo</BulletItem>
+            <BulletItem>Recompense e comemore os sucessos, mantendo a experiência positiva e motivadora</BulletItem>
+          </BulletList>
+        </>
+      ),
+    },
+    {
+      title: "Resumo Rápido",
+      content: (
+        <>
+          <BulletList>
+            <BulletItem>O enriquecimento mental é fundamental para o bem-estar do seu cão</BulletItem>
+            <BulletItem>Utilize brinquedos interativos, jogos de farejar e treinamento de novos truques</BulletItem>
+            <BulletItem>Reduza problemas comportamentais oferecendo estímulos mentais adequados</BulletItem>
+            <BulletItem>Varie as atividades para manter o interesse e o engajamento do seu cão</BulletItem>
+            <BulletItem>Dedique tempo diário para desafios mentais, assim como faz com exercícios físicos</BulletItem>
+            <BulletItem>Observe as preferências do seu cão e adapte as atividades às suas necessidades</BulletItem>
+            <BulletItem>Aumente gradualmente a dificuldade dos desafios conforme seu cão progride</BulletItem>
+            <BulletItem>Celebre os sucessos e mantenha uma experiência positiva de aprendizado</BulletItem>
+            <BulletItem>Utilize o enriquecimento mental em todas as fases da vida do seu cão</BulletItem>
+            <BulletItem>Combine diferentes tipos de estímulos para atender às diversas necessidades do seu pet</BulletItem>
+          </BulletList>
+        </>
+      ),
+    },
+  ];
+
   return (
     <LessonContainer>
-      <Title>Brinquedos Interativos e Enriquecimento Ambiental</Title>
+      <Title>
+        Brinquedos Interativos e Enriquecimento Ambiental
+        {localStorage.getItem("mental1_completed") === "true" && (
+          <span className="ml-2 text-green-500">✓</span>
+        )}
+      </Title>
       
       <CarouselContainer>
-        {/* Slide 0: Introdução com Imagem */}
-        <Slide active={currentSlide === 0}>
-          <SlideTitle>Bem-vindo à Aula!</SlideTitle>
-          <ImageContainer>
-            <ImagePlaceholder>Imagem ilustrativa de cão brincando com brinquedos interativos</ImagePlaceholder>
-          </ImageContainer>
-          <IntroductionText>
-            Nesta aula, vamos aprender como usar brinquedos interativos e técnicas de enriquecimento ambiental para manter seu cão mentalmente estimulado.
-          </IntroductionText>
-        </Slide>
-
-        {/* Slide 1: Por que ensinar */}
-        <Slide active={currentSlide === 1}>
-          <SlideTitle>Por que ensinar?</SlideTitle>
-          <SlideContent>
-            <Card>
-              <CardTitle>Benefícios do Enriquecimento Ambiental</CardTitle>
-              <BenefitsList>
-                <BenefitItem>
-                  <BenefitText>Mantém o cão mentalmente estimulado e ativo</BenefitText>
-                </BenefitItem>
-                <BenefitItem>
-                  <BenefitText>Reduz comportamentos destrutivos e ansiedade</BenefitText>
-                </BenefitItem>
-                <BenefitItem>
-                  <BenefitText>Promove o bem-estar físico e mental</BenefitText>
-                </BenefitItem>
-                <BenefitItem>
-                  <BenefitText>Fortalecimento do vínculo entre tutor e cão</BenefitText>
-                </BenefitItem>
-                <BenefitItem>
-                  <BenefitText>Desenvolvimento de habilidades cognitivas</BenefitText>
-                </BenefitItem>
-              </BenefitsList>
-            </Card>
-          </SlideContent>
-        </Slide>
-
-        {/* Slide 2: Passo a Passo */}
-        <Slide active={currentSlide === 2}>
-          <SlideTitle>Passo a Passo</SlideTitle>
-          <SlideContent>
-            <StepsGrid>
-              <StepCard>
-                <StepNumber>1</StepNumber>
-                <StepText>Escolha brinquedos interativos: Mordedores recheáveis, brinquedos que liberam petiscos e quebra-cabeças para cães são ótimos para estimulação mental.</StepText>
-              </StepCard>
-              <StepCard>
-                <StepNumber>2</StepNumber>
-                <StepText>Varie os brinquedos: Alterne os brinquedos para evitar que o cão perca o interesse.</StepText>
-              </StepCard>
-              <StepCard>
-                <StepNumber>3</StepNumber>
-                <StepText>Crie desafios: Esconda petiscos pela casa e incentive o cão a encontrá-los.</StepText>
-              </StepCard>
-              <StepCard>
-                <StepNumber>4</StepNumber>
-                <StepText>Estimule diferentes sentidos: Use brinquedos de texturas variadas, sons e cheiros para manter o cão engajado.</StepText>
-              </StepCard>
-              <StepCard>
-                <StepNumber>5</StepNumber>
-                <StepText>Dê novos desafios semanalmente: Mudar a posição da caminha, trocar os brinquedos e criar novos jogos ajudam o cão a se adaptar e aprender.</StepText>
-              </StepCard>
-            </StepsGrid>
-          </SlideContent>
-        </Slide>
-
-        {/* Slide 3: Resumo Rápido */}
-        <Slide active={currentSlide === 3}>
-          <SlideTitle>Resumo Rápido</SlideTitle>
-          <SummaryList>
-            <SummaryItem>Ofereça brinquedos interativos e desafios novos.</SummaryItem>
-            <SummaryItem>Esconda petiscos para estimular o faro.</SummaryItem>
-            <SummaryItem>Mantenha a variedade para evitar tédio.</SummaryItem>
-          </SummaryList>
-        </Slide>
-      </CarouselContainer>
-
-      <NavigationButtons>
-        <Button onClick={prevSlide} disabled={currentSlide === 0}>
-          Anterior
-        </Button>
-        <Button onClick={nextSlide}>
-          {currentSlide === 3 ? "Próxima Aula" : "Próximo"}
-        </Button>
-      </NavigationButtons>
-
-      <Dots>
-        {[0, 1, 2, 3].map((index) => (
-          <Dot
-            key={index}
-            active={currentSlide === index}
-            onClick={() => goToSlide(index)}
-          />
+        {slides.map((slide, index) => (
+          <Slide key={index} active={currentSlide === index}>
+            <SlideContent>
+              <SlideTitle>{slide.title}</SlideTitle>
+              {slide.content}
+            </SlideContent>
+          </Slide>
         ))}
-      </Dots>
+        <NavigationButtons>
+          <Button onClick={prevSlide} disabled={currentSlide === 0}>
+            Anterior
+          </Button>
+          <Dots>
+            {slides.map((_, index) => (
+              <Dot
+                key={index}
+                active={currentSlide === index}
+                onClick={() => goToSlide(index)}
+              />
+            ))}
+          </Dots>
+          <Button onClick={nextSlide}>
+            {currentSlide === 3 ? "Próxima Aula" : "Próximo"}
+          </Button>
+        </NavigationButtons>
+      </CarouselContainer>
     </LessonContainer>
   );
 } 
