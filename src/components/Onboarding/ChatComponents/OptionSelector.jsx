@@ -5,28 +5,20 @@ import { OptionsContainer, OptionButton, MultiOptionButton, ConfirmButton } from
 const OptionSelector = ({ options, onSelect, delay = 300, multiSelect = false }) => {
   const [visible, setVisible] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState([]);
-  const [showHint, setShowHint] = useState(false);
   
   useEffect(() => {
     // Adiciona um delay antes de mostrar as opções
     const timer = setTimeout(() => {
       setVisible(true);
-      
-      // Mostrar dica após 1.5s se o usuário não selecionar
-      setTimeout(() => {
-        setShowHint(true);
-      }, 1500);
     }, delay);
     
     return () => clearTimeout(timer);
   }, [delay]);
   
+  // Não renderiza nada até que seja visível
   if (!visible) return null;
   
   const handleSelect = (option) => {
-    // Esconder dica quando o usuário seleciona uma opção
-    setShowHint(false);
-    
     if (multiSelect) {
       // Para múltipla seleção
       const isSelected = selectedOptions.find(opt => opt.id === option.id);
@@ -50,54 +42,35 @@ const OptionSelector = ({ options, onSelect, delay = 300, multiSelect = false })
     return selectedOptions.some(opt => opt.id === optionId);
   };
   
-  // Mover o botão de confirmar para o topo se tivermos muitas opções
-  const totalOptions = options.length;
-  const showConfirmAtTop = totalOptions > 4 && multiSelect && selectedOptions.length > 0;
-  
   // Verificar se estamos no primeiro passo (welcome)
   const isFirstStep = options.length === 1 && options[0].id === 'start';
 
   return (
-    <OptionsContainer style={{ 
+    <div style={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      gap: '8px',
       width: '100%',
-      background: 'transparent',
-      padding: '10px 0',
-      marginBottom: 0,
+      maxWidth: '500px',
+      margin: '0 auto'
     }}>
-      {showHint && isFirstStep && (
-        <div style={{
-          position: 'absolute',
-          top: '-25px',
-          width: '100%',
-          textAlign: 'center',
-          color: '#4a89dc',
-          fontSize: '14px',
-          animation: 'bounce 1s infinite',
-          left: 0
+      {multiSelect && selectedOptions.length > 0 && (
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'flex-end', 
+          marginTop: '10px', 
+          marginBottom: '5px'
         }}>
-          <span>👇 Clique para continuar</span>
-          <style>
-            {`
-              @keyframes bounce {
-                0%, 100% { transform: translateY(0); }
-                50% { transform: translateY(-5px); }
-              }
-            `}
-          </style>
+          <ConfirmButton
+            onClick={() => onSelect(selectedOptions)}
+            $index={options.length}
+            style={{ width: 'auto', padding: '8px 16px' }}
+          >
+            Confirmar ({selectedOptions.length} selecionado{selectedOptions.length !== 1 ? 's' : ''})
+          </ConfirmButton>
         </div>
       )}
-    
-      {showConfirmAtTop && (
-        <ConfirmButton
-          onClick={() => onSelect(selectedOptions)}
-          $index={0} // Renderizar primeiro
-          className="option-button"
-          style={{ marginBottom: '10px' }}
-        >
-          Confirmar ({selectedOptions.length} selecionado{selectedOptions.length !== 1 ? 's' : ''})
-        </ConfirmButton>
-      )}
-    
+      
       {options.map((option, index) => (
         multiSelect ? (
           <MultiOptionButton
@@ -106,6 +79,11 @@ const OptionSelector = ({ options, onSelect, delay = 300, multiSelect = false })
             onClick={() => handleSelect(option)}
             $selected={isSelected(option.id)}
             className={`multi-option-button ${isSelected(option.id) ? 'selected' : ''}`}
+            style={{ 
+              borderRadius: '12px',
+              maxWidth: '100%',
+              alignSelf: 'flex-start'
+            }}
           >
             {option.label || (typeof option === 'string' ? option : JSON.stringify(option))}
           </MultiOptionButton>
@@ -116,34 +94,27 @@ const OptionSelector = ({ options, onSelect, delay = 300, multiSelect = false })
             onClick={() => handleSelect(option)}
             className="option-button"
             style={{
-              animation: showHint && isFirstStep ? 'pulse 1.5s infinite' : undefined
+              borderRadius: '12px',
+              maxWidth: isFirstStep ? '100%' : '90%',
+              alignSelf: isFirstStep ? 'center' : 'flex-start',
+              padding: isFirstStep ? '15px 20px' : '12px 16px',
+              fontSize: isFirstStep ? '16px' : '15px',
+              fontWeight: isFirstStep ? '600' : '500',
+              textAlign: isFirstStep ? 'center' : 'left',
+              display: 'block',
+              width: '100%',
+              backgroundColor: isFirstStep ? '#4a89dc' : 'white',
+              color: isFirstStep ? 'white' : 'inherit',
+              boxShadow: isFirstStep ? '0 4px 10px rgba(74, 137, 220, 0.3)' : '0 2px 6px rgba(0, 0, 0, 0.05)',
+              border: isFirstStep ? 'none' : '1px solid rgba(0, 0, 0, 0.1)',
+              margin: isFirstStep ? '10px auto' : '5px 0'
             }}
           >
             {option.label || (typeof option === 'string' ? option : JSON.stringify(option))}
-            {showHint && isFirstStep && (
-              <style>
-                {`
-                  @keyframes pulse {
-                    0%, 100% { box-shadow: 0 0 8px rgba(74, 137, 220, 0.3); }
-                    50% { box-shadow: 0 0 12px rgba(74, 137, 220, 0.7); }
-                  }
-                `}
-              </style>
-            )}
           </OptionButton>
         )
       ))}
-      
-      {multiSelect && selectedOptions.length > 0 && !showConfirmAtTop && (
-        <ConfirmButton
-          onClick={() => onSelect(selectedOptions)}
-          $index={options.length}
-          className="option-button"
-        >
-          Confirmar ({selectedOptions.length} selecionado{selectedOptions.length !== 1 ? 's' : ''})
-        </ConfirmButton>
-      )}
-    </OptionsContainer>
+    </div>
   );
 };
 

@@ -7,12 +7,12 @@ import MessageBubble from './ChatComponents/MessageBubble';
 import OptionSelector from './ChatComponents/OptionSelector';
 import TextInputField from './ChatComponents/TextInputField';
 import TypingIndicator from './ChatComponents/TypingIndicator';
+import StartButton from './ChatComponents/StartButton';
 import {
   ChatContainer,
   HeaderContainer,
   ProgressText,
-  MessagesContainer,
-  ResponseAreaContainer
+  MessagesContainer
 } from './OnboardingStyles';
 
 const ChatOnboarding = () => {
@@ -30,6 +30,14 @@ const ChatOnboarding = () => {
   const [darkMode, setDarkMode] = useState(
     window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
   );
+  
+  // Estado para garantir que as opções só apareçam quando a animação de digitação estiver completa
+  const [messageTypingComplete, setMessageTypingComplete] = useState(true);
+  
+  // Efeito para logar quando o estado messageTypingComplete muda
+  useEffect(() => {
+    console.log('Estado messageTypingComplete mudou:', messageTypingComplete);
+  }, [messageTypingComplete]);
   
   // Refs para o container de mensagens e última mensagem (para auto-scroll)
   const messagesContainerRef = useRef(null);
@@ -66,15 +74,21 @@ const ChatOnboarding = () => {
   // Inicializa a conversa com a primeira mensagem
   useEffect(() => {
     if (messages.length === 0 && currentStep) {
+      // Marca que a digitação vai começar
+      setMessageTypingComplete(false);
+      
       // Simula um pequeno delay antes de mostrar a primeira mensagem
       setTimeout(() => {
         const message = typeof currentStep.message === 'function'
-          ? currentStep.message(petData)
+          ? currentStep.message(petData.petName, petData.petType, petData)
           : currentStep.message;
           
         setMessages([
           { id: `system-${Date.now()}`, text: message, type: 'system' }
         ]);
+        
+        // Nota: não definimos setMessageTypingComplete(true) aqui
+        // isso será feito pelo callback onTypingComplete no MessageBubble
       }, 500);
     }
   }, [messages, currentStep, petData]);
@@ -207,6 +221,9 @@ const ChatOnboarding = () => {
       displayText = response;
     }
     
+    // Marca que uma nova mensagem vai começar a ser digitada
+    setMessageTypingComplete(false);
+    
     // Adiciona a resposta do usuário às mensagens com o texto formatado
     const userMessage = {
       id: `user-${Date.now()}`,
@@ -302,14 +319,31 @@ const ChatOnboarding = () => {
         };
         
         setMessages(prev => [...prev, systemMessage]);
+        
+        // Aguarda um tempo para garantir que a mensagem seja processada
+        // antes de permitir a exibição das opções de resposta
+        // Não definimos messageTypingComplete=true aqui - isso será feito pelo callback onTypingComplete
       }
     }, 1500);
   };
   
   // Renderiza as opções de resposta com base na etapa atual
   const renderResponseOptions = () => {
-    if (!currentStep || isCompleted || showTyping) return null;
+    // Retorna null se não tiver passo atual, se estiver completado ou se estiver digitando
+    if (!currentStep || isCompleted || showTyping || !messageTypingComplete) return null;
     
+    // Etapa de boas-vindas com botão personalizado
+    if (currentStep.id === 'welcome' && currentStep.options && currentStep.options.length === 1) {
+      return (
+        <StartButton 
+          option={currentStep.options[0]} 
+          onSelect={processUserResponse}
+          delay={300}
+        />
+      );
+    }
+    
+    // Entrada de texto
     if (currentStep.input) {
       return (
         <TextInputField
@@ -319,12 +353,14 @@ const ChatOnboarding = () => {
       );
     }
     
+    // Opções normais
     if (currentStep.options) {
       return (
         <OptionSelector
           options={currentStep.options}
           onSelect={processUserResponse}
           multiSelect={currentStep.multiSelect}
+          delay={300}
         />
       );
     }
@@ -339,23 +375,32 @@ const ChatOnboarding = () => {
       </HeaderContainer>
       
       <MessagesContainer ref={messagesContainerRef}>
-        {messages.map(message => (
+        {messages.map((message, index) => (
           <MessageBubble
             key={message.id}
             message={message.text}
             isUser={message.type === 'user'}
             showInstantly={message.showInstantly}
+            onTypingComplete={index === messages.length - 1 && !message.isUser ? () => {
+              // Atraso para garantir que não haja conflito na renderização
+              setTimeout(() => {
+                setMessageTypingComplete(true);
+              }, 200);
+            } : undefined}
           />
         ))}
         
         {showTyping && <TypingIndicator />}
         
+        {/* Renderiza as opções apenas quando a digitação estiver completa e não houver indicador de digitação */}
+        {!showTyping && currentStep && !isCompleted && messageTypingComplete && (
+          <div style={{ paddingTop: '10px', paddingBottom: '25px' }}>
+            {renderResponseOptions()}
+          </div>
+        )}
+        
         <div ref={messagesEndRef} />
       </MessagesContainer>
-      
-      <ResponseAreaContainer>
-        {renderResponseOptions()}
-      </ResponseAreaContainer>
     </ChatContainer>
   );
 };

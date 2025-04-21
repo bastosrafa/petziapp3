@@ -3,9 +3,9 @@ export const onboardingSteps = [
   // Etapa 1 - Boas-vindas
   {
     id: 'welcome',
-    message: 'Olá! Seja bem-vindo ao Petzia, o app que vai ajudar você a treinar e cuidar do seu pet. Vamos configurar o perfil do seu amigo de quatro patas?',
+    message: 'Olá! Sou o Tobias e vou ajudar você a configurar seu perfil! 🐾\n\nVamos começar?',
     options: [
-      { id: 'start', label: 'Vamos começar!' }
+      { id: 'start', label: 'Vamos lá! 👋' }
     ],
     nextStep: 'pet-name'
   },
