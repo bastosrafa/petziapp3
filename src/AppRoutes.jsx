@@ -115,7 +115,7 @@ export default function AppRoutes() {
                       element={<HygieneModule />}
                     />
                     <Route
-                      path="/content/training/bad-habits"
+                      path="/content/training/badhabits"
                       element={<BadHabitsModule />}
                     />
                     <Route

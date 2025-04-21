@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import BadHabits1 from "./Lessons/BadHabits1";
@@ -104,6 +104,27 @@ const badHabitsModule = trainingModules.find(m => m.id === "badhabits");
 function BadHabitsModule() {
   const navigate = useNavigate();
   const [selectedLesson, setSelectedLesson] = useState(null);
+  const [moduleUnlocked, setModuleUnlocked] = useState(false);
+
+  useEffect(() => {
+    // Verificar se o módulo está desbloqueado
+    const isUnlocked = localStorage.getItem("badhabits_unlocked") === "true";
+    setModuleUnlocked(isUnlocked);
+    
+    // Se o módulo não estiver desbloqueado, redirecionar para a página de treinamento
+    if (!isUnlocked) {
+      navigate("/content/training");
+    }
+    
+    // Adicionar event listener para atualizar o estado se houver mudanças no localStorage
+    const handleStorageChange = () => {
+      const unlocked = localStorage.getItem("badhabits_unlocked") === "true";
+      setModuleUnlocked(unlocked);
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [navigate]);
 
   const lessons = [
     {
@@ -112,7 +133,7 @@ function BadHabitsModule() {
       description: "Como controlar mordidas e mastigação excessiva",
       duration: "15 min",
       component: BadHabits1,
-      locked: !localStorage.getItem("badhabits1_unlocked") === "true",
+      locked: localStorage.getItem("badhabits1_unlocked") !== "true",
     },
     {
       id: "badhabits2",
@@ -159,6 +180,10 @@ function BadHabitsModule() {
     }
   };
 
+  if (!moduleUnlocked) {
+    return null; // Evitar renderização enquanto redireciona
+  }
+
   if (selectedLesson) {
     const LessonComponent = selectedLesson.component;
     return (
@@ -172,9 +197,9 @@ function BadHabitsModule() {
     <Container>
       <Header>
         <BackButton onClick={handleBack}>Voltar</BackButton>
-        <Title>{badHabitsModule.title}</Title>
+        <Title>{badHabitsModule ? badHabitsModule.title : "Evitando Maus Hábitos ⚠️"}</Title>
       </Header>
-      <Description>{badHabitsModule.description}</Description>
+      <Description>{badHabitsModule ? badHabitsModule.description : "Prevenção e correção de comportamentos indesejados"}</Description>
       <LessonsGrid>
         {lessons.map((lesson) => (
           <LessonCard 

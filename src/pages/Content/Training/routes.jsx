@@ -13,7 +13,7 @@ const TrainingRoutes = () => {
       <Route path="/basic-commands" element={<BasicCommands />} />
       <Route path="/socialization" element={<Socialization />} />
       <Route path="/advanced-commands" element={<AdvancedCommands />} />
-      <Route path="/bad-habits" element={<BadHabits />} />
+      <Route path="/badhabits" element={<BadHabits />} />
     </Routes>
   );
 };

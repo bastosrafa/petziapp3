@@ -24,11 +24,11 @@ export const modules = [
     path: '/advanced-commands'
   },
   {
-    id: 'bad-habits',
+    id: 'badhabits',
     title: 'Maus Hábitos',
     description: 'Como identificar e corrigir comportamentos indesejados',
     icon: '🚫',
     isUnlocked: false,
-    path: '/bad-habits'
+    path: '/badhabits'
   }
 ]; 
