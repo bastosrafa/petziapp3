@@ -136,7 +136,7 @@ export default function WalkForm({ onClose, onSuccess }) {
     try {
       const result = await addDocument({
         ...formData,
-        date: Timestamp.fromDate(new Date(formData.date)),
+        date: Timestamp.fromDate(combineDateAndTime(formData.date, formData.time)),
         userId: user.uid,
         createdAt: Timestamp.now()
       });
@@ -166,6 +166,16 @@ export default function WalkForm({ onClose, onSuccess }) {
         variant: "destructive",
       });
     }
+  };
+
+  // Função para combinar data e hora em um único objeto Date
+  const combineDateAndTime = (dateString, timeString) => {
+    const [year, month, day] = dateString.split('-').map(num => parseInt(num, 10));
+    const [hours, minutes] = timeString.split(':').map(num => parseInt(num, 10));
+    
+    // Mês em JavaScript é 0-indexed (0-11 em vez de 1-12)
+    const date = new Date(year, month - 1, day, hours, minutes);
+    return date;
   };
 
   return (

@@ -75,7 +75,7 @@ const ActionButton = styled.button`
   padding: 5px;
   
   &:hover {
-    color: ${(props) => (props.delete ? "#dc3545" : "#007bff")};
+    color: ${(props) => (props.$delete ? "#dc3545" : "#007bff")};
   }
 `;
 
@@ -454,7 +454,7 @@ export default function DiaryList({ category, columns }) {
                     <ChevronUp size={18} /> : 
                     <ChevronDown size={18} />
                   }
-                  <ActionButton delete onClick={(e) => {
+                  <ActionButton $delete onClick={(e) => {
                     e.stopPropagation();
                     handleDelete(record.id);
                   }}>

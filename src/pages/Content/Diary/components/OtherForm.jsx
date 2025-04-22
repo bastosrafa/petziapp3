@@ -93,6 +93,7 @@ const OtherForm = ({ onClose, onSuccess }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [time, setTime] = useState(new Date().toTimeString().slice(0, 5));
   const { addDocument } = useFirestore('diary');
   const { user } = useAuthContext();
   const { toast } = useToast();
@@ -104,7 +105,7 @@ const OtherForm = ({ onClose, onSuccess }) => {
         type: 'other',
         title,
         description,
-        date: Timestamp.fromDate(new Date(date)),
+        date: Timestamp.fromDate(combineDateAndTime(date, time)),
         userId: user.uid,
         createdAt: Timestamp.now(),
         category: "outros"
@@ -137,6 +138,16 @@ const OtherForm = ({ onClose, onSuccess }) => {
     }
   };
 
+  // Função para combinar data e hora em um único objeto Date
+  const combineDateAndTime = (dateString, timeString) => {
+    const [year, month, day] = dateString.split('-').map(num => parseInt(num, 10));
+    const [hours, minutes] = timeString.split(':').map(num => parseInt(num, 10));
+    
+    // Mês em JavaScript é 0-indexed (0-11 em vez de 1-12)
+    const date = new Date(year, month - 1, day, hours, minutes);
+    return date;
+  };
+
   return (
     <FormContainer>
       <FormTitle>Novo Registro</FormTitle>
@@ -152,15 +163,27 @@ const OtherForm = ({ onClose, onSuccess }) => {
           />
         </FormGroup>
 
-        <FormGroup>
-          <Label>Data</Label>
-          <Input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            required
-          />
-        </FormGroup>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+          <FormGroup>
+            <Label>Data</Label>
+            <Input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              required
+            />
+          </FormGroup>
+
+          <FormGroup>
+            <Label>Hora</Label>
+            <Input
+              type="time"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              required
+            />
+          </FormGroup>
+        </div>
 
         <FormGroup>
           <Label>Descrição</Label>
