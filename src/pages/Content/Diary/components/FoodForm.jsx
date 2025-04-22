@@ -117,7 +117,7 @@ const Grid = styled.div`
   gap: 20px;
 `;
 
-export default function FoodForm({ onClose }) {
+export default function FoodForm({ onClose, onSuccess }) {
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0],
     time: new Date().toTimeString().slice(0, 5),
@@ -147,6 +147,9 @@ export default function FoodForm({ onClose }) {
           description: "Registro de alimentação adicionado com sucesso.",
           variant: "default",
         });
+        if (onSuccess) {
+          onSuccess();
+        }
         onClose();
       } else {
         toast({

@@ -11,6 +11,12 @@ import WeightForm from "./components/WeightForm";
 import WalkForm from "./components/WalkForm";
 import FoodForm from "./components/FoodForm";
 import OtherForm from "./components/OtherForm";
+import VeterinaryList from "./components/CategoryLists/VeterinaryList";
+import WeightList from "./components/CategoryLists/WeightList";
+import WalkList from "./components/CategoryLists/WalkList";
+import FoodList from "./components/CategoryLists/FoodList";
+import OtherList from "./components/CategoryLists/OtherList";
+import DiaryTabView from "./components/DiaryTabView";
 
 const Container = styled.div`
   padding: 20px;
@@ -81,6 +87,7 @@ const categories = [
     description: "Registre consultas, exames e procedimentos veterinários",
     color: "bg-blue-500",
     form: VeterinaryForm,
+    list: VeterinaryList
   },
   {
     id: "peso",
@@ -89,6 +96,7 @@ const categories = [
     description: "Acompanhe o peso e medidas do seu pet",
     color: "bg-green-500",
     form: WeightForm,
+    list: WeightList
   },
   {
     id: "passeios",
@@ -97,6 +105,7 @@ const categories = [
     description: "Registre os passeios e atividades físicas",
     color: "bg-purple-500",
     form: WalkForm,
+    list: WalkList
   },
   {
     id: "alimentacao",
@@ -105,6 +114,7 @@ const categories = [
     description: "Controle a alimentação e dieta do seu pet",
     color: "bg-orange-500",
     form: FoodForm,
+    list: FoodList
   },
   {
     id: "outros",
@@ -113,6 +123,7 @@ const categories = [
     description: "Registre outros acontecimentos importantes",
     color: "bg-gray-500",
     form: OtherForm,
+    list: OtherList
   },
 ];
 
@@ -127,12 +138,20 @@ export default function Diary() {
     }
   };
 
-  const renderForm = () => {
+  const renderContent = () => {
     const category = categories.find(c => c.id === selectedCategory);
-    if (!category?.form) return null;
+    if (!category) return null;
 
     const FormComponent = category.form;
-    return <FormComponent onClose={() => setIsDialogOpen(false)} />;
+    const ListComponent = category.list;
+
+    return (
+      <DiaryTabView
+        category={category.id}
+        formComponent={<FormComponent onClose={() => setIsDialogOpen(false)} />}
+        listComponent={<ListComponent />}
+      />
+    );
   };
 
   return (
@@ -141,7 +160,7 @@ export default function Diary() {
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl">
-          {renderForm()}
+          {renderContent()}
         </DialogContent>
       </Dialog>
 

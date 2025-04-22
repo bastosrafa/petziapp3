@@ -3,6 +3,7 @@ import { useFirestore } from "@/hooks/useFirestore";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { Timestamp } from 'firebase/firestore';
 import styled from "styled-components";
+import { useToast } from "@/shadcn/components/ui/use-toast";
 
 const FormContainer = styled.div`
   padding: 20px;
@@ -88,29 +89,51 @@ const CancelButton = styled(Button)`
   }
 `;
 
-const OtherForm = ({ onClose }) => {
+const OtherForm = ({ onClose, onSuccess }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const { addDocument } = useFirestore('diary');
   const { user } = useAuthContext();
+  const { toast } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      await addDocument({
+      const result = await addDocument({
         type: 'other',
         title,
         description,
         date: Timestamp.fromDate(new Date(date)),
         userId: user.uid,
-        createdAt: Timestamp.now()
+        createdAt: Timestamp.now(),
+        category: "outros"
       });
 
-      onClose();
+      if (result && result.type === 'SUCCESS') {
+        toast({
+          title: "Sucesso!",
+          description: "Registro adicionado com sucesso.",
+          variant: "default",
+        });
+        if (onSuccess) {
+          onSuccess();
+        }
+        onClose();
+      } else {
+        toast({
+          title: "Erro",
+          description: "Não foi possível adicionar o registro. Tente novamente.",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       console.error('Error adding record:', error);
+      toast({
+        title: "Erro",
+        description: "Ocorreu um erro ao adicionar o registro. Tente novamente.",
+        variant: "destructive",
+      });
     }
   };
 

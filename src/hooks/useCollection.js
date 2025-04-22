@@ -68,7 +68,7 @@ export const useCollection = (
       (error) => {
         console.log("Erro na coleção ", coll);
         console.log(error);
-        setError("Could not list transactions.");
+        setError(error.message || "Could not list transactions.");
       }
     );
 
