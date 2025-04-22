@@ -5,12 +5,25 @@ import { useAuthContext } from "@/hooks/useAuthContext";
 import styled from "styled-components";
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, AlertTriangle } from "lucide-react";
 import { useToast } from "@/shadcn/components/ui/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/shadcn/components/ui/alert-dialog";
 
 // Estilos
 const ListContainer = styled.div`
   margin-top: 20px;
+  max-height: calc(100vh - 250px);
+  overflow-y: auto;
+  padding-right: 5px;
 `;
 
 const Heading = styled.h3`
@@ -42,6 +55,25 @@ const RecordHeader = styled.div`
   padding: 12px 15px;
   background: #f5f5f5;
   cursor: pointer;
+  transition: background-color 0.2s, border-radius 0.3s;
+  position: relative;
+  border-radius: ${props => props.expanded === 'true' ? '8px 8px 0 0' : '8px'};
+  
+  &:hover {
+    background-color: #e9e9e9;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 15px;
+    right: 15px;
+    height: 1px;
+    background-color: #e0e0e0;
+    opacity: ${props => props.expanded === 'true' ? '1' : '0'};
+    transition: opacity 0.2s;
+  }
 `;
 
 const RecordDate = styled.div`
@@ -55,9 +87,25 @@ const RecordTime = styled.span`
 `;
 
 const RecordDetails = styled.div`
-  padding: 15px;
+  padding: 0;
   background: white;
-  display: ${(props) => (props.isOpen ? "block" : "none")};
+  height: ${props => props.expanded === 'true' ? 'auto' : '0'};
+  max-height: ${props => props.expanded === 'true' ? '1000px' : '0'};
+  overflow: hidden;
+  opacity: ${props => props.expanded === 'true' ? '1' : '0'};
+  transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
+  border-top: ${props => props.expanded === 'true' ? '1px solid #eee' : 'none'};
+  border-radius: 0 0 8px 8px;
+  margin-top: ${props => props.expanded === 'true' ? '-1px' : '0'};
+`;
+
+const RecordDetailsInner = styled.div`
+  padding: 15px;
+  opacity: ${props => props.expanded === 'true' ? '1' : '0'};
+  transition: opacity 0.2s ease-in-out;
+  transition-delay: ${props => props.expanded === 'true' ? '0.1s' : '0'};
+  max-height: 400px;
+  overflow-y: auto;
 `;
 
 const RecordActions = styled.div`
@@ -81,16 +129,26 @@ const ActionButton = styled.button`
 
 const DetailItem = styled.div`
   margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
 `;
 
 const DetailLabel = styled.span`
-  font-weight: 500;
-  color: #666;
-  margin-right: 8px;
+  font-weight: 600;
+  color: #4a4a4a;
+  margin-bottom: 2px;
 `;
 
 const DetailValue = styled.span`
-  color: #333;
+  color: #666;
+  margin-left: 4px;
+`;
+
+const DetailSeparator = styled.hr`
+  margin: 15px 0;
+  border: 0;
+  height: 1px;
+  background-color: #eee;
 `;
 
 const FilterControls = styled.div`
@@ -191,6 +249,38 @@ const StatLabel = styled.div`
   margin-top: 5px;
 `;
 
+const ChevronIcon = styled.div`
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease;
+  transform: ${props => props.expanded === 'true' ? 'rotate(180deg)' : 'rotate(0)'};
+`;
+
+const CategoryBadge = styled.div`
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: white;
+  background-color: ${props => {
+    switch (props.category) {
+      case 'veterinario': return '#4a90e2';
+      case 'peso': return '#50b83c';
+      case 'passeio': return '#9c6ade';
+      case 'alimentacao': return '#f49342';
+      default: return '#637381';
+    }
+  }};
+`;
+
+const EmptyDetailsMessage = styled.div`
+  color: #666;
+  font-style: italic;
+  padding: 10px 0;
+  text-align: center;
+`;
+
 export default function DiaryList({ category, columns }) {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -199,6 +289,10 @@ export default function DiaryList({ category, columns }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 5;
+  
+  // Estado para controlar o diálogo de confirmação
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [recordToDelete, setRecordToDelete] = useState(null);
   
   const { deleteDocument } = useFirestore('diary');
   const { user } = useAuthContext();
@@ -215,8 +309,26 @@ export default function DiaryList({ category, columns }) {
     // Processar os documentos quando eles mudarem
     if (documents) {
       try {
-        // Filtrar por categoria
-        let categoryFiltered = documents.filter(doc => doc.category === category);
+        // Debugging - Verificar todas as categorias disponíveis
+        console.log('Todas as categorias disponíveis:', documents.map(doc => doc.category));
+        console.log('Categoria que estamos filtrando:', category);
+        
+        // Filtrar por categoria - permitir correspondências parciais
+        let categoryFiltered = documents.filter(doc => {
+          // Correspondência exata
+          if (doc.category === category) return true;
+          
+          // Correspondências alternativas para possíveis diferenças de nomenclatura
+          if (category === 'veterinario' && (doc.category === 'vet' || doc.category === 'veterinária' || doc.category === 'veterinaria')) return true;
+          if (category === 'passeio' && (doc.category === 'passeios' || doc.category === 'walk')) return true;
+          if (category === 'alimentacao' && (doc.category === 'alimentação' || doc.category === 'comida' || doc.category === 'food')) return true;
+          if (category === 'peso' && (doc.category === 'weight' || doc.category === 'medidas')) return true;
+          if (category === 'outros' && (doc.category === 'other' || doc.category === 'outro')) return true;
+          
+          return false;
+        });
+        
+        console.log('Registros filtrados por categoria:', categoryFiltered.length);
         
         // Ordenar por data (decrescente)
         categoryFiltered.sort((a, b) => {
@@ -271,6 +383,13 @@ export default function DiaryList({ category, columns }) {
         setRecords(filteredData);
         // Resetar para a primeira página quando mudar os filtros
         setCurrentPage(1);
+        
+        // Inicializar o estado de expansão para cada registro
+        const initialExpanded = {};
+        filteredData.forEach(record => {
+          initialExpanded[record.id] = false;
+        });
+        setExpandedRecords(initialExpanded);
       } catch (error) {
         console.error("Erro ao processar documentos:", error);
         toast({
@@ -282,7 +401,7 @@ export default function DiaryList({ category, columns }) {
         setLoading(false);
       }
     }
-  }, [documents, filter, searchTerm, category, toast, user?.uid]);
+  }, [documents, filter, searchTerm, category, toast, user?.uid, columns]);
 
   // Exibir mensagem de erro se houver problema na consulta
   useEffect(() => {
@@ -302,11 +421,17 @@ export default function DiaryList({ category, columns }) {
   }, [error, category, toast, documents]);
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Tem certeza que deseja excluir este registro?")) return;
+    // Abrir diálogo de confirmação
+    setRecordToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+  
+  const confirmDelete = async () => {
+    if (!recordToDelete) return;
     
     try {
-      await deleteDocument(id);
-      setRecords(prev => prev.filter(record => record.id !== id));
+      await deleteDocument(recordToDelete);
+      setRecords(prev => prev.filter(record => record.id !== recordToDelete));
       toast({
         title: "Sucesso!",
         description: "Registro excluído com sucesso.",
@@ -319,6 +444,9 @@ export default function DiaryList({ category, columns }) {
         description: "Não foi possível excluir o registro. Tente novamente.",
         variant: "destructive",
       });
+    } finally {
+      setDeleteDialogOpen(false);
+      setRecordToDelete(null);
     }
   };
 
@@ -329,26 +457,75 @@ export default function DiaryList({ category, columns }) {
     }));
   };
 
-  const formatDate = (date) => {
-    try {
-      if (!date) return 'Data não disponível';
-      const dateObj = date.toDate ? date.toDate() : new Date(date);
-      return format(dateObj, "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
-    } catch (error) {
-      console.error("Erro ao formatar data:", error, date);
-      return 'Data inválida';
-    }
+  // Formata o nome do campo para exibição
+  const formatFieldName = (fieldName) => {
+    // Mapeamento de nomes de campos para exibição amigável
+    const fieldMap = {
+      title: 'Título',
+      description: 'Descrição',
+      location: 'Local',
+      vetName: 'Veterinário',
+      procedure: 'Procedimento',
+      reason: 'Motivo',
+      nextAppointment: 'Próxima consulta',
+      notes: 'Notas',
+      weight: 'Peso',
+      food: 'Alimentação',
+      quantity: 'Quantidade',
+      distance: 'Distância',
+      duration: 'Duração',
+      place: 'Local'
+    };
+    
+    // Retorna o nome mapeado ou capitaliza a primeira letra
+    return fieldMap[fieldName] || 
+      fieldName.charAt(0).toUpperCase() + 
+      fieldName.replace(/([A-Z])/g, ' $1').slice(1);
   };
 
-  const formatTime = (date) => {
-    try {
-      if (!date) return '';
-      const dateObj = date.toDate ? date.toDate() : new Date(date);
-      return format(dateObj, "HH:mm");
-    } catch (error) {
-      console.error("Erro ao formatar hora:", error, date);
-      return '';
+  // Formata a data para exibição
+  const formatDate = (date) => {
+    if (!date) return '';
+    
+    // Verifica se é um timestamp do Firestore
+    if (date.toDate && typeof date.toDate === 'function') {
+      date = date.toDate();
     }
+    
+    // Converte string para objeto Date se necessário
+    if (typeof date === 'string') {
+      date = new Date(date);
+    }
+    
+    return date instanceof Date 
+      ? date.toLocaleDateString('pt-BR', { 
+          day: '2-digit', 
+          month: '2-digit', 
+          year: 'numeric'
+        })
+      : date.toString();
+  };
+  
+  // Formata a hora para exibição
+  const formatTime = (date) => {
+    if (!date) return '';
+    
+    // Verifica se é um timestamp do Firestore
+    if (date.toDate && typeof date.toDate === 'function') {
+      date = date.toDate();
+    }
+    
+    // Converte string para objeto Date se necessário
+    if (typeof date === 'string') {
+      date = new Date(date);
+    }
+    
+    return date instanceof Date 
+      ? date.toLocaleTimeString('pt-BR', { 
+          hour: '2-digit', 
+          minute: '2-digit'
+        })
+      : '';
   };
 
   // Calcular estatísticas
@@ -387,9 +564,140 @@ export default function DiaryList({ category, columns }) {
   const prevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
   const nextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
 
+  // Função para formatar os valores baseados em tipo
+  const formatFieldValue = (key, value) => {
+    if (!value) return '';
+    
+    // Adicionar formatação específica para determinados tipos de campo
+    switch (key) {
+      case 'weight':
+        return `${value} kg`;
+      case 'height':
+      case 'length':
+        return `${value} cm`;
+      case 'duration':
+        return `${value} minutos`;
+      case 'nextAppointment':
+        return formatDate(value);
+      default:
+        return value;
+    }
+  };
+
+  // Função que renderiza os detalhes de acordo com a categoria do registro
+  const renderDetailsByCategory = (record, columns) => {
+    // Remove debug logs
+    if (!record) return <p>Nenhum detalhe adicional disponível</p>;
+    
+    const category = record.category || 'outros';
+    
+    // Special case for veterinary visits
+    if (category === 'veterinario') {
+      const fields = [];
+      
+      // Add veterinary specific fields
+      if (record.title) fields.push({ name: 'Título', value: record.title });
+      if (record.description) fields.push({ name: 'Descrição', value: record.description });
+      if (record.location) fields.push({ name: 'Localização', value: record.location });
+      
+      // Add any other fields from the record that aren't handled above
+      Object.entries(record).forEach(([key, value]) => {
+        // Skip fields already handled or internal fields
+        if (['title', 'description', 'location', 'category', 'date', 'userId', 'createdAt', 'id', 'time'].includes(key)) {
+          return;
+        }
+        
+        if (value && typeof value === 'string' && value.trim() !== '') {
+          fields.push({ name: formatFieldName(key), value });
+        }
+      });
+      
+      if (fields.length === 0) {
+        return <p>Nenhum detalhe adicional disponível</p>;
+      }
+      
+      return (
+        <div>
+          {fields.map((field, index) => (
+            <DetailItem key={index}>
+              <DetailLabel>{field.name}:</DetailLabel>
+              <DetailValue>{field.value}</DetailValue>
+            </DetailItem>
+          ))}
+        </div>
+      );
+    }
+    
+    // For other categories, use the configured columns or fallback to all fields
+    if (columns && columns.length > 0) {
+      const filteredColumns = columns.filter(col => 
+        record[col.field] !== undefined && 
+        record[col.field] !== null &&
+        record[col.field] !== '' &&
+        col.field !== 'time');
+        
+      if (filteredColumns.length > 0) {
+        return (
+          <div>
+            {filteredColumns.map((column, index) => (
+              <DetailItem key={index}>
+                <DetailLabel>{column.title || formatFieldName(column.field)}:</DetailLabel>
+                <DetailValue>{record[column.field]}</DetailValue>
+              </DetailItem>
+            ))}
+          </div>
+        );
+      }
+    }
+    
+    // Fallback to display all non-empty fields
+    const details = Object.entries(record)
+      .filter(([key, value]) => 
+        !['category', 'date', 'userId', 'createdAt', 'id', 'time'].includes(key) && 
+        value !== undefined && 
+        value !== null && 
+        value !== ''
+      )
+      .map(([key, value], index) => (
+        <DetailItem key={index}>
+          <DetailLabel>{formatFieldName(key)}:</DetailLabel>
+          <DetailValue>{value}</DetailValue>
+        </DetailItem>
+      ));
+      
+    return details.length > 0 
+      ? <div>{details}</div> 
+      : <p>Nenhum detalhe adicional disponível</p>;
+  };
+
   return (
     <ListContainer>
       <Heading>Histórico de Registros</Heading>
+      
+      {/* AlertDialog para confirmação de exclusão */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className="border-none shadow-lg">
+          <AlertDialogHeader>
+            <div className="flex items-center justify-center mb-2">
+              <AlertTriangle className="text-red-500 mr-2" size={24} />
+              <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+            </div>
+            <AlertDialogDescription className="text-center">
+              Tem certeza que deseja excluir este registro?
+              <br />Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-gray-100 hover:bg-gray-200 text-gray-800 border-none">Cancelar</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDelete} 
+              className="bg-red-500 hover:bg-red-600 text-white border-none"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       
       <StatsContainer>
         <StatCard>
@@ -444,41 +752,41 @@ export default function DiaryList({ category, columns }) {
         <>
           {currentRecords.map((record) => (
             <RecordItem key={record.id}>
-              <RecordHeader onClick={() => toggleRecordExpanded(record.id)}>
+              <RecordHeader 
+                onClick={() => toggleRecordExpanded(record.id)} 
+                expanded={expandedRecords[record.id] ? 'true' : 'false'}
+              >
                 <RecordDate>
                   {formatDate(record.date)}
                   <RecordTime>{formatTime(record.date)}</RecordTime>
                 </RecordDate>
-                <RecordActions onClick={e => e.stopPropagation()}>
-                  {expandedRecords[record.id] ? 
-                    <ChevronUp size={18} /> : 
-                    <ChevronDown size={18} />
-                  }
-                  <ActionButton $delete onClick={(e) => {
-                    e.stopPropagation();
-                    handleDelete(record.id);
-                  }}>
+                <RecordActions>
+                  <ActionButton 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleRecordExpanded(record.id);
+                    }}
+                  >
+                    <ChevronIcon expanded={expandedRecords[record.id] ? 'true' : 'false'}>
+                      <ChevronDown size={18} />
+                    </ChevronIcon>
+                  </ActionButton>
+                  <ActionButton 
+                    $delete 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(record.id);
+                    }}
+                  >
                     <Trash2 size={18} />
                   </ActionButton>
                 </RecordActions>
               </RecordHeader>
               
-              <RecordDetails isOpen={expandedRecords[record.id]}>
-                {columns.map((column) => (
-                  record[column.key] && (
-                    <DetailItem key={column.key}>
-                      <DetailLabel>{column.label}:</DetailLabel>
-                      <DetailValue>{record[column.key]}</DetailValue>
-                    </DetailItem>
-                  )
-                ))}
-                
-                {record.notes && (
-                  <DetailItem>
-                    <DetailLabel>Observações:</DetailLabel>
-                    <DetailValue>{record.notes}</DetailValue>
-                  </DetailItem>
-                )}
+              <RecordDetails expanded={expandedRecords[record.id] ? 'true' : 'false'}>
+                <RecordDetailsInner expanded={expandedRecords[record.id] ? 'true' : 'false'}>
+                  {renderDetailsByCategory(record, columns)}
+                </RecordDetailsInner>
               </RecordDetails>
             </RecordItem>
           ))}
