@@ -385,76 +385,146 @@ export const dashboardService = {
       const latestDiaryEntries = await dashboardService.getLatestDiaryEntries(userId);
       console.log('Entradas mais recentes do diário:', latestDiaryEntries);
       
-      // Atualizar dados de passeio a partir do diário
+      // Adicionar as entradas mais recentes diretamente ao objeto principal do dashboard
+      // Primeiro, adicionar a entrada de passeio mais recente
       if (latestDiaryEntries.passeio) {
-        if (!dashboardData.activities) {
-          dashboardData.activities = {};
+        // Verificar se a data está disponível e válida
+        if (latestDiaryEntries.passeio.date && !isNaN(latestDiaryEntries.passeio.date.getTime())) {
+          console.log('Data válida do último passeio encontrada:', latestDiaryEntries.passeio.date.toLocaleString());
+          
+          // Garantir que a data seja tanto date quanto timestamp
+          if (!latestDiaryEntries.passeio.timestamp) {
+            latestDiaryEntries.passeio.timestamp = latestDiaryEntries.passeio.date;
+          }
+          
+          // Criar cópia limpa do objeto para evitar referências circulares ou problemas de serialização
+          const walkEntry = {
+            ...latestDiaryEntries.passeio,
+            date: latestDiaryEntries.passeio.date,
+            timestamp: latestDiaryEntries.passeio.date
+          };
+          
+          dashboardData.lastWalkEntry = walkEntry;
+          console.log('Último passeio adicionado como lastWalkEntry com timestamp válido');
+          
+          // Manter a retrocompatibilidade com a estrutura antiga do dashboard
+          if (!dashboardData.activities) {
+            dashboardData.activities = {};
+          }
+          if (!dashboardData.activities.walk) {
+            dashboardData.activities.walk = { lastEntry: null, totalEntries: 0, streak: 0 };
+          }
+          
+          // Criar um objeto de lastEntry compatível com a estrutura do dashboard
+          dashboardData.activities.walk.lastEntry = {
+            timestamp: latestDiaryEntries.passeio.date,
+            details: walkEntry,
+            type: 'walk'
+          };
+          
+          console.log('Último passeio atualizado na estrutura antiga');
+        } else {
+          console.error('Data do último passeio é inválida ou não está disponível');
         }
-        if (!dashboardData.activities.walk) {
-          dashboardData.activities.walk = { lastEntry: null, totalEntries: 0, streak: 0 };
-        }
-        
-        // Verificar se a data está disponível
-        const walkDate = latestDiaryEntries.passeio.date;
-        console.log('Data do último passeio:', walkDate);
-        
-        // Criar um objeto de lastEntry compatível com a estrutura do dashboard
-        dashboardData.activities.walk.lastEntry = {
-          timestamp: walkDate,
-          details: latestDiaryEntries.passeio,
-          type: 'walk'
-        };
-        
-        console.log('Último passeio atualizado:', dashboardData.activities.walk.lastEntry);
+      } else {
+        console.log('Nenhum registro de passeio encontrado');
       }
       
-      // Atualizar dados de alimentação a partir do diário
+      // Depois, adicionar a entrada de alimentação mais recente
       if (latestDiaryEntries.alimentacao) {
-        if (!dashboardData.activities) {
-          dashboardData.activities = {};
+        // Verificar se a data está disponível e válida
+        if (latestDiaryEntries.alimentacao.date && !isNaN(latestDiaryEntries.alimentacao.date.getTime())) {
+          console.log('Data válida da última alimentação encontrada:', latestDiaryEntries.alimentacao.date.toLocaleString());
+          console.log('Intervalo de alimentação configurado:', latestDiaryEntries.alimentacao.feedingInterval || '8 (padrão)');
+          
+          // Garantir que a data seja tanto date quanto timestamp
+          if (!latestDiaryEntries.alimentacao.timestamp) {
+            latestDiaryEntries.alimentacao.timestamp = latestDiaryEntries.alimentacao.date;
+          }
+          
+          // Criar cópia limpa do objeto para evitar referências circulares ou problemas de serialização
+          const foodEntry = {
+            ...latestDiaryEntries.alimentacao,
+            date: latestDiaryEntries.alimentacao.date,
+            timestamp: latestDiaryEntries.alimentacao.date
+          };
+          
+          dashboardData.lastFoodEntry = foodEntry;
+          console.log('Última alimentação adicionada como lastFoodEntry com timestamp válido');
+          
+          // Manter a retrocompatibilidade com a estrutura antiga do dashboard
+          if (!dashboardData.activities) {
+            dashboardData.activities = {};
+          }
+          if (!dashboardData.activities.food) {
+            dashboardData.activities.food = { lastEntry: null, totalEntries: 0, streak: 0 };
+          }
+          
+          // Criar um objeto de lastEntry compatível com a estrutura do dashboard
+          dashboardData.activities.food.lastEntry = {
+            timestamp: latestDiaryEntries.alimentacao.date,
+            details: foodEntry,
+            type: 'food'
+          };
+          
+          console.log('Última alimentação atualizada na estrutura antiga');
+        } else {
+          console.error('Data da última alimentação é inválida ou não está disponível');
         }
-        if (!dashboardData.activities.food) {
-          dashboardData.activities.food = { lastEntry: null, totalEntries: 0, streak: 0 };
-        }
-        
-        // Verificar se a data está disponível
-        const foodDate = latestDiaryEntries.alimentacao.date;
-        console.log('Data da última alimentação:', foodDate);
-        
-        // Criar um objeto de lastEntry compatível com a estrutura do dashboard
-        dashboardData.activities.food.lastEntry = {
-          timestamp: foodDate,
-          details: latestDiaryEntries.alimentacao,
-          type: 'food'
-        };
-        
-        console.log('Última alimentação atualizada:', dashboardData.activities.food.lastEntry);
+      } else {
+        console.log('Nenhum registro de alimentação encontrado');
       }
       
       // Também atualizar o dashboard no Firestore com estes dados mais recentes
       try {
         const updateData = {};
         
-        if (latestDiaryEntries.passeio && latestDiaryEntries.passeio.date) {
+        if (latestDiaryEntries.passeio && latestDiaryEntries.passeio.date && !isNaN(latestDiaryEntries.passeio.date.getTime())) {
+          // Preparar dados para Firestore (Firestore não aceita objetos Date diretamente)
+          const walkEntryForFirestore = {...latestDiaryEntries.passeio};
+          
+          // Converter Date para Timestamp do Firestore
+          walkEntryForFirestore.date = Timestamp.fromDate(latestDiaryEntries.passeio.date);
+          walkEntryForFirestore.timestamp = Timestamp.fromDate(latestDiaryEntries.passeio.date);
+          
+          // Atualizar a nova estrutura
+          updateData.lastWalkEntry = walkEntryForFirestore;
+          
+          // Manter a retrocompatibilidade
           updateData['activities.walk.lastEntry'] = {
-            timestamp: latestDiaryEntries.passeio.date,
-            details: latestDiaryEntries.passeio,
+            timestamp: Timestamp.fromDate(latestDiaryEntries.passeio.date),
+            details: walkEntryForFirestore,
             type: 'walk'
           };
         }
         
-        if (latestDiaryEntries.alimentacao && latestDiaryEntries.alimentacao.date) {
+        if (latestDiaryEntries.alimentacao && latestDiaryEntries.alimentacao.date && !isNaN(latestDiaryEntries.alimentacao.date.getTime())) {
+          // Preparar dados para Firestore (Firestore não aceita objetos Date diretamente)
+          const foodEntryForFirestore = {...latestDiaryEntries.alimentacao};
+          
+          // Converter Date para Timestamp do Firestore
+          foodEntryForFirestore.date = Timestamp.fromDate(latestDiaryEntries.alimentacao.date);
+          foodEntryForFirestore.timestamp = Timestamp.fromDate(latestDiaryEntries.alimentacao.date);
+          
+          // Atualizar a nova estrutura
+          updateData.lastFoodEntry = foodEntryForFirestore;
+          
+          // Manter a retrocompatibilidade
           updateData['activities.food.lastEntry'] = {
-            timestamp: latestDiaryEntries.alimentacao.date,
-            details: latestDiaryEntries.alimentacao,
+            timestamp: Timestamp.fromDate(latestDiaryEntries.alimentacao.date),
+            details: foodEntryForFirestore,
             type: 'food'
           };
         }
         
         if (Object.keys(updateData).length > 0) {
           updateData.lastUpdated = serverTimestamp();
-          console.log('Atualizando dashboard com:', updateData);
+          console.log('Atualizando dashboard com dados de timestamp para Firestore');
+          
           await updateDoc(dashboardRef, updateData);
+          console.log('Dashboard atualizado com sucesso no Firestore');
+        } else {
+          console.log('Nenhum dado para atualizar no dashboard');
         }
       } catch (updateError) {
         console.error('Erro ao atualizar dashboard com dados do diário:', updateError);
@@ -532,7 +602,21 @@ export const dashboardService = {
       console.log(`Encontrados ${querySnapshot.size} registros de diário`);
       querySnapshot.docs.forEach(doc => {
         const data = doc.data();
-        console.log(`ID: ${doc.id}, Categoria: ${data.category}, Data: ${data.date ? (data.date.toDate ? data.date.toDate().toISOString() : data.date) : 'sem data'}`);
+        let dateString = 'sem data';
+        try {
+          if (data.date) {
+            if (data.date.toDate) {
+              dateString = data.date.toDate().toISOString();
+            } else if (data.date.seconds) {
+              dateString = new Date(data.date.seconds * 1000).toISOString();
+            } else {
+              dateString = String(data.date);
+            }
+          }
+        } catch (e) {
+          dateString = `Erro ao processar data: ${e.message}`;
+        }
+        console.log(`ID: ${doc.id}, Categoria: ${data.category}, Data: ${dateString}`);
       });
       
       // Ordenar todos os registros por data, do mais recente para o mais antigo
@@ -554,6 +638,7 @@ export const dashboardService = {
             // Objeto com seconds
             if (date.seconds) return date.seconds * 1000;
           } catch (e) {
+            console.error("Erro ao processar data para ordenação:", e, date);
             return 0;
           }
         };
@@ -563,7 +648,27 @@ export const dashboardService = {
       
       console.log("Registros ordenados:");
       allRecords.slice(0, 5).forEach((record, index) => {
-        console.log(`${index + 1}: Categoria: ${record.category}, Data: ${record.date ? (record.date.toDate ? record.date.toDate().toISOString() : record.date) : 'sem data'}`);
+        let dateInfo = 'sem data';
+        try {
+          if (record.date) {
+            if (record.date.toDate) {
+              dateInfo = record.date.toDate().toLocaleString();
+            } else if (record.date.seconds) {
+              dateInfo = new Date(record.date.seconds * 1000).toLocaleString();
+            } else if (record.date instanceof Date) {
+              dateInfo = record.date.toLocaleString();
+            } else {
+              dateInfo = String(record.date);
+            }
+          }
+        } catch (e) {
+          dateInfo = `Erro ao processar data: ${e.message}`;
+        }
+        
+        console.log(`${index + 1}: Categoria: ${record.category}, Data: ${dateInfo}`);
+        if (record.category === 'alimentacao' || record.category === 'alimentação') {
+          console.log(`   Intervalo de alimentação: ${record.feedingInterval || 'não definido'}`);
+        }
       });
       
       // Uma vez que temos todos os registros ordenados, filtramos por categoria
@@ -581,39 +686,74 @@ export const dashboardService = {
         );
         
         if (matchingRecord) {
-          console.log(`Registro encontrado para ${category}:`, matchingRecord);
-          
-          // Converter Timestamp para Date
-          let entryDate = null;
-          if (matchingRecord.date) {
-            try {
-              // Se for um timestamp do Firestore
-              if (matchingRecord.date.toDate) {
-                entryDate = matchingRecord.date.toDate();
-              }
-              // Se for uma string ou Date
-              else if (typeof matchingRecord.date === 'string' || matchingRecord.date instanceof Date) {
-                entryDate = new Date(matchingRecord.date);
-              }
-              // Se for um objeto com seconds (formato Firestore timestamp)
-              else if (matchingRecord.date.seconds) {
-                entryDate = new Date(matchingRecord.date.seconds * 1000);
-              }
-              
-              console.log(`Data convertida para ${category}:`, entryDate);
-            } catch (error) {
-              console.error(`Erro ao converter data para ${category}:`, error);
-              entryDate = null;
+          console.log(`Registro encontrado para ${category}:`, JSON.stringify(matchingRecord, (key, value) => {
+            if (value && typeof value === 'object' && value.toDate) {
+              return `Timestamp: ${value.toDate().toLocaleString()}`;
             }
+            return value;
+          }));
+          
+          // Se for um registro de alimentação, verificar se tem o intervalo configurado
+          if (category === 'alimentacao' && !matchingRecord.feedingInterval) {
+            console.log(`Intervalo de alimentação não encontrado, usando padrão de 8 horas`);
+            matchingRecord.feedingInterval = "8"; // Valor padrão se não estiver definido
           }
           
+          // Converter Timestamp para Date
+          let parsedDate = null;
+          
+          try {
+            if (matchingRecord.date) {
+              if (matchingRecord.date.toDate) {
+                parsedDate = matchingRecord.date.toDate();
+                console.log(`Data convertida via toDate(): ${parsedDate.toLocaleString()}`);
+              } else if (matchingRecord.date.seconds) {
+                parsedDate = new Date(matchingRecord.date.seconds * 1000);
+                console.log(`Data convertida via seconds: ${parsedDate.toLocaleString()}`);
+              } else if (typeof matchingRecord.date === 'string') {
+                parsedDate = new Date(matchingRecord.date);
+                console.log(`Data convertida via construtor Date (string): ${parsedDate.toLocaleString()}`);
+              } else if (matchingRecord.date instanceof Date) {
+                parsedDate = matchingRecord.date;
+                console.log(`Data mantida como objeto Date: ${parsedDate.toLocaleString()}`);
+              }
+              
+              // Verificar se a data é válida
+              if (!parsedDate || isNaN(parsedDate.getTime())) {
+                console.error("Data inválida após conversão:", parsedDate);
+                parsedDate = null;
+              } else {
+                console.log(`Data válida convertida para ${category}: ${parsedDate.toLocaleString()}`);
+              }
+            }
+          } catch (error) {
+            console.error(`Erro ao converter data para ${category}:`, error);
+            parsedDate = null;
+          }
+          
+          // Garantir que tenhamos um timestamp válido
+          if (!parsedDate) {
+            console.error(`ATENÇÃO: Não foi possível converter a data para ${category}. Vai ficar null.`);
+          }
+          
+          // Criar um objeto limpo para o resultado
+          const recordClone = {...matchingRecord};
+          delete recordClone.date; // Remover o objeto date original para evitar inconsistências
+          
           results[category] = {
+            ...recordClone,
             id: matchingRecord.id,
-            ...matchingRecord,
-            date: entryDate || matchingRecord.date // Manter o formato original se a conversão falhar
+            date: parsedDate, // Usar a data convertida
+            timestamp: parsedDate // Garantir que temos o mesmo valor em ambos os campos
           };
           
           console.log(`Resultado final para ${category}:`, results[category]);
+          if (results[category].date) {
+            console.log(`Data final para ${category}: ${results[category].date.toLocaleString()}`);
+          } else {
+            console.error(`NENHUMA DATA VÁLIDA PARA ${category}`);
+          }
+          
         } else {
           console.log(`Nenhum registro de ${category} encontrado`);
           results[category] = null;
