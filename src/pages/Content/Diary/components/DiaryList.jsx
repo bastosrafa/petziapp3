@@ -633,8 +633,7 @@ export default function DiaryList({ category, columns }) {
       const filteredColumns = columns.filter(col => 
         record[col.field] !== undefined && 
         record[col.field] !== null &&
-        record[col.field] !== '' &&
-        col.field !== 'time');
+        record[col.field] !== '');
         
       if (filteredColumns.length > 0) {
         return (
