@@ -24,7 +24,7 @@ export function VaccineProvider({ children }) {
 
     const q = query(
       collection(db, "users", user.uid, "health_records"),
-      orderBy("date", "asc")
+      orderBy("date", "desc")
     );
 
     const unsubscribe = onSnapshot(q, 
@@ -72,9 +72,14 @@ export function VaccineProvider({ children }) {
     if (!user) return;
 
     try {
-      await updateDoc(doc(db, "users", user.uid, "health_records", vaccineId), {
-        status,
-      });
+      const updateData = { status };
+      
+      // Se o status for "Aplicada", adiciona a data de aplicação
+      if (status === "Aplicada") {
+        updateData.appliedDate = new Date();
+      }
+      
+      await updateDoc(doc(db, "users", user.uid, "health_records", vaccineId), updateData);
     } catch (err) {
       console.error("Erro ao atualizar status da vacina:", err);
       setError(err.message);

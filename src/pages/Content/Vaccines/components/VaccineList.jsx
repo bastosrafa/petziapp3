@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "@/shadcn/components/ui/use-toast";
 import { useState } from "react";
+import { CheckCircle } from "lucide-react";
 
 const Container = styled.div`
   padding: 20px;
@@ -88,16 +89,29 @@ const Badge = styled.span`
 `;
 
 const Button = styled.button`
-  padding: 6px 12px;
-  border: 1px solid #ddd;
+  padding: 6px 10px;
+  border: none;
   border-radius: 4px;
-  background: white;
-  color: #333;
+  background: #007bff;
+  color: white;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+  font-size: 13px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   &:hover {
-    background: #f8f9fa;
+    background: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -158,7 +172,14 @@ export default function VaccineList() {
   };
 
   const pendingVaccines = vaccines.filter((v) => v.status === "Pendente");
-  const appliedVaccines = vaccines.filter((v) => v.status === "Aplicada");
+  
+  const appliedVaccines = vaccines
+    .filter((v) => v.status === "Aplicada")
+    .sort((a, b) => {
+      const dateA = a.appliedDate ? new Date(a.appliedDate) : new Date(a.date);
+      const dateB = b.appliedDate ? new Date(b.appliedDate) : new Date(b.date);
+      return dateB - dateA;
+    });
 
   console.log("Vacinas filtradas:", { 
     total: vaccines.length, 
@@ -232,6 +253,7 @@ export default function VaccineList() {
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
                     <Badge>Pendente</Badge>
                     <Button onClick={() => handleStatusUpdate(vaccine.id, "Aplicada")}>
+                      <CheckCircle size={14} />
                       Marcar como Aplicada
                     </Button>
                   </div>
@@ -252,9 +274,11 @@ export default function VaccineList() {
                     <VaccineTitle>{vaccine.name}</VaccineTitle>
                     <VaccineInfo>Tipo: {vaccine.type}</VaccineInfo>
                     <VaccineInfo>
-                      Data: {vaccine.date && !isNaN(new Date(vaccine.date).getTime()) 
-                        ? format(new Date(vaccine.date), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
-                        : "Data não disponível"}
+                      Data: {vaccine.appliedDate && !isNaN(new Date(vaccine.appliedDate).getTime()) 
+                        ? format(new Date(vaccine.appliedDate), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
+                        : vaccine.date && !isNaN(new Date(vaccine.date).getTime())
+                          ? format(new Date(vaccine.date), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
+                          : "Data não disponível"}
                     </VaccineInfo>
                     {vaccine.notes && (
                       <VaccineInfo>Obs: {vaccine.notes}</VaccineInfo>
