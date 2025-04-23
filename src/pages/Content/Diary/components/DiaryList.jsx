@@ -21,9 +21,28 @@ import {
 // Estilos
 const ListContainer = styled.div`
   margin-top: 20px;
-  max-height: calc(100vh - 250px);
+  max-height: 80vh;
   overflow-y: auto;
   padding-right: 5px;
+  
+  /* Estilo da barra de rolagem */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f5f5f5;
+    border-radius: 10px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #d1d1d1;
+    border-radius: 10px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: #b8b8b8;
+  }
 `;
 
 const Heading = styled.h3`
@@ -104,8 +123,6 @@ const RecordDetailsInner = styled.div`
   opacity: ${props => props.expanded === 'true' ? '1' : '0'};
   transition: opacity 0.2s ease-in-out;
   transition-delay: ${props => props.expanded === 'true' ? '0.1s' : '0'};
-  max-height: 400px;
-  overflow-y: auto;
 `;
 
 const RecordActions = styled.div`
@@ -128,20 +145,35 @@ const ActionButton = styled.button`
 `;
 
 const DetailItem = styled.div`
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   display: flex;
   flex-direction: column;
+  
+  @media (min-width: 640px) {
+    flex-direction: row;
+    align-items: flex-start;
+  }
 `;
 
 const DetailLabel = styled.span`
   font-weight: 600;
-  color: #4a4a4a;
-  margin-bottom: 2px;
+  color: #555;
+  margin-right: 12px;
+  min-width: 120px;
+  display: block;
+  margin-bottom: 4px;
+  
+  @media (min-width: 640px) {
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
 `;
 
 const DetailValue = styled.span`
-  color: #666;
-  margin-left: 4px;
+  color: #333;
+  flex: 1;
+  display: block;
+  word-break: break-word;
 `;
 
 const DetailSeparator = styled.hr`
@@ -457,75 +489,26 @@ export default function DiaryList({ category, columns }) {
     }));
   };
 
-  // Formata o nome do campo para exibição
-  const formatFieldName = (fieldName) => {
-    // Mapeamento de nomes de campos para exibição amigável
-    const fieldMap = {
-      title: 'Título',
-      description: 'Descrição',
-      location: 'Local',
-      vetName: 'Veterinário',
-      procedure: 'Procedimento',
-      reason: 'Motivo',
-      nextAppointment: 'Próxima consulta',
-      notes: 'Notas',
-      weight: 'Peso',
-      food: 'Alimentação',
-      quantity: 'Quantidade',
-      distance: 'Distância',
-      duration: 'Duração',
-      place: 'Local'
-    };
-    
-    // Retorna o nome mapeado ou capitaliza a primeira letra
-    return fieldMap[fieldName] || 
-      fieldName.charAt(0).toUpperCase() + 
-      fieldName.replace(/([A-Z])/g, ' $1').slice(1);
+  const formatDate = (date) => {
+    try {
+      if (!date) return 'Data não disponível';
+      const dateObj = date.toDate ? date.toDate() : new Date(date);
+      return format(dateObj, "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
+    } catch (error) {
+      console.error("Erro ao formatar data:", error, date);
+      return 'Data inválida';
+    }
   };
 
-  // Formata a data para exibição
-  const formatDate = (date) => {
-    if (!date) return '';
-    
-    // Verifica se é um timestamp do Firestore
-    if (date.toDate && typeof date.toDate === 'function') {
-      date = date.toDate();
-    }
-    
-    // Converte string para objeto Date se necessário
-    if (typeof date === 'string') {
-      date = new Date(date);
-    }
-    
-    return date instanceof Date 
-      ? date.toLocaleDateString('pt-BR', { 
-          day: '2-digit', 
-          month: '2-digit', 
-          year: 'numeric'
-        })
-      : date.toString();
-  };
-  
-  // Formata a hora para exibição
   const formatTime = (date) => {
-    if (!date) return '';
-    
-    // Verifica se é um timestamp do Firestore
-    if (date.toDate && typeof date.toDate === 'function') {
-      date = date.toDate();
+    try {
+      if (!date) return '';
+      const dateObj = date.toDate ? date.toDate() : new Date(date);
+      return format(dateObj, "HH:mm");
+    } catch (error) {
+      console.error("Erro ao formatar hora:", error, date);
+      return '';
     }
-    
-    // Converte string para objeto Date se necessário
-    if (typeof date === 'string') {
-      date = new Date(date);
-    }
-    
-    return date instanceof Date 
-      ? date.toLocaleTimeString('pt-BR', { 
-          hour: '2-digit', 
-          minute: '2-digit'
-        })
-      : '';
   };
 
   // Calcular estatísticas
@@ -584,89 +567,217 @@ export default function DiaryList({ category, columns }) {
     }
   };
 
-  // Função que renderiza os detalhes de acordo com a categoria do registro
-  const renderDetailsByCategory = (record, columns) => {
-    // Remove debug logs
-    if (!record) return <p>Nenhum detalhe adicional disponível</p>;
+  // Função para renderizar os detalhes baseados na categoria
+  const renderDetailsByCategory = (record, category, columns) => {
+    // Se não temos registro, retornar mensagem
+    if (!record) {
+      return <EmptyDetailsMessage>Nenhum detalhe disponível</EmptyDetailsMessage>;
+    }
     
-    const category = record.category || 'outros';
+    // Debug: Verificar os campos disponíveis no registro
+    console.log('Categoria do registro:', record.category);
+    console.log('Categoria esperada:', category);
+    console.log('Todos os campos do registro:', Object.keys(record));
     
-    // Special case for veterinary visits
+    // ** Tratamento especial para visitas ao veterinário **
     if (category === 'veterinario') {
       const fields = [];
       
-      // Add veterinary specific fields
-      if (record.title) fields.push({ name: 'Título', value: record.title });
-      if (record.description) fields.push({ name: 'Descrição', value: record.description });
-      if (record.location) fields.push({ name: 'Localização', value: record.location });
+      // Campos específicos do formulário de veterinário
+      if (record.title) fields.push({ key: 'title', label: 'Título', value: record.title });
+      if (record.description) fields.push({ key: 'description', label: 'Descrição', value: record.description });
+      if (record.location) fields.push({ key: 'location', label: 'Localização', value: record.location });
       
-      // Add any other fields from the record that aren't handled above
-      Object.entries(record).forEach(([key, value]) => {
-        // Skip fields already handled or internal fields
-        if (['title', 'description', 'location', 'category', 'date', 'userId', 'createdAt', 'id', 'time'].includes(key)) {
-          return;
-        }
-        
-        if (value && typeof value === 'string' && value.trim() !== '') {
-          fields.push({ name: formatFieldName(key), value });
-        }
-      });
+      // Campos das colunas que possam existir
+      if (record.vetName) fields.push({ key: 'vetName', label: 'Veterinário', value: record.vetName });
+      if (record.procedure) fields.push({ key: 'procedure', label: 'Procedimento', value: record.procedure });
+      if (record.reason) fields.push({ key: 'reason', label: 'Motivo', value: record.reason });
       
-      if (fields.length === 0) {
-        return <p>Nenhum detalhe adicional disponível</p>;
-      }
-      
-      return (
-        <div>
-          {fields.map((field, index) => (
-            <DetailItem key={index}>
-              <DetailLabel>{field.name}:</DetailLabel>
-              <DetailValue>{field.value}</DetailValue>
-            </DetailItem>
-          ))}
-        </div>
-      );
-    }
-    
-    // For other categories, use the configured columns or fallback to all fields
-    if (columns && columns.length > 0) {
-      const filteredColumns = columns.filter(col => 
-        record[col.field] !== undefined && 
-        record[col.field] !== null &&
-        record[col.field] !== '');
-        
-      if (filteredColumns.length > 0) {
+      // Se temos algum campo para mostrar
+      if (fields.length > 0 || record.notes) {
         return (
-          <div>
-            {filteredColumns.map((column, index) => (
-              <DetailItem key={index}>
-                <DetailLabel>{column.title || formatFieldName(column.field)}:</DetailLabel>
-                <DetailValue>{record[column.field]}</DetailValue>
-              </DetailItem>
-            ))}
+          <div className="space-y-4">
+            {fields.length > 0 && (
+              <div className="space-y-3">
+                {fields.map(field => (
+                  <DetailItem key={field.key}>
+                    <DetailLabel>{field.label}:</DetailLabel>
+                    <DetailValue>{field.value}</DetailValue>
+                  </DetailItem>
+                ))}
+              </div>
+            )}
+            
+            {record.notes && (
+              <div>
+                {fields.length > 0 && <DetailSeparator />}
+                <DetailItem>
+                  <DetailLabel>Observações:</DetailLabel>
+                  <DetailValue className="whitespace-pre-line">{record.notes}</DetailValue>
+                </DetailItem>
+              </div>
+            )}
           </div>
         );
       }
     }
     
-    // Fallback to display all non-empty fields
-    const details = Object.entries(record)
-      .filter(([key, value]) => 
-        !['category', 'date', 'userId', 'createdAt', 'id', 'time'].includes(key) && 
-        value !== undefined && 
-        value !== null && 
-        value !== ''
-      )
-      .map(([key, value], index) => (
-        <DetailItem key={index}>
-          <DetailLabel>{formatFieldName(key)}:</DetailLabel>
-          <DetailValue>{value}</DetailValue>
-        </DetailItem>
-      ));
+    // Para outras categorias, continuar com o processamento normal
+    const fieldsMap = {
+      // Mapeamento comum de campos para cada categoria
+      veterinario: ['vetName', 'procedure', 'reason', 'nextAppointment'],
+      peso: ['weight', 'height', 'length'],
+      passeio: ['duration', 'location'],
+      alimentacao: ['foodType', 'quantity'],
+      outros: ['title', 'description']
+    };
+    
+    // Lista de campos a verificar com base na categoria
+    const fieldsToCheck = fieldsMap[category] || [];
+    console.log('Campos a verificar para esta categoria:', fieldsToCheck);
+    console.log('Valores no registro para estes campos:', 
+      fieldsToCheck.map(field => ({ field, value: record[field] }))
+    );
+    
+    // Obter os campos a serem exibidos baseados na categoria e nas colunas configuradas
+    let fieldsToDisplay = [];
+    
+    // Se temos colunas configuradas, usá-las
+    if (columns && columns.length > 0) {
+      fieldsToDisplay = columns
+        .map(column => {
+          // Verificar se o campo existe no registro
+          const value = record[column.key];
+          console.log(`Verificando coluna ${column.key}:`, value);
+          
+          return {
+            key: column.key,
+            label: column.label,
+            value: value ? formatFieldValue(column.key, value) : null
+          };
+        })
+        .filter(field => field.value); // Filtrar campos vazios
+    } else {
+      // Se não temos colunas, mostrar campos relevantes baseados no objeto
+      fieldsToDisplay = Object.entries(record)
+        .filter(([key, value]) => 
+          !['id', 'date', 'userId', 'createdAt', 'category', 'notes'].includes(key) && value
+        )
+        .map(([key, value]) => ({
+          key,
+          label: key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim(),
+          value: formatFieldValue(key, value)
+        }));
+    }
+    
+    // Adicionar campos específicos baseados na categoria
+    if (category === 'veterinario' && record.nextAppointment) {
+      fieldsToDisplay.push({
+        key: 'nextAppointment',
+        label: 'Próxima Consulta',
+        value: formatDate(record.nextAppointment)
+      });
+    }
+    
+    // ** Checar campos adicionais que não estejam nas colunas configuradas **
+    // Isso é especialmente útil para campos como title, description no veterinário
+    if (fieldsToDisplay.length === 0) {
+      // Campos comuns que podem estar presentes
+      if (record.title) {
+        fieldsToDisplay.push({
+          key: 'title',
+          label: 'Título',
+          value: record.title
+        });
+      }
       
-    return details.length > 0 
-      ? <div>{details}</div> 
-      : <p>Nenhum detalhe adicional disponível</p>;
+      if (record.description && !fieldsToDisplay.some(f => f.key === 'description')) {
+        fieldsToDisplay.push({
+          key: 'description',
+          label: 'Descrição',
+          value: record.description
+        });
+      }
+      
+      if (record.location && !fieldsToDisplay.some(f => f.key === 'location')) {
+        fieldsToDisplay.push({
+          key: 'location',
+          label: 'Localização',
+          value: record.location
+        });
+      }
+    }
+    
+    console.log('Campos a serem exibidos após processamento:', fieldsToDisplay);
+    
+    // Se não há campos para exibir e não há observações, mostrar mensagem amigável
+    if (fieldsToDisplay.length === 0 && !record.notes) {
+      // Tentar encontrar quaisquer campos relevantes não capturados pelas colunas
+      const anyFields = Object.entries(record)
+        .filter(([key, value]) => 
+          !['id', 'date', 'userId', 'createdAt', 'category', 'notes'].includes(key) && value
+        );
+      
+      console.log('Campos adicionais encontrados:', anyFields);
+      
+      // Se realmente não há campos adicionais
+      if (anyFields.length === 0) {
+        return <EmptyDetailsMessage>Nenhum detalhe adicional disponível</EmptyDetailsMessage>;
+      }
+      
+      // Se há campos, mas eles não foram capturados pelas colunas, exibi-los
+      return (
+        <div className="space-y-4">
+          {anyFields.map(([key, value]) => {
+            const label = key
+              .replace(/([A-Z])/g, ' $1')
+              .replace(/^./, str => str.toUpperCase())
+              .trim();
+            
+            return (
+              <DetailItem key={key}>
+                <DetailLabel>{label}:</DetailLabel>
+                <DetailValue>{formatFieldValue(key, value)}</DetailValue>
+              </DetailItem>
+            );
+          })}
+          
+          {record.notes && (
+            <DetailItem>
+              <DetailLabel>Observações:</DetailLabel>
+              <DetailValue className="whitespace-pre-line">{record.notes}</DetailValue>
+            </DetailItem>
+          )}
+        </div>
+      );
+    }
+    
+    return (
+      <div className="space-y-4">
+        {/* Campos regulares */}
+        {fieldsToDisplay.length > 0 && (
+          <div className="space-y-3">
+            {fieldsToDisplay.map(field => (
+              <DetailItem key={field.key}>
+                <DetailLabel>{field.label}:</DetailLabel>
+                <DetailValue>{field.value}</DetailValue>
+              </DetailItem>
+            ))}
+          </div>
+        )}
+        
+        {/* Observações */}
+        {record.notes && (
+          <div>
+            {fieldsToDisplay.length > 0 && <DetailSeparator />}
+            <DetailItem>
+              <DetailLabel>Observações:</DetailLabel>
+              <DetailValue className="whitespace-pre-line">{record.notes}</DetailValue>
+            </DetailItem>
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -784,7 +895,7 @@ export default function DiaryList({ category, columns }) {
               
               <RecordDetails expanded={expandedRecords[record.id] ? 'true' : 'false'}>
                 <RecordDetailsInner expanded={expandedRecords[record.id] ? 'true' : 'false'}>
-                  {renderDetailsByCategory(record, columns)}
+                  {renderDetailsByCategory(record, category, columns)}
                 </RecordDetailsInner>
               </RecordDetails>
             </RecordItem>
