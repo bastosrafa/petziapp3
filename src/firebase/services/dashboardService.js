@@ -232,6 +232,8 @@ export const dashboardService = {
   // Buscar dados do dashboard
   getDashboardData: async (userId) => {
     try {
+      console.log("========== INÍCIO getDashboardData ==========");
+      
       const dashboardRef = doc(db, 'dashboards', userId);
       const dashboardDoc = await getDoc(dashboardRef);
       
@@ -242,19 +244,242 @@ export const dashboardService = {
       
       const dashboardData = dashboardDoc.data();
       
-      // Buscar vacina mais recente
-      const recentVaccine = await dashboardService.getRecentVaccines(userId);
-      console.log('Vacina mais recente para o dashboard:', recentVaccine);
-      
-      // Atualizar dados de vacinação
-      if (recentVaccine) {
-        dashboardData.health.vaccines.lastVaccine = recentVaccine;
-        dashboardData.health.vaccines.status = recentVaccine.status === 'Aplicada' ? 'up_to_date' : 'pending';
+      // Buscar a vacina mais recente que foi APLICADA (status == 'Aplicada')
+      try {
+        console.log("========== BUSCANDO VACINAS ==========");
+        
+        // Consulta direta na coleção health_records
+        const healthRef = collection(db, 'users', userId, 'health_records');
+        
+        // Buscar manualmente todas as vacinas
+        const vaccineQuery = query(
+          healthRef,
+          where('type', '==', 'vaccine')
+        );
+        
+        const vaccineSnapshot = await getDocs(vaccineQuery);
+        
+        if (!vaccineSnapshot.empty) {
+          console.log(`Encontradas ${vaccineSnapshot.size} vacinas no total`);
+          
+          // Filtrar TODAS as vacinas APLICADAS
+          const appliedVaccines = vaccineSnapshot.docs
+            .map(doc => ({
+              id: doc.id,
+              ...doc.data()
+            }))
+            .filter(data => data.status === 'Aplicada');
+            
+          console.log(`Total de vacinas aplicadas: ${appliedVaccines.length}`);
+          
+          // Mostrar TODAS as vacinas aplicadas para diagnóstico
+          appliedVaccines.forEach((vaccine, index) => {
+            const dateStr = vaccine.date 
+              ? (vaccine.date.toDate ? vaccine.date.toDate().toISOString() : vaccine.date) 
+              : 'sem data';
+            
+            console.log(`Vacina aplicada ${index + 1}: ${vaccine.name}, Data: ${dateStr}, Doc ID: ${vaccine.id}`);
+          });
+          
+          // Ordenar por data (mais recente primeiro)
+          appliedVaccines.sort((a, b) => {
+            const getTime = (item) => {
+              const date = item.date;
+              if (!date) return 0;
+              
+              try {
+                if (date.toDate) return date.toDate().getTime();
+                if (typeof date === 'string') return new Date(date).getTime();
+                if (date.seconds) return date.seconds * 1000;
+                return 0;
+              } catch (e) {
+                console.error('Erro ao converter data para ordenação:', e);
+                return 0;
+              }
+            };
+            
+            // Ordem decrescente (mais recente primeiro)
+            return getTime(b) - getTime(a);
+          });
+          
+          console.log("Vacinas ordenadas por data (mais recente primeiro):");
+          appliedVaccines.forEach((vaccine, index) => {
+            const dateStr = vaccine.date 
+              ? (vaccine.date.toDate ? vaccine.date.toDate().toISOString() : vaccine.date) 
+              : 'sem data';
+            
+            console.log(`${index + 1}: ${vaccine.name}, Data: ${dateStr}, Doc ID: ${vaccine.id}`);
+          });
+          
+          if (appliedVaccines.length > 0) {
+            // Usar a PRIMEIRA vacina após ordenação (a mais recente)
+            const vaccineDoc = appliedVaccines[0];
+            console.log('Vacina mais recente selecionada:', vaccineDoc);
+            
+            // Garantir que a data da vacina seja correta
+            let vaccineDate = null;
+            if (vaccineDoc.date) {
+              try {
+                if (vaccineDoc.date.toDate) {
+                  vaccineDate = vaccineDoc.date.toDate();
+                } else if (typeof vaccineDoc.date === 'string') {
+                  vaccineDate = new Date(vaccineDoc.date);
+                } else if (vaccineDoc.date.seconds) {
+                  vaccineDate = new Date(vaccineDoc.date.seconds * 1000);
+                }
+                
+                console.log('Data extraída da vacina mais recente:', vaccineDate);
+              } catch (dateError) {
+                console.error('Erro ao processar data da vacina:', dateError);
+              }
+            }
+            
+            if (vaccineDate && !isNaN(vaccineDate.getTime())) {
+              console.log('Atualizando dashboard com a vacina mais recente de', vaccineDate);
+              
+              // Atualizar a data da última vacina no dashboard
+              if (!dashboardData.health) dashboardData.health = {};
+              if (!dashboardData.health.vaccines) dashboardData.health.vaccines = {};
+              
+              // Atualizar com a vacina mais recente
+              dashboardData.health.vaccines.lastVaccine = {
+                ...vaccineDoc,
+                date: vaccineDate
+              };
+              
+              // Atualizar o status
+              dashboardData.health.vaccines.status = 'up_to_date';
+              
+              // Atualizar o documento do dashboard no Firestore
+              await updateDoc(dashboardRef, {
+                'health.vaccines.lastVaccine': {
+                  ...vaccineDoc,
+                  date: vaccineDate
+                },
+                'health.vaccines.status': 'up_to_date',
+                lastUpdated: serverTimestamp()
+              });
+              
+              console.log('Dashboard atualizado com sucesso com a vacina mais recente');
+            }
+          }
+        } else {
+          console.log('Nenhuma vacina encontrada');
+        }
+      } catch (vaccineError) {
+        console.error('Erro ao buscar vacina mais recente:', vaccineError);
+        // Não interromper o fluxo principal
       }
       
+      // Agora vamos reler o dashboard após a atualização para garantir que temos os dados mais recentes
+      const updatedDashboardDoc = await getDoc(dashboardRef);
+      if (updatedDashboardDoc.exists()) {
+        const updatedData = updatedDashboardDoc.data();
+        if (updatedData.health?.vaccines?.lastVaccine) {
+          dashboardData.health = updatedData.health;
+          console.log('Dashboard recarregado com dados atualizados de vacina');
+        }
+      }
+      
+      // Buscar entradas mais recentes do diário
+      const latestDiaryEntries = await dashboardService.getLatestDiaryEntries(userId);
+      console.log('Entradas mais recentes do diário:', latestDiaryEntries);
+      
+      // Atualizar dados de passeio a partir do diário
+      if (latestDiaryEntries.passeio) {
+        if (!dashboardData.activities) {
+          dashboardData.activities = {};
+        }
+        if (!dashboardData.activities.walk) {
+          dashboardData.activities.walk = { lastEntry: null, totalEntries: 0, streak: 0 };
+        }
+        
+        // Verificar se a data está disponível
+        const walkDate = latestDiaryEntries.passeio.date;
+        console.log('Data do último passeio:', walkDate);
+        
+        // Criar um objeto de lastEntry compatível com a estrutura do dashboard
+        dashboardData.activities.walk.lastEntry = {
+          timestamp: walkDate,
+          details: latestDiaryEntries.passeio,
+          type: 'walk'
+        };
+        
+        console.log('Último passeio atualizado:', dashboardData.activities.walk.lastEntry);
+      }
+      
+      // Atualizar dados de alimentação a partir do diário
+      if (latestDiaryEntries.alimentacao) {
+        if (!dashboardData.activities) {
+          dashboardData.activities = {};
+        }
+        if (!dashboardData.activities.food) {
+          dashboardData.activities.food = { lastEntry: null, totalEntries: 0, streak: 0 };
+        }
+        
+        // Verificar se a data está disponível
+        const foodDate = latestDiaryEntries.alimentacao.date;
+        console.log('Data da última alimentação:', foodDate);
+        
+        // Criar um objeto de lastEntry compatível com a estrutura do dashboard
+        dashboardData.activities.food.lastEntry = {
+          timestamp: foodDate,
+          details: latestDiaryEntries.alimentacao,
+          type: 'food'
+        };
+        
+        console.log('Última alimentação atualizada:', dashboardData.activities.food.lastEntry);
+      }
+      
+      // Também atualizar o dashboard no Firestore com estes dados mais recentes
+      try {
+        const updateData = {};
+        
+        if (latestDiaryEntries.passeio && latestDiaryEntries.passeio.date) {
+          updateData['activities.walk.lastEntry'] = {
+            timestamp: latestDiaryEntries.passeio.date,
+            details: latestDiaryEntries.passeio,
+            type: 'walk'
+          };
+        }
+        
+        if (latestDiaryEntries.alimentacao && latestDiaryEntries.alimentacao.date) {
+          updateData['activities.food.lastEntry'] = {
+            timestamp: latestDiaryEntries.alimentacao.date,
+            details: latestDiaryEntries.alimentacao,
+            type: 'food'
+          };
+        }
+        
+        if (Object.keys(updateData).length > 0) {
+          updateData.lastUpdated = serverTimestamp();
+          console.log('Atualizando dashboard com:', updateData);
+          await updateDoc(dashboardRef, updateData);
+        }
+      } catch (updateError) {
+        console.error('Erro ao atualizar dashboard com dados do diário:', updateError);
+        // Não lançar erro aqui para não interromper o fluxo principal
+      }
+      
+      console.log("========== FIM getDashboardData ==========");
       return dashboardData;
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
+      throw error;
+    }
+  },
+
+  // Função auxiliar para buscar um documento diretamente sem consultas adicionais
+  getDocumentDirectly: async (docRef) => {
+    try {
+      const docSnapshot = await getDoc(docRef);
+      if (!docSnapshot.exists()) {
+        console.log('Documento não encontrado');
+        return null;
+      }
+      return docSnapshot.data();
+    } catch (error) {
+      console.error('Erro ao buscar documento diretamente:', error);
       throw error;
     }
   },
@@ -280,6 +505,125 @@ export const dashboardService = {
     } catch (error) {
       console.error(`Error fetching ${activityType} history:`, error);
       throw error;
+    }
+  },
+
+  // Buscar entradas mais recentes do diário por categoria
+  getLatestDiaryEntries: async (userId, categories = ['alimentacao', 'passeio']) => {
+    try {
+      const diaryRef = collection(db, 'diary');
+      
+      const results = {};
+      
+      // Realizar uma única consulta simples que não requer índices compostos
+      const simpleQuery = query(
+        diaryRef,
+        where('userId', '==', userId)
+      );
+      
+      const querySnapshot = await getDocs(simpleQuery);
+      
+      if (querySnapshot.empty) {
+        console.log('Nenhum registro de diário encontrado para o usuário');
+        return {};
+      }
+      
+      // Debug: mostrar todos os registros encontrados
+      console.log(`Encontrados ${querySnapshot.size} registros de diário`);
+      querySnapshot.docs.forEach(doc => {
+        const data = doc.data();
+        console.log(`ID: ${doc.id}, Categoria: ${data.category}, Data: ${data.date ? (data.date.toDate ? data.date.toDate().toISOString() : data.date) : 'sem data'}`);
+      });
+      
+      // Ordenar todos os registros por data, do mais recente para o mais antigo
+      const allRecords = querySnapshot.docs.map(doc => {
+        return {
+          id: doc.id,
+          ...doc.data()
+        };
+      }).sort((a, b) => {
+        // Função para converter diversos formatos de data para timestamp
+        const getTime = (date) => {
+          if (!date) return 0;
+          
+          try {
+            // Timestamp do Firestore
+            if (date.toDate) return date.toDate().getTime();
+            // String ou Date
+            if (typeof date === 'string' || date instanceof Date) return new Date(date).getTime();
+            // Objeto com seconds
+            if (date.seconds) return date.seconds * 1000;
+          } catch (e) {
+            return 0;
+          }
+        };
+        
+        return getTime(b.date) - getTime(a.date); // Ordem decrescente (mais recente primeiro)
+      });
+      
+      console.log("Registros ordenados:");
+      allRecords.slice(0, 5).forEach((record, index) => {
+        console.log(`${index + 1}: Categoria: ${record.category}, Data: ${record.date ? (record.date.toDate ? record.date.toDate().toISOString() : record.date) : 'sem data'}`);
+      });
+      
+      // Uma vez que temos todos os registros ordenados, filtramos por categoria
+      for (const category of categories) {
+        // Definir variações de nomes de categoria para verificação
+        const categoryVariations = category === 'alimentacao' 
+          ? ['alimentacao', 'alimentação', 'comida', 'food', 'Alimentação', 'ALIMENTACAO', 'Alimentacao']
+          : category === 'passeio' 
+            ? ['passeio', 'passeios', 'walk', 'walks', 'Passeio', 'PASSEIO'] 
+            : [category, category.toLowerCase(), category.toUpperCase()];
+        
+        // Encontrar o registro mais recente da categoria atual
+        const matchingRecord = allRecords.find(record => 
+          categoryVariations.includes(record.category)
+        );
+        
+        if (matchingRecord) {
+          console.log(`Registro encontrado para ${category}:`, matchingRecord);
+          
+          // Converter Timestamp para Date
+          let entryDate = null;
+          if (matchingRecord.date) {
+            try {
+              // Se for um timestamp do Firestore
+              if (matchingRecord.date.toDate) {
+                entryDate = matchingRecord.date.toDate();
+              }
+              // Se for uma string ou Date
+              else if (typeof matchingRecord.date === 'string' || matchingRecord.date instanceof Date) {
+                entryDate = new Date(matchingRecord.date);
+              }
+              // Se for um objeto com seconds (formato Firestore timestamp)
+              else if (matchingRecord.date.seconds) {
+                entryDate = new Date(matchingRecord.date.seconds * 1000);
+              }
+              
+              console.log(`Data convertida para ${category}:`, entryDate);
+            } catch (error) {
+              console.error(`Erro ao converter data para ${category}:`, error);
+              entryDate = null;
+            }
+          }
+          
+          results[category] = {
+            id: matchingRecord.id,
+            ...matchingRecord,
+            date: entryDate || matchingRecord.date // Manter o formato original se a conversão falhar
+          };
+          
+          console.log(`Resultado final para ${category}:`, results[category]);
+        } else {
+          console.log(`Nenhum registro de ${category} encontrado`);
+          results[category] = null;
+        }
+      }
+      
+      return results;
+    } catch (error) {
+      console.error('Error fetching latest diary entries:', error);
+      return {}; // Retornar objeto vazio em vez de lançar erro
     }
   }
 }; 

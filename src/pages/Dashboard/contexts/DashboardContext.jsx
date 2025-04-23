@@ -23,15 +23,60 @@ export const DashboardProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       
-      // Carregar dados do dashboard
-      const data = await dashboardService.getDashboardData(user.uid);
-      console.log('Dashboard data loaded:', data);
-      
-      // Atualizar estado com os dados retornados
-      setDashboardData(data);
+      try {
+        // Carregar dados do dashboard
+        const data = await dashboardService.getDashboardData(user.uid);
+        console.log('Dashboard data loaded:', data);
+        
+        // Atualizar estado com os dados retornados
+        setDashboardData(data);
+      } catch (err) {
+        console.error('Error loading dashboard data:', err);
+        
+        // Se houver erro na busca completa, tentar buscar pelo menos os dados básicos do dashboard
+        try {
+          console.log('Tentando carregar apenas dados básicos do dashboard...');
+          // Buscar o documento do dashboard diretamente, sem as subconsultas que podem falhar
+          const dashboardRef = doc(db, 'dashboards', user.uid);
+          const dashboardDoc = await dashboardService.getDocumentDirectly(dashboardRef);
+          
+          if (dashboardDoc) {
+            console.log('Dados básicos do dashboard carregados com sucesso:', dashboardDoc);
+            setDashboardData(dashboardDoc);
+          } else {
+            // Se nem isso funcionar, inicializar um dashboard vazio
+            console.log('Inicializando dashboard vazio...');
+            const emptyDashboard = await dashboardService.initializeDashboard(user.uid);
+            setDashboardData(emptyDashboard);
+          }
+        } catch (basicError) {
+          console.error('Erro ao carregar dados básicos do dashboard:', basicError);
+          setError('Erro ao carregar dados do dashboard');
+          // Mesmo com erro, inicializar um objeto vazio para que a UI não quebre
+          setDashboardData({
+            activities: {
+              food: { lastEntry: null },
+              walk: { lastEntry: null }
+            },
+            health: {
+              vaccines: { lastVaccine: null }
+            }
+          });
+        }
+      }
     } catch (err) {
-      console.error('Error loading dashboard data:', err);
+      console.error('Error in dashboard loading process:', err);
       setError('Erro ao carregar dados do dashboard');
+      // Garantir que temos pelo menos um objeto vazio
+      setDashboardData({
+        activities: {
+          food: { lastEntry: null },
+          walk: { lastEntry: null }
+        }, 
+        health: {
+          vaccines: { lastVaccine: null }
+        }
+      });
     } finally {
       setLoading(false);
     }
@@ -41,13 +86,37 @@ export const DashboardProvider = ({ children }) => {
   useEffect(() => {
     if (!user) return;
 
+    // Referência ao documento do dashboard
     const dashboardRef = doc(db, 'dashboards', user.uid);
+    
+    // Variável para controlar se precisamos atualizar
+    let lastUpdateTimestamp = 0;
+    
+    // Configurar o listener
     const unsubscribe = onSnapshot(dashboardRef, async (doc) => {
       if (doc.exists()) {
-        console.log('Dashboard data updated in real-time:', doc.data());
-        // Carregar dados completos do dashboard para garantir que temos todas as informações atualizadas
-        const data = await dashboardService.getDashboardData(user.uid);
-        setDashboardData(data);
+        // Obter dados do documento
+        const data = doc.data();
+        
+        // Verificar se os dados são realmente novos para evitar loops
+        const currentTimestamp = data.lastUpdated ? 
+          (data.lastUpdated.seconds ? data.lastUpdated.seconds : Date.now() / 1000) : 
+          Date.now() / 1000;
+          
+        // Só atualizar se for mais recente (com uma margem de segurança)
+        if (currentTimestamp > lastUpdateTimestamp + 2) {
+          lastUpdateTimestamp = currentTimestamp;
+          
+          try {
+            // Carregar dados completos do dashboard
+            const fullData = await dashboardService.getDashboardData(user.uid);
+            setDashboardData(fullData);
+          } catch (error) {
+            console.error('Erro ao atualizar dados completos:', error);
+            // Se falhar, pelo menos atualize com os dados básicos do snapshot
+            setDashboardData(data);
+          }
+        }
       }
     }, (error) => {
       console.error('Error listening to dashboard updates:', error);

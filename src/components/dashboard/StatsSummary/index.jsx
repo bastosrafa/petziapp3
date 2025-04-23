@@ -19,88 +19,184 @@ const StatsSummary = () => {
 
   const formatDateTime = (timestamp) => {
     if (!timestamp) return 'Não registrado';
+    
     try {
       let date;
       
-      // Se for um timestamp do Firestore
-      if (timestamp.toDate) {
-        date = timestamp.toDate();
+      console.log('Formatando data para timestamp (tipo):', typeof timestamp, timestamp);
+      
+      // Verificar se é um objeto Date JavaScript nativo
+      if (Object.prototype.toString.call(timestamp) === "[object Date]") {
+        console.log('É um objeto Date nativo');
+        date = timestamp;
       }
-      // Se for uma string ISO ou objeto Date
-      else if (typeof timestamp === 'string' || timestamp instanceof Date) {
+      // Se for uma string que representa uma data
+      else if (typeof timestamp === 'string' && !isNaN(new Date(timestamp).getTime())) {
+        console.log('É uma string de data válida');
         date = new Date(timestamp);
       }
-      // Se for um objeto com propriedade seconds (Firestore Timestamp)
-      else if (timestamp.seconds) {
+      // Se for um timestamp Firestore
+      else if (timestamp && typeof timestamp === 'object' && timestamp.toDate) {
+        console.log('É um timestamp Firestore');
+        date = timestamp.toDate();
+      }
+      // Se for um objeto com seconds (formato Firestore)
+      else if (timestamp && typeof timestamp === 'object' && timestamp.seconds) {
+        console.log('É um objeto com seconds');
         date = new Date(timestamp.seconds * 1000);
       }
       // Se for um objeto com propriedade date
-      else if (timestamp.date) {
-        date = new Date(timestamp.date);
+      else if (timestamp && typeof timestamp === 'object' && timestamp.date) {
+        console.log('Tem propriedade date:', timestamp.date);
+        
+        // Se a propriedade date for um timestamp Firestore
+        if (timestamp.date.toDate) {
+          console.log('date é um timestamp Firestore');
+          date = timestamp.date.toDate();
+        }
+        // Se a propriedade date for um objeto com seconds
+        else if (timestamp.date.seconds) {
+          console.log('date tem seconds');
+          date = new Date(timestamp.date.seconds * 1000);
+        }
+        // Se a propriedade date for uma string ou Date
+        else if (typeof timestamp.date === 'string') {
+          console.log('date é uma string');
+          date = new Date(timestamp.date);
+        }
+        else if (Object.prototype.toString.call(timestamp.date) === "[object Date]") {
+          console.log('date é um objeto Date');
+          date = timestamp.date;
+        }
       }
-      // Se for um objeto Date válido
-      else if (timestamp instanceof Date) {
-        date = timestamp;
+      // Tentar outras propriedades
+      else if (timestamp && typeof timestamp === 'object') {
+        if (timestamp.appliedDate) {
+          console.log('Tentando usar appliedDate');
+          date = new Date(timestamp.appliedDate);
+        }
+        else if (timestamp.timestamp) {
+          console.log('Tentando usar timestamp');
+          date = new Date(timestamp.timestamp);
+        }
       }
       
       // Verificar se a data é válida
       if (!date || isNaN(date.getTime())) {
-        console.error('Data inválida:', timestamp);
-        return 'Data inválida';
+        console.log('Data inválida ou não reconhecida:', timestamp);
+        return 'Data não disponível';
       }
       
-      return date.toLocaleString('pt-BR', {
+      const formattedDate = date.toLocaleString('pt-BR', {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
         hour: '2-digit',
         minute: '2-digit'
       });
+      
+      console.log('Data formatada final:', formattedDate);
+      return formattedDate;
     } catch (error) {
-      console.error('Error formatting date:', error, 'Timestamp:', timestamp);
-      return 'Data inválida';
+      console.error('Erro ao formatar data:', error, timestamp);
+      return 'Data não disponível';
+    }
+  };
+
+  // Função especial apenas para vacinas
+  const formatVaccineDate = (vaccine) => {
+    if (!vaccine) return 'Não registrado';
+    
+    try {
+      console.log('Formatando data de vacina:', vaccine);
+      
+      // Primeiro tenta usar o campo date diretamente
+      if (vaccine.date) {
+        const dateStr = formatDateTime(vaccine.date);
+        if (dateStr !== 'Data não disponível') {
+          return dateStr;
+        }
+      }
+      
+      // Se falhar, tenta extrair de outras propriedades
+      if (vaccine.appliedDate) {
+        return formatDateTime(vaccine.appliedDate);
+      }
+      
+      if (vaccine.timestamp) {
+        return formatDateTime(vaccine.timestamp);
+      }
+      
+      // Se não encontrar uma data válida em nenhum campo específico
+      // Passa o objeto inteiro para o formatDateTime tentar em todas as propriedades
+      return formatDateTime(vaccine);
+    } catch (error) {
+      console.error('Erro ao formatar data da vacina:', error);
+      return 'Data não disponível';
     }
   };
 
   const getStatus = (timestamp, type = 'activity') => {
     if (!timestamp) return type === 'vaccine' ? 'pending' : 'atrasado';
     
+    // Para vacinas, usar diretamente o status guardado no dashboard
     if (type === 'vaccine') {
-      return timestamp.status === 'Aplicada' ? 'up_to_date' : 'pending';
+      if (dashboardData.health?.vaccines?.status === 'up_to_date') {
+        return 'up_to_date';
+      }
+      
+      // Se temos um objeto com status explícito, usar essa informação
+      if (timestamp.status === 'Aplicada') {
+        return 'up_to_date';
+      }
+      
+      return 'pending';
     }
     
     let lastActivity;
     
-    // Se for um timestamp do Firestore
-    if (timestamp.toDate) {
-      lastActivity = timestamp.toDate();
+    // Tentar extrair a data de diferentes formatos
+    try {
+      // Se for um objeto Date JavaScript nativo
+      if (Object.prototype.toString.call(timestamp) === "[object Date]") {
+        lastActivity = timestamp;
+      }
+      // Se for um objeto com toDate (Firestore timestamp)
+      else if (timestamp.toDate) {
+        lastActivity = timestamp.toDate();
+      }
+      // Se for uma string
+      else if (typeof timestamp === 'string') {
+        lastActivity = new Date(timestamp);
+      }
+      // Se for um objeto com seconds (Firestore timestamp)
+      else if (timestamp.seconds) {
+        lastActivity = new Date(timestamp.seconds * 1000);
+      }
+      
+      // Se não conseguiu extrair ou a data é inválida
+      if (!lastActivity || isNaN(lastActivity.getTime())) {
+        return 'atrasado';
+      }
+      
+      const now = new Date();
+      const diffHours = (now - lastActivity) / (1000 * 60 * 60);
+  
+      // Períodos diferentes para cada tipo de atividade
+      if (type === 'food') {
+        return diffHours <= 8 ? 'up_to_date' : 'atrasado'; // 8 horas para alimentação
+      } else if (type === 'walk') {
+        return diffHours <= 24 ? 'up_to_date' : 'atrasado'; // 24 horas para passeio
+      }
+      
+      return diffHours <= 24 ? 'up_to_date' : 'atrasado'; // padrão para outras atividades
+    } catch (error) {
+      return 'atrasado'; // Em caso de erro, considerar atrasado
     }
-    // Se for uma string ISO ou objeto Date
-    else if (typeof timestamp === 'string' || timestamp instanceof Date) {
-      lastActivity = new Date(timestamp);
-    }
-    // Se for um objeto com propriedade seconds (Firestore Timestamp)
-    else if (timestamp.seconds) {
-      lastActivity = new Date(timestamp.seconds * 1000);
-    }
-    
-    if (!lastActivity || isNaN(lastActivity.getTime())) {
-      console.error('Data inválida:', timestamp);
-      return 'atrasado';
-    }
-    
-    const now = new Date();
-    const diffHours = (now - lastActivity) / (1000 * 60 * 60);
-
-    // Períodos diferentes para cada tipo de atividade
-    if (type === 'food') {
-      return diffHours <= 8 ? 'up_to_date' : 'atrasado'; // 8 horas para alimentação
-    } else if (type === 'walk') {
-      return diffHours <= 24 ? 'up_to_date' : 'atrasado'; // 24 horas para passeio
-    }
-    
-    return diffHours <= 24 ? 'up_to_date' : 'atrasado'; // padrão para outras atividades
   };
+  
+  // Verificar se temos dados de vacina válidos para exibir
+  const hasVaccineData = dashboardData.health?.vaccines?.lastVaccine;
 
   return (
     <div className="stats-summary-container">
@@ -147,7 +243,7 @@ const StatsSummary = () => {
                   </div>
                 )}
                 <div className="vaccine-history">
-                  <p className="datetime">Última dose: {formatDateTime(dashboardData.health?.vaccines?.lastVaccine)}</p>
+                  <p className="datetime">Última dose: {hasVaccineData ? formatVaccineDate(dashboardData.health.vaccines.lastVaccine) : 'Não registrado'}</p>
                 </div>
               </div>
               <div className="vaccine-status">

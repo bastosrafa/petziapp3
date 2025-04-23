@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDashboard } from '../../../pages/Dashboard/contexts/DashboardContext';
 import './styles.css';
 
 const PetStatus = () => {
-  const { dashboardData, loading } = useDashboard();
+  const { dashboardData, loading, error } = useDashboard();
   const [mood, setMood] = useState('neutral');
   const [messages, setMessages] = useState([]);
 
@@ -13,40 +13,66 @@ const PetStatus = () => {
     sad: 'Precisamos cuidar de algumas coisas... 🥺'
   };
 
+  // Função para converter timestamps de forma segura
+  const getTimestamp = useCallback((timestamp) => {
+    if (!timestamp) return null;
+    
+    try {
+      // Se for um timestamp do Firestore
+      if (timestamp.toDate) {
+        return timestamp.toDate();
+      }
+      // Se for uma string ISO ou objeto Date
+      else if (typeof timestamp === 'string' || timestamp instanceof Date) {
+        return new Date(timestamp);
+      }
+      // Se for um objeto com propriedade seconds (Firestore Timestamp)
+      else if (timestamp.seconds) {
+        return new Date(timestamp.seconds * 1000);
+      }
+    } catch (e) {
+      // Silenciar erros para reduzir logs
+    }
+    
+    return null;
+  }, []);
+
   useEffect(() => {
-    if (dashboardData) {
-      console.log('PetStatus received new dashboard data:', dashboardData);
+    if (!dashboardData) return;
+
+    try {
       const now = new Date();
       
-      const getTimestamp = (timestamp) => {
-        if (!timestamp) return null;
+      // Verifica se os campos necessários existem antes de tentar acessá-los
+      const activitiesExist = dashboardData && dashboardData.activities;
+      const healthExist = dashboardData && dashboardData.health;
+      
+      // Obter timestamps para cada atividade com verificações de segurança
+      const lastFood = activitiesExist && dashboardData.activities.food 
+        ? getTimestamp(dashboardData.activities.food.lastEntry?.timestamp) 
+        : null;
         
-        // Se for um timestamp do Firestore
-        if (timestamp.toDate) {
-          return timestamp.toDate();
+      const lastWalk = activitiesExist && dashboardData.activities.walk 
+        ? getTimestamp(dashboardData.activities.walk.lastEntry?.timestamp) 
+        : null;
+        
+      const lastTraining = activitiesExist && dashboardData.activities.training 
+        ? getTimestamp(dashboardData.activities.training?.lastEntry?.timestamp) 
+        : null;
+        
+      // Melhorar a extração da data da última vacina
+      let lastVaccine = null;
+      if (healthExist && dashboardData.health.vaccines && dashboardData.health.vaccines.lastVaccine) {
+        const vaccineData = dashboardData.health.vaccines.lastVaccine;
+        // Tentar diferentes campos que podem conter a data
+        if (vaccineData.date) {
+          lastVaccine = getTimestamp(vaccineData.date);
+        } else if (vaccineData.appliedDate) {
+          lastVaccine = getTimestamp(vaccineData.appliedDate);
+        } else if (vaccineData.timestamp) {
+          lastVaccine = getTimestamp(vaccineData.timestamp);
         }
-        // Se for uma string ISO ou objeto Date
-        else if (typeof timestamp === 'string' || timestamp instanceof Date) {
-          return new Date(timestamp);
-        }
-        // Se for um objeto com propriedade seconds (Firestore Timestamp)
-        else if (timestamp.seconds) {
-          return new Date(timestamp.seconds * 1000);
-        }
-        return null;
-      };
-
-      const lastFood = getTimestamp(dashboardData.activities?.food?.lastEntry?.timestamp);
-      const lastWalk = getTimestamp(dashboardData.activities?.walk?.lastEntry?.timestamp);
-      const lastTraining = getTimestamp(dashboardData.activities?.training?.lastEntry?.timestamp);
-      const lastVaccine = getTimestamp(dashboardData.health?.lastVaccine?.date);
-
-      console.log('Timestamps:', {
-        lastFood,
-        lastWalk,
-        lastTraining,
-        lastVaccine
-      });
+      }
 
       let score = 0;
       let needs = [];
@@ -57,15 +83,21 @@ const PetStatus = () => {
         vaccine: { status: 'ok', months: 0 }
       };
 
-      // Food check
-      if (lastFood) {
+      // Constantes para limites de tempo
+      const FOOD_LATE_HOURS = 8;     // Considerar "atrasado" após 8 horas
+      const FOOD_GOOD_HOURS = 4;     // Considerar "bom" se < 4 horas
+      
+      const WALK_LATE_HOURS = 8;     // Considerar "atrasado" após 8 horas
+      const WALK_GOOD_HOURS = 4;     // Considerar "bom" se < 4 horas
+
+      // Food check - com validação do timestamp
+      if (lastFood && lastFood instanceof Date && !isNaN(lastFood.getTime())) {
         const hoursSinceFood = (now - lastFood) / (1000 * 60 * 60);
-        console.log('Hours since food:', hoursSinceFood);
-        if (hoursSinceFood > 8) {
+        if (hoursSinceFood > FOOD_LATE_HOURS) {
           score -= 1;
           needs.push("alimentação");
           status.food = { status: 'late', hours: Math.round(hoursSinceFood) };
-        } else if (hoursSinceFood <= 4) {
+        } else if (hoursSinceFood <= FOOD_GOOD_HOURS) {
           score += 1;
         }
       } else {
@@ -74,15 +106,14 @@ const PetStatus = () => {
         status.food = { status: 'missing' };
       }
 
-      // Walk check
-      if (lastWalk) {
+      // Walk check - com validação do timestamp
+      if (lastWalk && lastWalk instanceof Date && !isNaN(lastWalk.getTime())) {
         const hoursSinceWalk = (now - lastWalk) / (1000 * 60 * 60);
-        console.log('Hours since walk:', hoursSinceWalk);
-        if (hoursSinceWalk > 12) {
+        if (hoursSinceWalk > WALK_LATE_HOURS) {
           score -= 1;
           needs.push("passeio");
           status.walk = { status: 'late', hours: Math.round(hoursSinceWalk) };
-        } else if (hoursSinceWalk <= 6) {
+        } else if (hoursSinceWalk <= WALK_GOOD_HOURS) {
           score += 1;
         }
       } else {
@@ -91,10 +122,9 @@ const PetStatus = () => {
         status.walk = { status: 'missing' };
       }
 
-      // Training check
-      if (lastTraining) {
+      // Training check - com validação do timestamp
+      if (lastTraining && lastTraining instanceof Date && !isNaN(lastTraining.getTime())) {
         const hoursSinceTraining = (now - lastTraining) / (1000 * 60 * 60);
-        console.log('Hours since training:', hoursSinceTraining);
         if (hoursSinceTraining > 24) {
           score -= 1;
           needs.push("treinamento");
@@ -108,10 +138,9 @@ const PetStatus = () => {
         status.training = { status: 'missing' };
       }
 
-      // Vaccine check
-      if (lastVaccine) {
+      // Vaccine check - com validação do timestamp
+      if (lastVaccine && lastVaccine instanceof Date && !isNaN(lastVaccine.getTime())) {
         const monthsSinceVaccine = (now - lastVaccine) / (1000 * 60 * 60 * 24 * 30);
-        console.log('Months since vaccine:', monthsSinceVaccine);
         if (monthsSinceVaccine > 12) {
           score -= 1;
           needs.push("vacina");
@@ -124,12 +153,6 @@ const PetStatus = () => {
         needs.push("vacina");
         status.vaccine = { status: 'missing' };
       }
-
-      console.log('Final status:', {
-        score,
-        needs,
-        status
-      });
 
       // Generate message based on status
       let message = '';
@@ -160,8 +183,12 @@ const PetStatus = () => {
       }
 
       setMessages([message]);
+    } catch (err) {
+      // Definir estado neutro em caso de erro
+      setMood('neutral');
+      setMessages(["Estou muito feliz em te ver! 🐶"]);
     }
-  }, [dashboardData]);
+  }, [dashboardData, getTimestamp]);
 
   return (
     <div className="pet-status-container">
