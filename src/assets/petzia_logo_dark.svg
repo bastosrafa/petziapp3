@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 180">
+  <!-- Dog face logo -->
+  <g transform="translate(50, 10)">
+    <path d="M60,20 C80,0 120,0 140,20 C160,0 200,0 220,20 C260,70 220,140 140,140 C60,140 20,70 60,20 Z" fill="#FFBE0B" stroke="#8B4513" stroke-width="8"/>
+    <ellipse cx="100" cy="60" rx="12" ry="18" fill="#8B4513"/>
+    <ellipse cx="180" cy="60" rx="12" ry="18" fill="#8B4513"/>
+    <ellipse cx="140" cy="90" rx="20" ry="15" fill="#8B4513"/>
+    <path d="M110,110 Q140,140 170,110" fill="none" stroke="#8B4513" stroke-width="8" stroke-linecap="round"/>
+    <path d="M90,40 Q80,30 70,40" fill="none" stroke="#8B4513" stroke-width="4" stroke-linecap="round"/>
+    <path d="M190,40 Q200,30 210,40" fill="none" stroke="#8B4513" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Petzia text -->
+  <g transform="translate(250, 80)">
+    <text font-family="Arial, sans-serif" font-size="60" font-weight="bold" fill="#FFFFFF">Petzia</text>
+    <text x="0" y="40" font-family="Arial, sans-serif" font-size="20" fill="#2EC4B6">Educar com amor, cuidar com leveza.</text>
+  </g>
+</svg> 

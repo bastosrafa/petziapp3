@@ -19,18 +19,20 @@ export default defineConfig({
         enabled: true,
       },
       manifest: {
-        name: "Generic App", // TODO: Informar o nome do seu app
-        short_name: "GenericApp", // TODO: Informar o nome do seu app
-        description: "A generic app", // TODO: Alterar a descrição
-        theme_color: "#000000",
+        name: "Petzia",
+        short_name: "Petzia",
+        description: "Seu pet + tecnologia na palma da mão.",
+        theme_color: "#2EC4B6",
+        background_color: "#F0F8FF",
+        display: "standalone",
         icons: [
           {
-            src: "android-chrome-192x192.png",
+            src: "web-app-manifest-192x192.png",
             sizes: "192x192",
             type: "image/png",
           },
           {
-            src: "apple-touch-icon.png",
+            src: "web-app-manifest-512x512.png",
             sizes: "512x512",
             type: "image/png",
           },

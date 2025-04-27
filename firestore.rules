@@ -32,6 +32,14 @@ service cloud.firestore {
       }
     }
 
+    // Regras para a coleção onboarding_data
+    match /onboarding_data/{userId} {
+      allow read: if isSignedIn() && idsMatch(userId);
+      allow create: if isSignedIn() && idsMatch(userId);
+      allow update: if isSignedIn() && idsMatch(userId);
+      allow delete: if isSignedIn() && idsMatch(userId);
+    }
+
     // Regras para a coleção dashboards
     match /dashboards/{userId} {
       allow read: if isSignedIn() && idsMatch(userId);

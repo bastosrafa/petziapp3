@@ -22,7 +22,14 @@ module.exports = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        brand: "#2299ff",
+        brand: "#3A86FF",
+        petzia: {
+          blue: "#3A86FF",    // Azul Tech
+          turquoise: "#2EC4B6", // Turquesa Digital
+          purple: "#9B5DE5",   // Lilás IA
+          gray: "#E5E5E5",     // Cinza Neutro
+          yellow: "#FFBE0B",   // Neon Suave
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

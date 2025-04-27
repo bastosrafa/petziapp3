@@ -1,242 +1,142 @@
-const functions = require("firebase-functions");
+const { onRequest } = require("firebase-functions/v2/https");
 const admin = require("firebase-admin");
-const express = require("express");
 const sendEmail = require("./utils/sendEmail");
 
 if (admin.apps.length === 0) {
   admin.initializeApp();
 }
 
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const db = admin.firestore();
+const auth = admin.auth();
 
-app.post("/", async (req, res) => {
-  const webhook = req.body;
+exports.onHotmartWebhook = onRequest(
+  { memory: "1GiB", timeoutSeconds: 120, cors: false },
+  async (req, res) => {
+    const handledEvents = ["PURCHASE_APPROVED", "PURCHASE_REFUNDED"];
+    const webhook = req.body;
+    const data = webhook.data;
+    const event = webhook.event;
+    let result;
+    let planObject = {};
 
-  // Add webhook to webhooks collection
-  await admin.firestore().collection("webhooks").add(webhook);
+    if (!handledEvents.includes(event)) {
+      return res.status(200).json({ success: true });
+    }
 
-  if (Object.keys(webhook).length === 0) {
-    return res.status(400).send("O objeto de webhook não deve estar vazio.");
-  }
+    const email = data.buyer.email;
+    const name = data.buyer.name;
+    const phone_number = data.buyer.phone || "";
+    const product = data.product.name;
+    const full_price = data.purchase.full_price.value;
+    const currency = data.purchase.full_price.currency_value;
+    const paymentMethod = data.purchase.payment.type;
+    const planName = data.subscription?.plan?.name;
+    const offer = data.purchase.offer.code;
+    const renewalDate = data.purchase.next_charge_date;
+    
+    // Adicionando estas linhas antes de usar as variáveis
+    const isReferral = data.buyer.isReferral || false;
+    const referrer = data.buyer.referrer || null;
 
-  const email = webhook.data.buyer.email;
-  const name = webhook.data.buyer.name;
-  const phone_number = webhook.data.buyer.checkout_phone;
+    if (event === "PURCHASE_APPROVED") {
+      planObject = {
+        status: "active",
+        name: "premium",
+        status_date: new Date(),
+        renewal_date: renewalDate ? new Date(renewalDate) : null,
+        purchase_date: new Date(),
+        platform: "hotmart",
+      };
+    } else if (event === "PURCHASE_REFUNDED") {
+      planObject = {
+        status: "refunded",
+        status_date: new Date(),
+      };
+    }
 
-  try {
-    const db = admin.firestore();
-    const auth = admin.auth();
+    //Consultando a coleção "users" pelo e-mail para obter o ID
+    let userRec;
+    try {
+      userRec = await auth.getUserByEmail(email);
+      console.log(
+        `[Authentication](INFO): Found user with email ${email}.`
+      );
+    } catch (error) {
+      console.log(
+        `[Authentication](INFO): Couldn't find user with email ${email}. Creating user...`
+      );
+    }
 
-    if (webhook.event === "PURCHASE_APPROVED") {
-      let userId;
-      let userExistsOnAuth;
+    // Verificar se encontrou o usuário
+    if (!userRec) {
       try {
-        const usersRef = db.collection("users");
-        const query = usersRef.where("email", "==", email);
-        const querySnapshot = await query.get();
-
-        if (querySnapshot.empty) {
-          try {
-            userExistsOnAuth = await auth.getUserByEmail(email);
-            console.log("userExistsOnAuth", "==", userExistsOnAuth);
-          } catch (err) {
-            console.log("Usuário ainda não existe, será criado: ", email);
-          }
-          if (userExistsOnAuth) {
-            userId = userExistsOnAuth.uid;
-            await db
-              .collection("users")
-              .doc(userId)
-              .set(
-                {
-                  email: email,
-                  name: name,
-                  phone: phone_number,
-                  id: userId,
-                  plan: {
-                    status: "active",
-                    purchase_date: new Date(),
-                    name: "premium",
-                    status_date: new Date(),
-                    platform: "hotmart",
-                  },
-                },
-                { merge: true }
-              );
-          }
-        } else {
-          // Assumindo que só há um documento com esse email
-          const userDoc = querySnapshot.docs[0];
-          userId = userDoc.id;
-        }
-      } catch (error) {
-        console.error("Error retrieving user ID by email:", error);
-        throw error;
-      }
-
-      // // Verificar se encontrou o usuário
-      if (!userExistsOnAuth && !userId) {
-        // Calculando a data de renovação do plano
-
-        let userRecord;
-        try {
-          userRecord = await auth.createUser({
-            email,
-            password: "senha123",
-            displayName: name,
-            emailVerified: true,
-            disabled: false,
-          });
-
-          await db
-            .collection("users")
-            .doc(userRecord.uid)
-            .set({
-              email: email,
-              name: name,
-              phone: phone_number,
-              id: userRecord.uid,
-              plan: {
-                status: "active",
-                name: "premium",
-                status_date: new Date(),
-                purchase_date: new Date(),
-                platform: "hotmart",
-              },
-            });
-          userId = userRecord.uid;
-          await sendEmail(email, name, "senha123");
-        } catch (error) {
-          console.log(error);
-        }
-
-        return res.status(201).send("Usuário criado com sucesso!");
-      }
-
-      await db
-        .collection("users")
-        .doc(userId)
-        .set(
-          {
-            email: email,
-            name: name,
-            phone: phone_number,
-            id: userId,
-            plan: {
-              status: "active",
-              name: "premium",
-              status_date: new Date(),
-              platform: "hotmart",
-            },
-            risk: "medium",
-            new: true,
-            isReferral,
-            referrer,
-            latam: true,
-          },
-          { merge: true }
+        userRec = await auth.createUser({
+          email: email,
+          password: "ma990mma",
+          displayName: name,
+          emailVerified: true,
+          disabled: false,
+        });
+        console.log(
+          "User created successfully with email :",
+          email
         );
-    } else if (webhook.event === "PURCHASE_CHARGEBACK") {
-      let userRec;
-      try {
-        userRec = await auth.getUserByEmail(email);
       } catch (error) {
         console.log(error);
-      }
-
-      // Verificar se encontrou o usuário
-      if (!userRec) {
-        return res.status(404).send("Usuário não encontrado.");
-      }
-
-      // Pegando o ID do usuário
-      const userId = userRec.uid;
-
-      await db
-        .collection("users")
-        .doc(userId)
-        .set(
-          {
-            email: email,
-            name: name,
-            phone: phone_number,
-            id: userId,
-            plan: {
-              status: "chargedback",
-              status_date: new Date(),
-            },
-            risk: "medium",
-            latam: true,
-          },
-          { merge: true }
+        console.log(
+          `[Authentication](ERROR) Failed to create user with email: ${email}. Stopping execution...`
         );
-
-      const rewardPurchase = await db
-        .collection("rewardPurchases")
-        .doc(userId)
-        .get();
-
-      if (rewardPurchase.exists) {
-        await rewardPurchase.ref.set(
-          { refundOrChargeback: true },
-          { merge: true }
-        );
-      }
-    } else if (webhook.event === "PURCHASE_REFUNDED") {
-      let userRec;
-      try {
-        userRec = await auth.getUserByEmail(email);
-      } catch (error) {
-        console.log(error);
-      }
-
-      // Verificar se encontrou o usuário
-      if (!userRec) {
-        return res.status(404).send("Usuário não encontrado.");
-      }
-
-      // Pegando o ID do usuário
-      const userId = userRec.uid;
-
-      await db
-        .collection("users")
-        .doc(userId)
-        .set(
-          {
-            email: email,
-            name: name,
-            phone: phone_number,
-            id: userId,
-            plan: {
-              status: "refunded",
-              status_date: new Date(),
-            },
-            risk: "medium",
-            latam: true,
-          },
-          { merge: true }
-        );
-
-      const rewardPurchase = await db
-        .collection("rewardPurchases")
-        .doc(userId)
-        .get();
-
-      if (rewardPurchase.exists) {
-        await rewardPurchase.ref.set(
-          { refundOrChargeback: true },
-          { merge: true }
-        );
+        return res.status(500).json({
+          success: false,
+          message:
+            "Erro ao criar usuário no Auth para " + email,
+        });
       }
     }
 
-    return res.status(201).send("Webhook processado com sucesso!");
-  } catch (error) {
-    console.log(`Erro ao processar o webhook com o ID: ${webhook.id} `, error);
-    return res.status(500).send("Erro interno ao processar o webhook.");
-  }
-});
+    // Pegando o ID do usuário
+    const userId = userRec.uid;
 
-exports.onHotmartWebhook = functions.https.onRequest(app);
+    try {
+      await db
+        .collection("users")
+        .doc(userId)
+        .set(
+          {
+            email: email,
+            name: name,
+            phone: phone_number,
+            id: userId,
+            plan: planObject,
+            risk: "medium",
+            new: true,
+            isReferral: isReferral,
+            referrer: referrer,
+            latam: true,
+          },
+          { merge: true }
+        );
+      console.log(
+        `[Firestore](OK) Successfuly created user with email: ${email}`
+      );
+      result = "success";
+    } catch (error) {
+      console.error(
+        `[Firestore](ERROR) Failed to create user with email: ${email}`,
+        error
+      );
+      result = "error";
+    }
+
+    // await sendEmail(email, name, password);
+
+    if (result === "success") {
+      return res.status(200).json({ 
+        success: true,
+        message: `[onHotmartWebhook.js] Successfully processed webhook for ${email}`
+      });
+    } else {
+      return res.status(500).json({ success: false });
+    }
+  }
+);
