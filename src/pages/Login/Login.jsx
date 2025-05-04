@@ -70,7 +70,7 @@ export default function Login() {
     <div className={styles['login-bg']}>
       <div className={styles['login-container']}>
         <img src="/Logo para página de login.png" alt="Mascote Petzia" className={styles['logo-mascote']} />
-        <h1 className={styles['login-title']}>Bem-vindo ao Petzia</h1>
+        <h1 className={styles['login-title']}>Bem-vindo ao Petzia!</h1>
         <p className={styles['login-subtitle']}>Conectando você ao seu pet, com tecnologia e amor.</p>
         <form className={styles['login-form']} onSubmit={handleLogin}>
           <input type="email" placeholder="E-mail" className={styles['login-input']} value={email} onChange={(e) => setEmail(e.target.value.trim().toLowerCase())} required />
@@ -105,7 +105,9 @@ export default function Login() {
           </button>
           {errorMsg && <p className={styles['error-msg']}>{errorMsg}</p>}
         </form>
-        <a href="/recuperar-senha" className={styles['forgot-link']}>Esqueceu sua senha?</a>
+        <Link to="/recover" className={styles['forgot-link']}>
+          Esqueceu sua senha?
+        </Link>
       </div>
     </div>
   );

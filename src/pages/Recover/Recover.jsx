@@ -2,13 +2,10 @@ import React, { useState } from "react";
 import { Button } from "@/shadcn/components/ui/button";
 import { Input } from "@/shadcn/components/ui/input";
 import { Link } from "react-router-dom";
-import { useLogin } from "@/hooks/useLogin";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import Logo from "@/components/Logo";
-import { useNavigate } from "react-router-dom";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "@/firebase/config";
-import { useToast } from "@/shadcn/components/ui/use-toast";
+import styles from '../Login/Login.module.css';
 
 export default function PasswordRecovery() {
   const [email, setEmail] = useState("");
@@ -37,65 +34,36 @@ export default function PasswordRecovery() {
   };
 
   return (
-    <div className="flex flex-col-reverse xl:flex-row 2xl:gap-20 xl:h-screen w-full xl:px-20 2xl:px-40 xl:py-20 2xl:py-0">
-      <div className="xl:w-1/2 2xl:h-[50%] my-auto bg-muted rounded-xl px-5 sm:p-12 py-8 flex justify-center items-center">
-        <div>
-          <Logo />
-          <h2 className="mt-12 sm:mt-10 2xl:mt-16 text-4xl leading-[44px] sm:leading-[50px] font-medium">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-          </h2>
-          <p className="mt-4 sm:mt-6 2xl:mt-10 text-muted-foreground">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet
-            quasi molestias molestiae, pariatur, doloribus neque saepe sit hic
-            quis sequi nulla non quidem accusantium harum ipsa minima adipisci
-            iure obcaecati!
-          </p>
-        </div>
-      </div>
-      <div className="flex flex-col justify-center xl:w-1/2 px-5 md:px-20 h-screen sm:h-auto">
-        <div>
-          <div className="sm:hidden mx-auto w-fit">
-            <Logo />
-          </div>
-          <h1 className="mt-12 text-3xl font-semibold text-center sm:text-left">
-            Redefina a sua senha
-          </h1>
-          <p className="mt-4 text-muted-foreground font-normal text-lg text-center sm:text-left">
-            Informe o seu e-mail abaixo
-          </p>
-          <form className="mt-8" onSubmit={handleSubmit}>
-            <p className="text-muted-foreground mb-2.5">E-mail</p>
-            <Input
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <Button
-              size="xl"
-              className="mt-6 text-lg w-full h-12"
-              disabled={isPending}
-            >
-              {isPending && (
-                <ReloadIcon className="w-5 h-5 mr-2 animate-spin" />
-              )}
-              {isPending ? "Enviando..." : "Enviar e-mail de recuperação"}
-            </Button>
-          </form>
-          {message && message.type === "success" && (
-            <p className="text-center text-emerald-500 mt-4">
-              {message.message}
-            </p>
-          )}
-          {message && message.type === "error" && (
-            <p className="text-center text-red-500 mt-4">{message.message}</p>
-          )}
-          <div className="mt-12 flex justify-center gap-2 text-lg">
-            <p>Lembrou-se da senha?</p>
-            <Link to="/login" className="text-blue-500 underline">
-              Entre na sua conta.
-            </Link>
-          </div>
+    <div className={styles['login-bg']}>
+      <div className={styles['login-container']}>
+        <img src="/Logo para página de login.png" alt="Mascote Petzia" className={styles['logo-mascote']} />
+        <h1 className={styles['login-title']}>Recuperar senha</h1>
+        <p className={styles['login-subtitle']}>Informe seu e-mail para receber o link de redefinição de senha.</p>
+        <form className={styles['login-form']} onSubmit={handleSubmit}>
+          <input
+            type="email"
+            placeholder="E-mail"
+            className={styles['login-input']}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <button type="submit" className={styles['login-btn']} disabled={isPending}>
+            {isPending && <ReloadIcon className={styles['spin-icon']} />}
+            {isPending ? "Enviando..." : "Enviar e-mail de recuperação"}
+          </button>
+        </form>
+        {message && message.type === "success" && (
+          <p className={styles['success-msg']} style={{ color: '#3A86FF', marginTop: 16 }}>{message.message}</p>
+        )}
+        {message && message.type === "error" && (
+          <p className={styles['error-msg']} style={{ marginTop: 16 }}>{message.message}</p>
+        )}
+        <div style={{ marginTop: 24 }}>
+          <span style={{ color: '#666', fontSize: 15 }}>Lembrou da senha?</span>
+          <Link to="/login" className={styles['forgot-link']} style={{ display: 'inline', marginLeft: 6 }}>
+            Entre na sua conta
+          </Link>
         </div>
       </div>
     </div>
