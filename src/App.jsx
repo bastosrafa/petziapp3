@@ -52,11 +52,15 @@ import Behavior4 from './pages/Content/Training/Behavior/Lessons/Behavior4';
 import Behavior5 from './pages/Content/Training/Behavior/Lessons/Behavior5';
 
 function App() {
-  const { user } = useAuthContext();
+  const { user, authIsReady } = useAuthContext();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [rerender, setRerender] = useState(false);
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [isWatching, setIsWatching] = useState(false);
+
+  if (!authIsReady) {
+    return <div>Carregando...</div>;
+  }
 
   return (
     <div className="App">
@@ -90,15 +94,15 @@ function App() {
                       </div>
                     )}
                     <div
-                      className={`${
+                      className={`$${
                         isMobile
                           ? "w-full"
                           : sidebarExpanded
                           ? "w-[calc(100%_-_300px)]"
                           : "w-[calc(100%_-_100px)]"
-                      } ${isMobile ? "mt-20" : "mt-24"} ${
+                      } pt-20 $${
                         isMobile ? "mb-20" : "mb-5"
-                      } ${
+                      } $${
                         isMobile ? "mx-0" : "mx-5"
                       } float-right overflow-y-auto h-[calc(100vh_-_120px)]`}
                     >

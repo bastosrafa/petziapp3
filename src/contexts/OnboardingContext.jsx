@@ -53,6 +53,12 @@ export const OnboardingProvider = ({ children }) => {
         completedAt: Timestamp.now()
       });
       
+      // Salvar o nome do pet também no dashboard
+      const dashboardRef = doc(db, 'dashboards', user.uid);
+      await setDoc(dashboardRef, {
+        petName: onboardingData.petName || '',
+      }, { merge: true });
+      
       setOnboardingCompleted(true);
       return true;
     } catch (error) {

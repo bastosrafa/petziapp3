@@ -20,8 +20,8 @@ import {
 
 // Estilos
 const ListContainer = styled.div`
-  margin-top: 20px;
-  max-height: 80vh;
+  margin-top: 0;
+  max-height: 60vh;
   overflow-y: auto;
   padding-right: 5px;
   
@@ -42,6 +42,13 @@ const ListContainer = styled.div`
   
   &::-webkit-scrollbar-thumb:hover {
     background: #b8b8b8;
+  }
+
+  @media (max-width: 600px) {
+    max-height: none;
+    height: auto;
+    padding-bottom: 72px;
+    padding-top: 0;
   }
 `;
 

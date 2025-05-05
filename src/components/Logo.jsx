@@ -15,10 +15,10 @@ export default function Logo({ size, justify, isTopBar }) {
   };
 
   return (
-    <div role="button" onClick={navigateToHome}>
+    <div role="button" onClick={navigateToHome} style={{ display: 'flex', alignItems: 'center', justifyContent: justify || 'center', height: isTopBar ? 140 : 'auto' }}>
       <img
         src={getLogoSrc()}
-        style={{ width: width }}
+        style={{ height: isTopBar ? 128 : 'auto', width: isTopBar ? 'auto' : width, maxHeight: '100%', objectFit: 'contain', display: 'block' }}
         alt="Petzia"
       />
     </div>

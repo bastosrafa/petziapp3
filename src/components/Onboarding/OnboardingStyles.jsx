@@ -355,10 +355,6 @@ export const WelcomeText = styled.p`
 `;
 
 // Animações e efeitos
-export const StepTransition = styled.div`
-  animation: ${fadeIn} 0.3s ease-in-out;
-`;
-
 // Animação para aparecer suavemente da direita/esquerda
 const slideInFromRight = keyframes`
   from {
@@ -486,14 +482,14 @@ export const HeaderContainer = styled.header`
   position: sticky;
   top: 0;
   background: linear-gradient(to right, #4a89dc, #5ca9fb);
-  padding: 16px;
+  padding: 8px 16px 8px 16px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index: 10;
   display: flex;
   justify-content: center;
   align-items: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  margin-bottom: 20px;
+  margin-bottom: 0;
   flex-shrink: 0;
 `;
 
@@ -509,8 +505,7 @@ export const MessagesContainer = styled.div`
   flex-direction: column;
   flex: 1;
   overflow-y: auto;
-  padding: 20px;
-  padding-bottom: 30px;
+  padding: 8px 20px 30px 20px;
   
   /* Estilizar scrollbar */
   &::-webkit-scrollbar {
@@ -536,23 +531,13 @@ export const MessageBubble = styled.div`
   line-height: 1.5;
   font-size: 16px;
   word-wrap: break-word;
-  
-  ${props => props.$isUser ? css`
-    background: linear-gradient(to right, #1a73e8, #5195ec);
-    color: white;
-    align-self: flex-end;
-    border-bottom-right-radius: 4px;
-    animation: ${slideInFromRight} 0.3s ease-out;
-    &.user-bubble {}
-  ` : css`
-    background-color: white;
-    color: #333;
-    align-self: flex-start;
-    border-bottom-left-radius: 4px;
-    animation: ${slideInFromLeft} 0.3s ease-out;
-    &.system-bubble {}
-  `}
-  
+  background-color: white;
+  color: #333;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+  animation: ${fadeIn} 0.3s ease-in-out;
+  &.system-bubble {}
+
   .typing-cursor {
     display: inline-block;
     width: 2px;
@@ -560,7 +545,6 @@ export const MessageBubble = styled.div`
     background-color: currentColor;
     margin-left: 2px;
     animation: blink 1s infinite;
-    
     @keyframes blink {
       0%, 100% { opacity: 1; }
       50% { opacity: 0; }

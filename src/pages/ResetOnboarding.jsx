@@ -16,11 +16,8 @@ const ResetOnboarding = () => {
     try {
       await resetOnboarding();
       setResetDone(true);
-      
-      // Redirecionar para o onboarding após um breve atraso
-      setTimeout(() => {
-        navigate('/onboarding');
-      }, 1500);
+      // Redirecionar imediatamente para o onboarding
+      navigate('/onboarding');
     } catch (err) {
       setError('Erro ao resetar onboarding: ' + err.message);
     } finally {

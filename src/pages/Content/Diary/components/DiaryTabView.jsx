@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Plus, List } from "lucide-react";
+import { Plus, List, X } from "lucide-react";
 
 const TabsContainer = styled.div`
   margin-bottom: 20px;
@@ -30,6 +30,23 @@ const Tab = styled.button`
 
 const TabContent = styled.div`
   padding-top: 20px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+`;
+
+const Card = styled.div`
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 48px 24px 24px 24px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  min-height: 0;
 `;
 
 export default function DiaryTabView({ category, formComponent, listComponent }) {
@@ -44,7 +61,7 @@ export default function DiaryTabView({ category, formComponent, listComponent })
   });
 
   return (
-    <div>
+    <Card>
       <TabsContainer>
         <TabsList>
           <Tab
@@ -67,6 +84,6 @@ export default function DiaryTabView({ category, formComponent, listComponent })
       <TabContent>
         {activeTab === "form" ? formWithCallback : listComponent}
       </TabContent>
-    </div>
+    </Card>
   );
 } 

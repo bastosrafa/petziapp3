@@ -1142,7 +1142,7 @@ const ChatOnboarding = () => {
         
         setMessages(prev => [...prev, {
           id: `system-${Date.now()}`,
-          text: ONBOARDING_STEPS.PET_GENDER.getMessage(petName, petType),
+          text: `${petName} é um ${breed}! E qual é o gênero?`,
           type: 'system'
         }]);
       }, 1500);

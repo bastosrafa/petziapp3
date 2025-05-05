@@ -404,14 +404,10 @@ const PetStatus = () => {
             <div className="nose"></div>
             <div className="mouth"></div>
           </div>
-          
-          <div className={`mood-indicator ${mood}`}>
-            {mood === 'happy' ? '😃' : mood === 'sad' ? '😞' : '😐'}
-          </div>
         </div>
         
         <div className="pet-status-info">
-          <h2>Status do Pet</h2>
+          <h2>{`Como ${dashboardData?.petName ? dashboardData.petName : 'seu pet'} está hoje:`}</h2>
           <div className="mood-description">{moodDescriptions[mood]}</div>
           
           <div className="mood-messages">

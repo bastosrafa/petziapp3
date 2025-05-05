@@ -77,7 +77,7 @@ export default function Topbar({ setRerender }) {
 
   return (
     <div className="fixed w-full bg-white border border-border h-[72px] flex justify-between items-center px-5 z-[50]">
-      <Logo size={172} />
+      <Logo isTopBar={true} />
       <div className="flex gap-2.5">
         <ProfilePicDialog setRerender={setRerender}>
           <Avatar className="h-12 w-12" role="button">
