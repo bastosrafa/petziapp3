@@ -15,6 +15,7 @@ import Sidebar from './components/Sidebar';
 import Topbar from './components/Topbar';
 import TopbarMobile from './components/TopbarMobile';
 import BottomBar from './components/BottomBar';
+import Loading from './components/Loading';
 
 // Páginas
 import Login from './pages/Login/Login';
@@ -59,7 +60,7 @@ function App() {
   const [isWatching, setIsWatching] = useState(false);
 
   if (!authIsReady) {
-    return <div>Carregando...</div>;
+    return <Loading />;
   }
 
   return (

@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light only">
     <title>Welcome to Firebase Hosting</title>
 
     <!-- update the version number as needed -->
@@ -41,6 +42,18 @@
     </style>
   </head>
   <body>
+    <div id="splash" style="
+      position: fixed;
+      inset: 0;
+      background: #e6f2ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+    ">
+      <img src="/Logo icone app_Transparente_App, loading, botão início (1).png" alt="Carregando Petzia" style="width: 80px; height: 80px; animation: spin 1.2s linear infinite;" />
+    </div>
+    <div id="root"></div>
     <div id="message">
       <h2>Welcome</h2>
       <h1>Firebase Hosting Setup Complete</h1>
@@ -87,5 +100,11 @@
         }
       });
     </script>
+    <style>
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+    </style>
   </body>
 </html>

@@ -57,6 +57,8 @@
     font-family: "Inter", sans-serif;
   }
   body {
+    background: #e6f2ff !important;
+    color: #222 !important;
     @apply bg-primary-foreground text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }

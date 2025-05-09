@@ -398,83 +398,15 @@ export const ChatContainer = styled.div`
   max-width: 600px;
   margin: 0 auto;
   height: 100vh;
-  background: linear-gradient(to bottom, #e6f2ff, #f8f9fa);
+  background: linear-gradient(to bottom, #e6f2ff, #f8f9fa) !important;
+  color: #222 !important;
   overflow: hidden;
   position: relative;
   font-family: 'Inter', 'Segoe UI', sans-serif;
-  
-  * {
-    box-sizing: border-box;
-  }
-  
+  * { box-sizing: border-box; }
   @media (max-width: 600px) {
     max-width: 100%;
     border-radius: 0;
-  }
-  
-  &.dark-mode {
-    background: linear-gradient(to bottom, #1a2942, #101520);
-    color: #eee;
-  }
-  
-  &.dark-mode header {
-    background: linear-gradient(to right, #3a5b99, #2b3c5d);
-  }
-  
-  &.dark-mode .user-bubble {
-    background: linear-gradient(to right, #1a4b8f, #2c5c9c);
-  }
-  
-  &.dark-mode .system-bubble {
-    background-color: #2a2f3c;
-    color: #eee;
-  }
-  
-  &.dark-mode .typing-indicator {
-    background-color: #2a2f3c;
-  }
-  
-  &.dark-mode .typing-indicator .typing-text {
-    color: #aaa;
-  }
-  
-  &.dark-mode .typing-indicator span {
-    background-color: #4a89dc;
-  }
-  
-  &.dark-mode .input-container {
-    background: rgba(26, 32, 44, 0.95);
-    backdrop-filter: blur(5px);
-    border-top-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  &.dark-mode .text-input {
-    background-color: #2a2f3c;
-    border-color: #3a4050;
-    color: #eee;
-  }
-  
-  &.dark-mode .text-input::placeholder {
-    color: #888;
-  }
-  
-  &.dark-mode .option-button {
-    background-color: #2a2f3c;
-    color: #4a89dc;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  }
-  
-  &.dark-mode .option-button:hover {
-    background-color: #353b4a;
-  }
-  
-  &.dark-mode .multi-option-button.selected {
-    background-color: #2c3d57;
-  }
-  
-  &.dark-mode [class*="ResponseAreaContainer"] {
-    background: rgba(26, 32, 44, 0.95) !important;
-    border-top-color: rgba(255, 255, 255, 0.1);
   }
 `;
 

@@ -68,3 +68,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     {/* <Toaster /> */}
   </AuthContextProvider>
 );
+
+// Remove splash screen após o React montar
+const splash = document.getElementById('splash');
+if (splash) splash.remove();
