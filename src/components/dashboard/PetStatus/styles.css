@@ -1,13 +1,16 @@
 .pet-status-container {
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   border-radius: 12px;
-  padding: 24px;
+  padding: 32px 24px 32px 24px;
   margin-bottom: 24px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
+  min-height: 320px;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
 .pet-status-content {
@@ -65,17 +68,28 @@
 }
 
 .pet-status-info h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #333;
+  font-family: 'Nunito Sans', 'Inter', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #3A86FF;
   margin-bottom: 8px;
 }
 
 .mood-description {
-  font-size: 1.2rem;
-  color: #666;
+  font-family: 'Nunito Sans', 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
   margin-bottom: 16px;
-  font-weight: 500;
+}
+
+.mood-description.feliz {
+  color: #2EC4B6;
+}
+.mood-description.atencao {
+  color: #FFBE0B;
+}
+.mood-description.critico {
+  color: #FF595E;
 }
 
 .mood-messages {
@@ -87,20 +101,24 @@
 }
 
 .mood-message {
-  font-size: 1.1rem;
-  color: #555;
-  font-style: italic;
-  padding: 12px 16px;
-  background-color: #f8f9fa;
+  color: #1C1C1C;
+  background: #FFFFFF;
   border-radius: 8px;
-  display: inline-block;
+  padding: 12px 16px;
   margin: 0 auto;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease;
+  font-size: 1rem;
+  font-style: italic;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  border-left: 4px solid #2EC4B6; /* default: feliz */
 }
-
-.mood-message:hover {
-  transform: translateY(-2px);
+.mood-message.feliz {
+  border-left: 4px solid #2EC4B6;
+}
+.mood-message.atencao {
+  border-left: 4px solid #FFBE0B;
+}
+.mood-message.critico {
+  border-left: 4px solid #FF595E;
 }
 
 /* Responsive adjustments */

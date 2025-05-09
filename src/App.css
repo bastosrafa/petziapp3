@@ -15,10 +15,10 @@ html, body, #root {
 
 /* Garante que o conteúdo principal não seja cortado pela BottomBar */
 .main-content {
-  padding-bottom: 4rem; /* Altura da BottomBar */
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
+  padding-bottom: 3.5rem; /* Altura exata da BottomBar */
 }
 
 /* Ajusta o padding para dispositivos móveis */

@@ -57,7 +57,7 @@ export default function TopbarMobile({ setRerender }) {
   if (!userDoc) return <Loading />;
 
   return (
-    <div className="fixed w-full bg-muted border border-border h-16 flex justify-between items-center">
+    <div className="fixed w-full bg-muted border border-border h-16 flex justify-between items-center z-50">
       <div className="w-full flex justify-center">
         <Logo isTopBar={true} />
       </div>

@@ -13,6 +13,7 @@ const PetStatus = () => {
   const [mood, setMood] = useState('neutral');
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const [isStatusReady, setIsStatusReady] = useState(false);
 
   const getTimestamp = (timestamp) => {
     if (!timestamp) return null;
@@ -389,7 +390,22 @@ const PetStatus = () => {
       }
     }
 
+    setIsStatusReady(true);
   }, [dashboardData]);
+
+  const getMessageClass = (msg) => {
+    const lower = msg.toLowerCase();
+    if (lower.includes("passeio") || lower.includes("fome") || lower.includes("atenção") || lower.includes("atençao")) {
+      return "atencao";
+    }
+    if (lower.includes("vacina") || lower.includes("crítico") || lower.includes("critico") || lower.includes("saúde") || lower.includes("saude")) {
+      return "critico";
+    }
+    if (lower.includes("feliz") || lower.includes("super bem") || lower.includes("bem hoje")) {
+      return "feliz";
+    }
+    return "feliz"; // default
+  };
 
   return (
     <div className="pet-status-container">
@@ -408,13 +424,18 @@ const PetStatus = () => {
         
         <div className="pet-status-info">
           <h2>{`Como ${dashboardData?.petName ? dashboardData.petName : 'seu pet'} está hoje:`}</h2>
-          <div className="mood-description">{moodDescriptions[mood]}</div>
-          
-          <div className="mood-messages">
-            {messages.map((msg, index) => (
-              <div key={index} className="mood-message">{msg}</div>
-            ))}
-          </div>
+          {!isStatusReady ? (
+            <div className="mood-description">Carregando...</div>
+          ) : (
+            <>
+              <div className={`mood-description ${mood === 'happy' ? 'feliz' : mood === 'sad' ? 'critico' : 'atencao'}`}>{moodDescriptions[mood]}</div>
+              <div className="mood-messages">
+                {messages.map((msg, index) => (
+                  <div key={index} className={`mood-message ${getMessageClass(msg)}`}>{msg}</div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
