@@ -38,7 +38,7 @@ export default function TopbarMobile({ setRerender }) {
 
       //We can send token to server
       console.log("Token generated : ", token);
-      await fetch("https://suaapi.com/token", {
+      await fetch("https://seu-backend.com/api/saveToken", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

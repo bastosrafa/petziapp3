@@ -72,8 +72,7 @@ export default function Profile({ rerender, setRerender }) {
   if (!userDoc || !user) return <Loading />;
 
   return (
-    <div className="profile-container">
-      {rerender && <span className="hidden"></span>}
+    <div className="profile-main-container">
       <div className="profile-header">
         <h1>Sua conta</h1>
         <p className="profile-subtitle">Altere os dados da sua conta</p>
@@ -142,12 +141,6 @@ export default function Profile({ rerender, setRerender }) {
             </form>
           )}
         </div>
-      </div>
-
-      <div className="grid gap-4 mt-6">
-        <Button onClick={handleResetOnboarding} variant="outline" className="w-full">
-          Resetar Onboarding (Teste)
-        </Button>
       </div>
     </div>
   );

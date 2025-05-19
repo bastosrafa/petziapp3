@@ -14,12 +14,27 @@ const ReportProblem = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Aqui você pode adicionar a lógica para enviar o relatório
-    console.log('Dados do relatório:', formData);
-    // Após enviar, redirecionar para a página principal
-    navigate('/');
-    // Mostrar uma mensagem de sucesso
-    alert('Relatório enviado com sucesso! Obrigado por nos ajudar a melhorar o PetziApp.');
+    const data = new FormData();
+    data.append('type', formData.type);
+    data.append('title', formData.title);
+    data.append('description', formData.description);
+    if (formData.file) {
+      data.append('file', formData.file);
+    }
+    try {
+      const response = await fetch("https://api.petziapp.com/api/report-problem", {
+        method: "POST",
+        body: data
+      });
+      if (response.ok) {
+        alert('Relatório enviado com sucesso! Obrigado por nos ajudar a melhorar o PetziApp.');
+        navigate('/');
+      } else {
+        alert('Erro ao enviar relatório. Tente novamente mais tarde.');
+      }
+    } catch (err) {
+      alert('Erro ao enviar relatório. Tente novamente mais tarde.');
+    }
   };
 
   const handleChange = (e) => {

@@ -21,22 +21,19 @@ const verifyToken = async (req, res, next) => {
 };
 
 router.post("/", verifyToken, async (req, res) => {
+  const { token } = req.body;
   const userId = req.body.userId;
-  const token = req.body.token;
+
+  if (!token || !userId) {
+    return res.status(400).json({ success: false, message: "Token e userId são obrigatórios." });
+  }
 
   try {
     await firestore.collection("tokens").doc(userId).set({ token });
-    try {
-      const response = await getMessaging().subscribeToTopic(token, "all");
-      console.log("Inscrição no tópico:", response);
-    } catch (error) {
-      console.error("Erro ao inscrever no tópico:", error);
-    }
-
-    res.sendStatus(200);
+    res.status(200).json({ success: true, message: "Token salvo com sucesso." });
   } catch (error) {
     console.error("Erro ao salvar token:", error);
-    res.status(500).send("Erro ao salvar token");
+    res.status(500).json({ success: false, message: "Erro ao salvar token." });
   }
 });
 

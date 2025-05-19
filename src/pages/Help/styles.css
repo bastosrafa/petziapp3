@@ -3,6 +3,8 @@
   margin: 0 auto;
   padding: 2rem;
   font-family: 'Inter', sans-serif;
+  min-height: calc(100vh - 56px);
+  background: white;
 }
 
 .help-header {
@@ -26,22 +28,29 @@
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+  position: relative;
 }
 
 .search-input {
   width: 100%;
   padding: 0.75rem 1rem;
+  padding-left: 2.5rem;
   border-radius: 0.5rem;
-  border: 1px solid #e5e7eb;
+  border: 2px solid #e5e7eb;
   background-color: white;
   color: #1a1a1a;
   font-size: 1rem;
+  transition: all 0.2s ease;
 }
 
 .search-input:focus {
   outline: none;
   border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.search-input::placeholder {
+  color: #9ca3af;
 }
 
 .help-grid {
@@ -49,6 +58,7 @@
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
   margin-bottom: 3rem;
+  min-height: 200px;
 }
 
 .help-card {
@@ -57,6 +67,8 @@
   padding: 1.5rem;
   transition: all 0.2s;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+  animation: fadeIn 0.3s ease-in-out;
 }
 
 .help-card:hover {
@@ -105,6 +117,7 @@
   cursor: pointer;
   padding: 0.5rem 0;
   color: #1a1a1a;
+  transition: color 0.2s ease;
 }
 
 .help-item-header:hover {
@@ -112,30 +125,21 @@
 }
 
 .help-item-content {
-  padding: 1rem 0;
-  color: #666;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
   font-size: 0.95rem;
   line-height: 1.5;
-  animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  color: #4b5563;
 }
 
 .contact-section {
   text-align: center;
   padding: 2rem;
-  background-color: white;
+  background-color: #f9fafb;
   border-radius: 0.75rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
 }
 
 .contact-section h2 {
@@ -152,28 +156,60 @@
 .contact-button {
   background-color: #2563eb;
   color: white;
-  border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
+  border: none;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s ease;
 }
 
 .contact-button:hover {
   background-color: #1d4ed8;
 }
 
+/* Estilos para quando não há resultados */
+.no-results {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* Animação de fade para os resultados */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsividade */
 @media (max-width: 768px) {
   .help-container {
     padding: 1rem;
+  }
+
+  .help-header h1 {
+    font-size: 1.75rem;
   }
 
   .help-grid {
     grid-template-columns: 1fr;
   }
 
-  .contact-section {
-    padding: 1.5rem;
+  .help-card {
+    margin-bottom: 1rem;
   }
+}
+
+/* Estilo para highlight dos resultados da busca */
+.highlight {
+  background-color: rgba(37, 99, 235, 0.1);
+  padding: 0 0.25rem;
+  border-radius: 0.25rem;
 } 

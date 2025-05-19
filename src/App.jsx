@@ -105,7 +105,7 @@ function App() {
                         isMobile ? "mb-20" : "mb-5"
                       } $${
                         isMobile ? "mx-0" : "mx-5"
-                      } float-right overflow-y-auto h-[calc(100vh_-_120px)]`}
+                      } float-right overflow-y-auto h-[calc(100vh_-_76px)]`}
                     >
                       <Routes>
                         <Route path="/" element={<Home />} />

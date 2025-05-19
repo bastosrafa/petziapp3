@@ -4,6 +4,7 @@ import './styles.css';
 
 const Help = () => {
   const [expandedItems, setExpandedItems] = useState({});
+  const [searchTerm, setSearchTerm] = useState('');
 
   const helpTopics = [
     {
@@ -100,7 +101,7 @@ const Help = () => {
       items: [
         {
           question: 'Como entrar em contato com o suporte',
-          answer: 'Você pode nos contatar através do chat dentro do app, email (suporte@petziapp.com) ou telefone (0800-123-4567).'
+          answer: 'Você pode nos contatar através do chat dentro do app ou email (support@petziapp.com).'
         },
         {
           question: 'FAQ - Perguntas frequentes',
@@ -148,6 +149,22 @@ const Help = () => {
     }));
   };
 
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value.toLowerCase());
+  };
+
+  const filterTopics = () => {
+    if (!searchTerm) return helpTopics;
+
+    return helpTopics.map(topic => ({
+      ...topic,
+      items: topic.items.filter(item =>
+        item.question.toLowerCase().includes(searchTerm) ||
+        item.answer.toLowerCase().includes(searchTerm)
+      )
+    })).filter(topic => topic.items.length > 0);
+  };
+
   return (
     <div className="help-container">
       <div className="help-header">
@@ -161,11 +178,13 @@ const Help = () => {
           type="text" 
           placeholder="Pesquisar tópicos de ajuda..." 
           className="search-input"
+          value={searchTerm}
+          onChange={handleSearch}
         />
       </div>
 
       <div className="help-grid">
-        {helpTopics.map((topic, topicIndex) => (
+        {filterTopics().map((topic, topicIndex) => (
           <div key={topicIndex} className="help-card">
             <div className="help-card-icon">
               {topic.icon}
