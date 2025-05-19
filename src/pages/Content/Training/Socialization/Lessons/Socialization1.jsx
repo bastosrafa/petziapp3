@@ -7,51 +7,56 @@ import { Timestamp } from 'firebase/firestore';
 import socialization1Image from "@/assets/images/training/socialization1.png";
 
 const LessonContainer = styled.div`
-  padding: 2rem;
-  max-width: 800px;
+  max-width: 430px;
+  width: 100%;
   margin: 0 auto;
+  padding: 1.5rem;
+  background: transparent;
 `;
 
 const Title = styled.h1`
   font-size: 2rem;
   color: #2D3748;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+  margin-top: 0.2rem;
   text-align: center;
 `;
 
 const CarouselContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 600px;
-  overflow: hidden;
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const Slide = styled.div`
-  position: absolute;
+  position: relative;
   width: 100%;
-  height: 100%;
-  opacity: ${props => (props.active ? 1 : 0)};
-  transition: opacity 0.3s ease-in-out;
+  height: 600px;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
+  display: ${props => (props.active ? 'flex' : 'none')};
   flex-direction: column;
-  pointer-events: ${props => props.active ? 'auto' : 'none'};
-  z-index: ${props => props.active ? 1 : 0};
+  margin: 0 auto;
+  max-width: 480px;
 `;
 
 const SlideContent = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding: 2.5rem;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   scrollbar-color: #4299E1 #F7FAFC;
   pointer-events: auto;
   position: relative;
   z-index: 1;
-  margin-bottom: 60px;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -288,11 +293,10 @@ const WarningItem = styled.li`
 
 const SlideImage = styled.img`
   width: 100%;
-  max-height: 300px;
+  height: 200px;
   object-fit: cover;
   border-radius: 8px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
 `;
 
 export default function Socialization1({ onNextLesson }) {

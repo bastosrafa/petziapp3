@@ -27,24 +27,23 @@ const CarouselContainer = styled.div`
 `;
 
 const Slide = styled.div`
-  position: absolute;
   width: 100%;
-  height: 100%;
-  opacity: ${props => (props.active ? 1 : 0)};
-  transition: opacity 0.3s ease-in-out;
+  max-width: 430px;
+  margin: 0 auto;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
+  display: ${props => (props.active ? 'flex' : 'none')};
   flex-direction: column;
-  pointer-events: ${props => props.active ? 'auto' : 'none'};
-  z-index: ${props => props.active ? 1 : 0};
 `;
 
 const SlideContent = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding: 2.5rem;
+  max-width: 430px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   scrollbar-color: #4299E1 #F7FAFC;

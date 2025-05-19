@@ -9,9 +9,12 @@ import ModuleCompletionPopup from "@/components/ModuleCompletionPopup";
 import behavior1Image from '@/assets/images/training/behavior1.png';
 
 const LessonContainer = styled.div`
-  padding: 2rem;
+  padding: 2rem 1rem 3.5rem 1rem;
   max-width: 800px;
-  margin: 0 auto;
+  margin: 2rem auto 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const Title = styled.h1`
@@ -26,27 +29,33 @@ const CarouselContainer = styled.div`
   width: 100%;
   height: 600px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const Slide = styled.div`
-  position: absolute;
+  position: relative;
   width: 100%;
   height: 100%;
-  opacity: ${props => (props.active ? 1 : 0)};
   transition: opacity 0.3s ease-in-out;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
+  display: ${props => (props.active ? 'flex' : 'none')};
   flex-direction: column;
   pointer-events: ${props => props.active ? 'auto' : 'none'};
-  z-index: ${props => props.active ? 1 : 0};
+  margin: 0;
+  max-width: none;
 `;
 
 const SlideContent = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding: 2.5rem;
+  max-width: 430px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   scrollbar-color: #4299E1 #F7FAFC;
