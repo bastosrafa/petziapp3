@@ -1,7 +1,8 @@
 .report-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+  max-width: 430px;
+  width: 100%;
+  margin: 2rem auto;
+  padding: 2rem;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -147,11 +148,15 @@ select {
 }
 
 /* Responsividade */
-@media (max-width: 768px) {
+@media (max-width: 600px) {
   .report-container {
-    padding: 16px;
+    max-width: 100vw;
+    width: 100vw;
+    min-width: 0;
+    margin: 0;
     border-radius: 0;
     box-shadow: none;
+    padding: 0.5rem 0.5rem 2.5rem 0.5rem;
   }
   
   .report-header h1 {
