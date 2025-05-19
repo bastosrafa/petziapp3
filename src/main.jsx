@@ -48,18 +48,9 @@ if ("serviceWorker" in navigator) {
 
 registerSW({ immediate: true });
 
-// Register the basic service worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(registration => {
-        console.log('ServiceWorker registrado com sucesso:', registration.scope);
-      })
-      .catch(error => {
-        console.log('Falha ao registrar o ServiceWorker:', error);
-      });
-  });
-}
+// Remove splash screen após o React montar
+const splash = document.getElementById('splash');
+if (splash) splash.remove();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <AuthContextProvider>
@@ -69,7 +60,3 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     {/* <Toaster /> */}
   </AuthContextProvider>
 );
-
-// Remove splash screen após o React montar
-const splash = document.getElementById('splash');
-if (splash) splash.remove();
