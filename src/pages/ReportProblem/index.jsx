@@ -5,6 +5,8 @@ import './styles.css';
 
 const ReportProblem = () => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     type: 'bug',
     title: '',
@@ -14,6 +16,9 @@ const ReportProblem = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
     const data = new FormData();
     data.append('type', formData.type);
     data.append('title', formData.title);
@@ -21,28 +26,48 @@ const ReportProblem = () => {
     if (formData.file) {
       data.append('file', formData.file);
     }
+
     try {
       const response = await fetch("https://api.petziapp.com/api/report-problem", {
         method: "POST",
-        body: data
+        body: data,
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json'
+        }
       });
+
+      const responseData = await response.json();
+
       if (response.ok) {
         alert('Relatório enviado com sucesso! Obrigado por nos ajudar a melhorar o PetziApp.');
         navigate('/');
       } else {
-        alert('Erro ao enviar relatório. Tente novamente mais tarde.');
+        setError(responseData.message || 'Erro ao enviar relatório. Por favor, tente novamente.');
       }
     } catch (err) {
-      alert('Erro ao enviar relatório. Tente novamente mais tarde.');
+      if (err.name === 'TypeError' && err.message.includes('Failed to fetch')) {
+        setError('Erro de conexão. Verifique sua internet e tente novamente.');
+      } else {
+        setError('Erro ao enviar relatório. Por favor, tente novamente mais tarde.');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === 'file') {
+      const file = files[0];
+      if (file && file.size > 5 * 1024 * 1024) { // 5MB limit
+        alert('O arquivo é muito grande. O tamanho máximo permitido é 5MB.');
+        e.target.value = '';
+        return;
+      }
       setFormData(prev => ({
         ...prev,
-        file: files[0]
+        file
       }));
     } else {
       setFormData(prev => ({
@@ -61,6 +86,12 @@ const ReportProblem = () => {
         <h1>Reportar Problema</h1>
       </div>
 
+      {error && (
+        <div className="error-message">
+          {error}
+        </div>
+      )}
+
       <form className="report-form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="type">Tipo de Problema</label>
@@ -70,6 +101,7 @@ const ReportProblem = () => {
             value={formData.type}
             onChange={handleChange}
             required
+            disabled={isLoading}
           >
             <option value="bug">Bug/Erro</option>
             <option value="feature">Sugestão de Melhoria</option>
@@ -88,6 +120,7 @@ const ReportProblem = () => {
             onChange={handleChange}
             placeholder="Descreva brevemente o problema"
             required
+            disabled={isLoading}
           />
         </div>
 
@@ -100,11 +133,12 @@ const ReportProblem = () => {
             onChange={handleChange}
             placeholder="Descreva o problema em detalhes"
             required
+            disabled={isLoading}
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="file">Anexar Arquivo (opcional)</label>
+          <label htmlFor="file">Anexar Arquivo (opcional, máximo 5MB)</label>
           <div className="file-input-wrapper">
             <input
               type="file"
@@ -112,6 +146,7 @@ const ReportProblem = () => {
               name="file"
               onChange={handleChange}
               className="file-input"
+              disabled={isLoading}
             />
             <label htmlFor="file" className="file-label">
               <FaUpload />
@@ -120,9 +155,19 @@ const ReportProblem = () => {
           </div>
         </div>
 
-        <button type="submit" className="submit-button">
-          <FaPaperPlane />
-          Enviar Relatório
+        <button 
+          type="submit" 
+          className="submit-button"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            'Enviando...'
+          ) : (
+            <>
+              <FaPaperPlane />
+              Enviar Relatório
+            </>
+          )}
         </button>
       </form>
     </div>

@@ -14,6 +14,9 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true,
+        navigateFallback: 'index.html',
+        navigateFallbackDenylist: [/^\/api\//],
+        globPatterns: ['**/*.{js,css,ico,png,svg,webp,woff2}'],
       },
       devOptions: {
         enabled: true,
