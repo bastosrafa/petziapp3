@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { OnboardingProvider, ProtectedRoute } from './contexts/OnboardingContext';
 import { ThemeProvider } from './providers/ThemeProvider';
@@ -17,40 +17,40 @@ import TopbarMobile from './components/TopbarMobile';
 import BottomBar from './components/BottomBar';
 import Loading from './components/Loading';
 
-// Páginas
-import Login from './pages/Login/Login';
-import Signup from './pages/Signup/Signup';
-import PasswordRecovery from './pages/Recover/Recover';
-import Home from './pages/Home/Home';
-import Profile from './pages/Profile/Profile';
-import Dashboard from './pages/Dashboard';
-import Onboarding from './components/Onboarding/Onboarding';
-import ResetOnboarding from './pages/ResetOnboarding';
-import Content from './pages/Content/Content';
-import Training from './pages/Content/Training/index';
-import StartHereModule from './pages/Content/Training/StartHere/index';
-import BehaviorModule from './pages/Content/Training/Behavior/index';
-import SocializationModule from './pages/Content/Training/Socialization/index';
-import HygieneModule from './pages/Content/Training/Hygiene/index';
-import BadHabitsModule from './pages/Content/Training/BadHabits/index';
-import MentalModule from './pages/Content/Training/Mental/index';
-import Vaccines from './pages/Content/Vaccines';
-import Diary from './pages/Content/Diary';
-import Help from './pages/Help/index';
-import Notifications from './pages/Notifications';
-import About from './pages/About';
-import Terms from './pages/Terms';
-import Privacy from './pages/Privacy';
-import Report from './pages/Report';
-import ReportSuccess from './pages/Report/Success';
-import ReportProblem from './pages/ReportProblem';
+// Lazy load para páginas principais
+const Login = lazy(() => import('./pages/Login/Login'));
+const Signup = lazy(() => import('./pages/Signup/Signup'));
+const PasswordRecovery = lazy(() => import('./pages/Recover/Recover'));
+const Home = lazy(() => import('./pages/Home/Home'));
+const Profile = lazy(() => import('./pages/Profile/Profile'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Onboarding = lazy(() => import('./components/Onboarding/Onboarding'));
+const ResetOnboarding = lazy(() => import('./pages/ResetOnboarding'));
+const Content = lazy(() => import('./pages/Content/Content'));
+const Training = lazy(() => import('./pages/Content/Training/index'));
+const StartHereModule = lazy(() => import('./pages/Content/Training/StartHere/index'));
+const BehaviorModule = lazy(() => import('./pages/Content/Training/Behavior/index'));
+const SocializationModule = lazy(() => import('./pages/Content/Training/Socialization/index'));
+const HygieneModule = lazy(() => import('./pages/Content/Training/Hygiene/index'));
+const BadHabitsModule = lazy(() => import('./pages/Content/Training/BadHabits/index'));
+const MentalModule = lazy(() => import('./pages/Content/Training/Mental/index'));
+const Vaccines = lazy(() => import('./pages/Content/Vaccines'));
+const Diary = lazy(() => import('./pages/Content/Diary'));
+const Help = lazy(() => import('./pages/Help/index'));
+const Notifications = lazy(() => import('./pages/Notifications'));
+const About = lazy(() => import('./pages/About'));
+const Terms = lazy(() => import('./pages/Terms'));
+const Privacy = lazy(() => import('./pages/Privacy'));
+const Report = lazy(() => import('./pages/Report'));
+const ReportSuccess = lazy(() => import('./pages/Report/Success'));
+const ReportProblem = lazy(() => import('./pages/ReportProblem'));
 
 // Lições
-import Behavior1 from './pages/Content/Training/Behavior/Lessons/Behavior1';
-import Behavior2 from './pages/Content/Training/Behavior/Lessons/Behavior2';
-import Behavior3 from './pages/Content/Training/Behavior/Lessons/Behavior3';
-import Behavior4 from './pages/Content/Training/Behavior/Lessons/Behavior4';
-import Behavior5 from './pages/Content/Training/Behavior/Lessons/Behavior5';
+const Behavior1 = lazy(() => import('./pages/Content/Training/Behavior/Lessons/Behavior1'));
+const Behavior2 = lazy(() => import('./pages/Content/Training/Behavior/Lessons/Behavior2'));
+const Behavior3 = lazy(() => import('./pages/Content/Training/Behavior/Lessons/Behavior3'));
+const Behavior4 = lazy(() => import('./pages/Content/Training/Behavior/Lessons/Behavior4'));
+const Behavior5 = lazy(() => import('./pages/Content/Training/Behavior/Lessons/Behavior5'));
 
 function App() {
   const { user, authIsReady } = useAuthContext();
@@ -80,7 +80,7 @@ function App() {
                     )}
                     {isMobile ? null : (
                       <div
-                        className={`${
+                        className={`$${
                           sidebarExpanded ? "w-[284px]" : "w-[90px]"
                         } w-[286px] h-[calc(100vh_-_120px)] fixed top-24 left-5 bottom-5 overflow-y-hidden border rounded-md`}
                       >
@@ -95,50 +95,52 @@ function App() {
                       </div>
                     )}
                     <div
-                      className={`$${
+                      className={`$$${
                         isMobile
                           ? "w-full"
                           : sidebarExpanded
                           ? "w-[calc(100%_-_300px)]"
                           : "w-[calc(100%_-_100px)]"
-                      } pt-20 $${
+                      } pt-20 $$${
                         isMobile ? "mb-20" : "mb-5"
-                      } $${
+                      } $$${
                         isMobile ? "mx-0" : "mx-5"
                       } float-right overflow-y-auto h-[calc(100vh_-_76px)]`}
                     >
-                      <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/content" element={<Content />} />
-                        <Route path="/content/training" element={<Training />} />
-                        <Route path="/training" element={<Navigate to="/content/training" />} />
-                        <Route path="/content/training/start-here" element={<StartHereModule />} />
-                        <Route path="/content/training/behavior" element={<BehaviorModule />} />
-                        <Route path="/content/training/socialization" element={<SocializationModule />} />
-                        <Route path="/content/training/hygiene" element={<HygieneModule />} />
-                        <Route path="/content/training/badhabits" element={<BadHabitsModule />} />
-                        <Route path="/content/training/mental" element={<MentalModule />} />
-                        <Route path="/content/training/behavior/lessons/behavior1" element={<Behavior1 />} />
-                        <Route path="/content/training/behavior/lessons/behavior2" element={<Behavior2 />} />
-                        <Route path="/content/training/behavior/lessons/behavior3" element={<Behavior3 />} />
-                        <Route path="/content/training/behavior/lessons/behavior4" element={<Behavior4 />} />
-                        <Route path="/content/training/behavior/lessons/behavior5" element={<Behavior5 />} />
-                        <Route path="/content/vaccines" element={<Vaccines />} />
-                        <Route path="/content/diary" element={<Diary />} />
-                        <Route path="/notifications" element={<Notifications />} />
-                        <Route path="/profile" element={<Profile />} />
-                        <Route path="/help" element={<Help />} />
-                        <Route path="/about" element={<About />} />
-                        <Route path="/terms" element={<Terms />} />
-                        <Route path="/privacy" element={<Privacy />} />
-                        <Route path="/report-problem" element={<ReportProblem />} />
-                        <Route path="/report" element={<Report />} />
-                        <Route path="/report/success" element={<ReportSuccess />} />
-                        <Route path="/onboarding" element={<Onboarding />} />
-                        <Route path="/reset-onboarding" element={<ResetOnboarding />} />
-                        <Route path="*" element={<Navigate to="/" />} />
-                      </Routes>
+                      <Suspense fallback={<Loading />}>
+                        <Routes>
+                          <Route path="/" element={<Home />} />
+                          <Route path="/dashboard" element={<Dashboard />} />
+                          <Route path="/content" element={<Content />} />
+                          <Route path="/content/training" element={<Training />} />
+                          <Route path="/training" element={<Navigate to="/content/training" />} />
+                          <Route path="/content/training/start-here" element={<StartHereModule />} />
+                          <Route path="/content/training/behavior" element={<BehaviorModule />} />
+                          <Route path="/content/training/socialization" element={<SocializationModule />} />
+                          <Route path="/content/training/hygiene" element={<HygieneModule />} />
+                          <Route path="/content/training/badhabits" element={<BadHabitsModule />} />
+                          <Route path="/content/training/mental" element={<MentalModule />} />
+                          <Route path="/content/training/behavior/lessons/behavior1" element={<Behavior1 />} />
+                          <Route path="/content/training/behavior/lessons/behavior2" element={<Behavior2 />} />
+                          <Route path="/content/training/behavior/lessons/behavior3" element={<Behavior3 />} />
+                          <Route path="/content/training/behavior/lessons/behavior4" element={<Behavior4 />} />
+                          <Route path="/content/training/behavior/lessons/behavior5" element={<Behavior5 />} />
+                          <Route path="/content/vaccines" element={<Vaccines />} />
+                          <Route path="/content/diary" element={<Diary />} />
+                          <Route path="/notifications" element={<Notifications />} />
+                          <Route path="/profile" element={<Profile />} />
+                          <Route path="/help" element={<Help />} />
+                          <Route path="/about" element={<About />} />
+                          <Route path="/terms" element={<Terms />} />
+                          <Route path="/privacy" element={<Privacy />} />
+                          <Route path="/report-problem" element={<ReportProblem />} />
+                          <Route path="/report" element={<Report />} />
+                          <Route path="/report/success" element={<ReportSuccess />} />
+                          <Route path="/onboarding" element={<Onboarding />} />
+                          <Route path="/reset-onboarding" element={<ResetOnboarding />} />
+                          <Route path="*" element={<Navigate to="/" />} />
+                        </Routes>
+                      </Suspense>
                     </div>
                     {isMobile && <BottomBar />}
                   </DashboardProvider>
@@ -146,12 +148,14 @@ function App() {
               </ReferrerDocProvider>
             </UserDocProvider>
           ) : (
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/recover" element={<PasswordRecovery />} />
-              <Route path="*" element={<Navigate to="/login" />} />
-            </Routes>
+            <Suspense fallback={<Loading />}>
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/recover" element={<PasswordRecovery />} />
+                <Route path="*" element={<Navigate to="/login" />} />
+              </Routes>
+            </Suspense>
           )}
         </OnboardingProvider>
       </ThemeProvider>

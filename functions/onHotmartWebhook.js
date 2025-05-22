@@ -17,7 +17,6 @@ exports.onHotmartWebhook = onRequest(
     const data = webhook.data;
     const event = webhook.event;
     let result;
-    let planObject = {};
 
     if (!handledEvents.includes(event)) {
       return res.status(200).json({ success: true });
@@ -25,25 +24,19 @@ exports.onHotmartWebhook = onRequest(
 
     const email = data.buyer.email;
     const name = data.buyer.name;
-    const phone_number = data.buyer.phone || "";
-    const product = data.product.name;
-    const full_price = data.purchase.full_price.value;
-    const currency = data.purchase.full_price.currency_value;
-    const paymentMethod = data.purchase.payment.type;
-    const planName = data.subscription?.plan?.name;
-    const offer = data.purchase.offer.code;
-    const renewalDate = data.purchase.next_charge_date;
-    
-    // Adicionando estas linhas antes de usar as variáveis
-    const isReferral = data.buyer.isReferral || false;
-    const referrer = data.buyer.referrer || null;
-
+    const phone_number = data.buyer.checkout_phone_code && data.buyer.checkout_phone
+      ? `+55${data.buyer.checkout_phone_code}${data.buyer.checkout_phone}`
+      : "";
+    const planName = data.subscription?.plan?.name || "free";
+    let planObject = {};
     if (event === "PURCHASE_APPROVED") {
       planObject = {
         status: "active",
-        name: "premium",
+        name: planName,
         status_date: new Date(),
-        renewal_date: renewalDate ? new Date(renewalDate) : null,
+        renewal_date: data.purchase.date_next_charge
+          ? new Date(data.purchase.date_next_charge)
+          : null,
         purchase_date: new Date(),
         platform: "hotmart",
       };
@@ -54,7 +47,9 @@ exports.onHotmartWebhook = onRequest(
       };
     }
 
-    //Consultando a coleção "users" pelo e-mail para obter o ID
+    const isReferral = data.buyer.isReferral || false;
+    const referrer = data.buyer.referrer || null;
+
     let userRec;
     try {
       userRec = await auth.getUserByEmail(email);
@@ -67,7 +62,6 @@ exports.onHotmartWebhook = onRequest(
       );
     }
 
-    // Verificar se encontrou o usuário
     if (!userRec) {
       try {
         userRec = await auth.createUser({
@@ -94,7 +88,6 @@ exports.onHotmartWebhook = onRequest(
       }
     }
 
-    // Pegando o ID do usuário
     const userId = userRec.uid;
 
     try {
@@ -106,8 +99,10 @@ exports.onHotmartWebhook = onRequest(
             email: email,
             name: name,
             phone: phone_number,
+            whatsapp: phone_number,
             id: userId,
-            plan: planObject,
+            plan: planName,
+            planObject,
             risk: "medium",
             new: true,
             isReferral: isReferral,
@@ -127,8 +122,6 @@ exports.onHotmartWebhook = onRequest(
       );
       result = "error";
     }
-
-    // await sendEmail(email, name, password);
 
     if (result === "success") {
       return res.status(200).json({ 
