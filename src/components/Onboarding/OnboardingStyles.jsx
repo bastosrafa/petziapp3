@@ -463,10 +463,11 @@ export const MessageBubble = styled.div`
   line-height: 1.5;
   font-size: 16px;
   word-wrap: break-word;
-  background-color: white;
-  color: #333;
-  align-self: flex-start;
-  border-bottom-left-radius: 4px;
+  background-color: ${({ $isUser }) => $isUser ? '#4a89dc' : 'white'};
+  color: ${({ $isUser }) => $isUser ? 'white' : '#333'};
+  align-self: ${({ $isUser }) => $isUser ? 'flex-end' : 'flex-start'};
+  border-bottom-left-radius: ${({ $isUser }) => $isUser ? '20px' : '4px'};
+  border-bottom-right-radius: ${({ $isUser }) => $isUser ? '4px' : '20px'};
   animation: ${fadeIn} 0.3s ease-in-out;
   &.system-bubble {}
 

@@ -67,7 +67,6 @@ const SettingsMenu = ({ isOpen, onClose }) => {
 
   const handleItemClick = (itemId) => {
     setActiveSection(itemId);
-    
     switch (itemId) {
       case 'profile':
         navigate('/profile');
@@ -106,6 +105,7 @@ const SettingsMenu = ({ isOpen, onClose }) => {
     setIsResetting(true);
     try {
       await resetOnboarding();
+      onClose();
       navigate('/onboarding');
     } catch (error) {
       console.error('Erro ao resetar onboarding:', error);
