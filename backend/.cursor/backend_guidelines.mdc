@@ -1,0 +1,21 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Guidelines do Backend
+
+## Padrões de Organização
+- Rotas Express: cada endpoint em um arquivo separado dentro de `routes/`.
+- Funções auxiliares: em `functions/`, para lógica de notificação, etc.
+- Inicialização Firebase: centralizada em `firebaseinit.js`.
+- Middlewares: funções de autenticação e verificação de token em cada rota.
+- Padrão de exportação: `module.exports = router;` para cada rota.
+- Uso de async/await para operações assíncronas.
+- Validação de dados antes de operações críticas (ex: salvar token).
+
+## Regras
+- Ignorar: `node_modules/`, arquivos `.log`.
+- Priorizar: `routes/`, `functions/`, `firebaseinit.js`.
+
+

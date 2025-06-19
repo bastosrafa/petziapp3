@@ -1,0 +1,23 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Guidelines Globais do Projeto
+
+## Ignorar
+- node_modules/
+- dist/
+- dev-dist/
+- *.zip
+- .git/
+- .firebase/
+- *.log
+- *.exe
+
+## Prioridade
+- README.md
+- package.json
+- vite.config.js
+- firebase.json
+

@@ -1,0 +1,21 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Guidelines das Funções Serverless
+
+## Padrões de Organização
+- Funções serverless: cada função exportada em um arquivo próprio.
+- Express + Firebase Functions: uso de Express para endpoints HTTP, com inicialização condicional do Firebase Admin.
+- Configuração de CORS centralizada e customizável.
+- Utils: funções auxiliares (ex: `mailchimpService.js`, `sendEmail.js`, `generateReferrerId.js`) em `utils/`.
+- Validação e tratamento de erros: uso de try/catch e logs detalhados.
+- Integração com serviços externos: Mailchimp, envio de e-mails, webhooks.
+- Padrão de autenticação: verificação de tokens JWT/Firebase em endpoints sensíveis.
+- Padrão de exportação: `exports.nomeFuncao = ...` para triggers e endpoints.
+
+## Regras
+- Ignorar: `node_modules/`, arquivos `.log`.
+- Priorizar: todos os arquivos `.js`, `utils/`.
+

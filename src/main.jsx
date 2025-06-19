@@ -6,6 +6,7 @@ import { AuthContextProvider } from "./contexts/AuthContext";
 import { registerSW } from "virtual:pwa-register";
 import { BrowserRouter } from "react-router-dom";
 import { getToken } from "firebase/messaging";
+import { messaging } from "./firebase/config";
 
 // import { Toaster } from "@/shadcn/components/ui/toaster";
 
