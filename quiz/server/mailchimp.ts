@@ -1,9 +1,10 @@
 // ATENÇÃO: Nunca deixe a chave exposta em produção! Use sempre a variável de ambiente MAILCHIMP_API_KEY.
 // Para testes locais, fallback para a nova chave se a env não estiver definida.
 
-import mailchimp from '@mailchimp/mailchimp_marketing';
+// @ts-ignore - Mailchimp module has typing issues
+const mailchimp = require('@mailchimp/mailchimp_marketing');
 
-const apiKey = process.env.MAILCHIMP_API_KEY || '80d4f178419fc4a8c6c0915256436098-us5';
+const apiKey = process.env.MAILCHIMP_API_KEY || '9a818330c88fd83a854ed31a1f15d0d5-us5';
 const server = apiKey.split('-')[1] || 'us5';
 
 mailchimp.setConfig({

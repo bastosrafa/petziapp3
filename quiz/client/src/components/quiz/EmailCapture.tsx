@@ -8,6 +8,12 @@ import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { tracking } from "@/lib/tracking";
 
+declare global {
+  interface Window {
+    fbq: any;
+  }
+}
+
 interface EmailCaptureProps {
   answers: Record<number, any>;
   onComplete: (diagnosis: any) => void;
@@ -58,6 +64,14 @@ export default function EmailCapture({ answers, onComplete }: EmailCaptureProps)
 
     // Track email capture event
     tracking.trackEmailCapture(userEmail, petName);
+    
+    // Track email capture event (Meta Pixel)
+    if (window.fbq) {
+      window.fbq('track', 'Lead', {
+        email: userEmail,
+        petName: petName
+      });
+    }
     
     submitLead.mutate({ petName, userEmail, answers });
   };

@@ -32,11 +32,25 @@ export default function ResultsSection({ diagnosis }: ResultsSectionProps) {
   }, [showExitIntent]);
 
   const redirectToSignup = (plan: string) => {
-    const planData = [...mainPlans, ...downsellPlans].find(p => p.id === plan);
-    if (planData) {
-      tracking.trackPlanClick(plan, planData.price);
+    // Dispara evento InitiateCheckout no Pixel do Meta
+    if (window.fbq) {
+      window.fbq('track', 'InitiateCheckout', {
+        value: plan,
+        currency: 'BRL'
+      });
     }
-    window.open(`https://petzia.com/signup?plan=${plan}`, '_blank');
+    // Mapeamento dos links de checkout Hotmart para todos os planos
+    const planLinks: Record<string, string> = {
+      monthly: 'https://pay.hotmart.com/S99680392H?off=0o0y5ykt&checkoutMode=10&bid=1750378424813',
+      quarterly: 'https://pay.hotmart.com/S99680392H?off=yg0f9ki4&checkoutMode=10&bid=1750378447685',
+      annual: 'https://pay.hotmart.com/S99680392H?off=azvsrrfv&checkoutMode=10&bid=1750378470778',
+      'downsell-monthly': 'https://pay.hotmart.com/S99680392H?off=ov654o4e&checkoutMode=10&bid=1750378356442',
+      'downsell-quarterly': 'https://pay.hotmart.com/S99680392H?off=4e590hpo&checkoutMode=10&bid=1750378340592',
+      'downsell-annual': 'https://pay.hotmart.com/S99680392H?off=ats5k5i9&checkoutMode=10&bid=1750378302286'
+    };
+    // Sempre usar os links da Hotmart - nunca redirecionar para petzia.com
+    const url = planLinks[plan] || planLinks['monthly']; // Fallback para mensal se plan não existir
+    window.open(url, '_blank');
   };
 
   const mainPlans = [
@@ -406,12 +420,20 @@ export default function ResultsSection({ diagnosis }: ResultsSectionProps) {
                   ))}
                 </ul>
                 
-                <Button
-                  onClick={() => redirectToSignup(plan.id)}
-                  className={`w-full ${plan.buttonColor} text-white py-3 rounded-full font-bold hover:opacity-90 transition-all duration-300`}
+                <a
+                  href={plan.id === 'monthly' ? 'https://pay.hotmart.com/S99680392H?off=0o0y5ykt&checkoutMode=10&bid=1750378424813'
+                    : plan.id === 'quarterly' ? 'https://pay.hotmart.com/S99680392H?off=yg0f9ki4&checkoutMode=10&bid=1750378447685'
+                    : plan.id === 'annual' ? 'https://pay.hotmart.com/S99680392H?off=azvsrrfv&checkoutMode=10&bid=1750378470778'
+                    : '#'}
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
                 >
-                  {plan.buttonText}
-                </Button>
+                  <Button
+                    className={`w-full ${plan.buttonColor} text-white py-3 rounded-full font-bold hover:opacity-90 transition-all duration-300`}
+                  >
+                    {plan.buttonText}
+                  </Button>
+                </a>
               </motion.div>
             ))}
           </div>
@@ -521,12 +543,20 @@ export default function ResultsSection({ diagnosis }: ResultsSectionProps) {
                         ))}
                       </ul>
                       
-                      <Button
-                        onClick={() => redirectToSignup(plan.id)}
-                        className={`w-full ${plan.buttonColor} text-white py-2 rounded-full font-bold hover:opacity-90 transition-all duration-300`}
+                      <a
+                        href={plan.id === 'downsell-monthly' ? 'https://pay.hotmart.com/S99680392H?off=ov654o4e&checkoutMode=10&bid=1750378356442'
+                          : plan.id === 'downsell-quarterly' ? 'https://pay.hotmart.com/S99680392H?off=4e590hpo&checkoutMode=10&bid=1750378340592'
+                          : plan.id === 'downsell-annual' ? 'https://pay.hotmart.com/S99680392H?off=ats5k5i9&checkoutMode=10&bid=1750378302286'
+                          : '#'}
+                        target="_blank"
+                        rel="noopener noreferrer nofollow"
                       >
-                        {plan.buttonText}
-                      </Button>
+                        <Button
+                          className={`w-full ${plan.buttonColor} text-white py-2 rounded-full font-bold hover:opacity-90 transition-all duration-300`}
+                        >
+                          {plan.buttonText}
+                        </Button>
+                      </a>
                     </motion.div>
                   ))}
                 </div>
