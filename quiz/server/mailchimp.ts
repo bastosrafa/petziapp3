@@ -4,7 +4,10 @@
 // @ts-ignore - Mailchimp module has typing issues
 const mailchimp = require('@mailchimp/mailchimp_marketing');
 
-const apiKey = process.env.MAILCHIMP_API_KEY || 'fe0da79eaeb6fe32ae55c3152a691cf1-us5';
+const apiKey = process.env.MAILCHIMP_API_KEY;
+if (!apiKey) {
+  throw new Error('MAILCHIMP_API_KEY environment variable is required');
+}
 const server = apiKey.split('-')[1] || 'us5';
 
 mailchimp.setConfig({
